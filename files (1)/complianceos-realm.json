@@ -1,0 +1,82 @@
+{
+  "realm": "complianceos",
+  "enabled": true,
+  "displayName": "ComplianceOS",
+  "displayNameHtml": "<b>Compliance</b>OS",
+  "sslRequired": "external",
+  "registrationAllowed": false,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": true,
+  "editUsernameAllowed": false,
+  "bruteForceProtected": true,
+  "failureFactor": 5,
+  "waitIncrementSeconds": 900,
+  "accessTokenLifespan": 28800,
+  "ssoSessionMaxLifespan": 2592000,
+  "clients": [
+    {
+      "clientId": "complianceos-api",
+      "name": "ComplianceOS API",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "dev-secret-change-in-prod",
+      "bearerOnly": false,
+      "publicClient": false,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": true,
+      "protocol": "openid-connect",
+      "redirectUris": [
+        "http://localhost:3000/*",
+        "http://localhost:8080/*"
+      ],
+      "webOrigins": ["http://localhost:3000", "http://localhost:8080"],
+      "defaultClientScopes": ["openid", "profile", "email"],
+      "protocolMappers": [
+        {
+          "name": "tenant-id-mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "userinfo.token.claim": "true",
+            "user.attribute": "tenant_id",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "tenant_id",
+            "jsonType.label": "String"
+          }
+        }
+      ]
+    },
+    {
+      "clientId": "complianceos-frontend",
+      "name": "ComplianceOS Frontend (Next.js)",
+      "enabled": true,
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": false,
+      "protocol": "openid-connect",
+      "redirectUris": ["http://localhost:3000/*"],
+      "webOrigins": ["http://localhost:3000"]
+    }
+  ],
+  "roles": {
+    "client": {
+      "complianceos-api": [
+        { "name": "ADMIN",           "description": "Full read/write access" },
+        { "name": "AUDITOR",         "description": "Read/write audits" },
+        { "name": "VIEWER",          "description": "Read-only access" },
+        { "name": "EXTERNAL_AUDITOR","description": "Read shared audits only" }
+      ]
+    }
+  },
+  "webAuthnPolicyRpEntityName": "ComplianceOS",
+  "webAuthnPolicySignatureAlgorithms": ["ES256"],
+  "webAuthnPolicyRpId": "localhost",
+  "webAuthnPolicyAttestationConveyancePreference": "not specified",
+  "webAuthnPolicyAuthenticatorAttachment": "not specified",
+  "webAuthnPolicyRequireResidentKey": "not specified",
+  "webAuthnPolicyUserVerificationRequirement": "not specified"
+}

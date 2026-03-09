@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cours Préparatoire : Architecture et Stack de ComplianceOS</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#e0f2fe',
+                primaryTextColor: '#0369a1',
+                primaryBorderColor: '#0284c7',
+                lineColor: '#475569',
+                secondaryColor: '#f1f5f9',
+                tertiaryColor: '#ffffff'
+            }
+        });
+    </script>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #475569;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --border: #e2e8f0;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background-color: var(--bg);
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+        header h1 { margin: 0; font-size: 2.5rem; }
+        header p { margin-top: 0.5rem; font-size: 1.2rem; opacity: 0.9; }
+
+        .container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        .module {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        h2 { color: var(--primary); border-bottom: 2px solid var(--border); padding-bottom: 0.5rem; margin-top: 0; }
+        h3 { color: var(--secondary); margin-top: 2rem; }
+
+        ul { padding-left: 1.5rem; }
+        li { margin-bottom: 0.5rem; }
+
+        .diagram-container {
+            background-color: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            text-align: center;
+            overflow-x: auto;
+        }
+        .diagram-title {
+            font-weight: bold;
+            color: var(--secondary);
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .tech-tag {
+            display: inline-block;
+            background-color: #e0f2fe;
+            color: #0369a1;
+            padding: 0.2rem 0.6rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin: 0.2rem 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        th, td {
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            text-align: left;
+        }
+        th {
+            background-color: #f1f5f9;
+            color: var(--secondary);
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>ComplianceOS : Le Cours Préparatoire</h1>
+    <p>Architecture visuelle, stack technique et concepts clés</p>
+</header>
+
+<div class="container">
+
+    <div class="module">
+        <h2>Vue d'ensemble de l'Architecture</h2>
+        <p>Avant d'entrer dans les détails, voici comment les différents composants de <strong>ComplianceOS</strong> interagissent entre eux, de l'utilisateur final jusqu'à la base de données.</p>
+
+        <div class="diagram-container">
+            <div class="diagram-title">Diagramme de Contexte Système</div>
+            <div class="mermaid">
+                graph TD
+                Admin[Administrateurs / Utilisateurs] -->|Navigation Web| NextJS[Frontend Next.js 15]
+                ERP[Systèmes ERP Tiers] -->|Appels API sécurisés| API[Passerelle API / OpenAPI 3.1]
+
+                NextJS -->|REST / GraphQL| API
+                API --> Core[Backend Core Spring Boot 3.4]
+
+                Core <-->|gRPC / OIDC| Keycloak[Keycloak IAM / Passkeys FIDO2]
+                Core -->|Connexion isolée RLS| DB[(PostgreSQL)]
+                Core -->|Publication d'événements| Kafka[Apache Kafka]
+
+                Kafka -->|Consommation| Webhooks[Service de Webhooks]
+                Webhooks -->|Notifs temps réel| ERP
+                Core <-->|API| Stripe[Stripe Billing & Tax]
+            </div>
+        </div>
+    </div>
+
+    <div class="module">
+        <h2>Module 1 : Phase 1 — Core Platform & Authentification</h2>
+        <p>Ce module pose les fondations. La sécurité, l'isolation des données et la gestion des accès sont les piliers de cette phase.</p>
+
+        <h3>1. Le flux d'inscription (User Story CO-001)</h3>
+        <p>Voyons comment se déroule l'inscription d'une nouvelle entreprise, en respectant vos critères d'acceptation (isolation de la base, chiffrement, Keycloak).</p>
+
+        <div class="diagram-container">
+            <div class="diagram-title">Diagramme de Séquence : Création de compte et provisionnement</div>
+            <div class="mermaid">
+                sequenceDiagram
+                actor Admin as Admin Entreprise
+                participant UI as Frontend
+                participant API as Spring Boot API
+                participant IAM as Keycloak
+                participant DB as PostgreSQL
+
+                Admin->>UI: Renseigne Email, SIRET, Nom
+                UI->>API: POST /api/register
+
+                rect rgb(241, 245, 249)
+                Note over API,DB: Processus interne (< 2 secondes)
+                API->>API: Validation (SIRET 14 chiffres, domaine)
+                API->>IAM: Création User + Assignation Rôle ADMIN
+                API->>DB: Création du Tenant + Config RLS
+                API->>DB: Chiffrement KMS (AES-256) des données sensibles
+                end
+
+                API->>Admin: Envoi Email + Lien d'activation (JWT 24h)
+                API-->>UI: 200 OK (Succès)
+            </div>
+        </div>
+
+        <h3>2. Concept Clé : Row-Level Security (RLS)</h3>
+        <p>Le multi-tenant ne se fait pas en créant une base de données par client, mais en utilisant une seule base où <strong>PostgreSQL filtre les lignes automatiquement</strong> selon le client connecté.</p>
+        <ul>
+            <li><strong>Sans RLS :</strong> Le développeur doit penser à ajouter <code>WHERE tenant_id = X</code> à <em>chaque</em> requête SQL. Risque d'erreur élevé.</li>
+            <li><strong>Avec RLS :</strong> Le contexte de l'utilisateur est injecté dans la session de la base de données. <code>SELECT * FROM factures</code> ne renverra <em>que</em> les factures du client connecté, même si le développeur oublie la clause <code>WHERE</code>.</li>
+        </ul>
+    </div>
+
+    <div class="module">
+        <h2>Module 2 : Phase 6 — Cloud, Observabilité & SaaS</h2>
+        <p>Une fois le cœur construit, le système doit s'ouvrir vers l'extérieur de manière sécurisée et facturable.</p>
+
+        <div class="diagram-container">
+            <div class="diagram-title">Architecture Événementielle et API Publique</div>
+            <div class="mermaid">
+                graph LR
+                Client[ERP Client]
+                API[API Publique v1]
+                Kafka{Cluster Kafka}
+                Billing[Stripe]
+
+                Client -->|Requête (Rate Limit: 1000/h)| API
+                API -->|Génère un événement| Kafka
+                Kafka -->|Action: audit.completed| WebhookWorker[Service Webhook]
+                WebhookWorker -->|POST asynchrone| Client
+
+                API -->|Calcul TVA / Abonnement| Billing
+            </div>
+        </div>
+
+        <h3>Résumé des Technologies</h3>
+        <table>
+            <thead>
+            <tr>
+                <th>Domaine</th>
+                <th>Technologies</th>
+                <th>Rôle dans ComplianceOS</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td><strong>Frontend</strong></td>
+                <td><span class="tech-tag">Next.js 15</span></td>
+                <td>Interface du portail client, SSR pour les performances.</td>
+            </tr>
+            <tr>
+                <td><strong>Backend & Core</strong></td>
+                <td><span class="tech-tag">Java 24</span> <span class="tech-tag">Spring Boot 3.4</span> <span class="tech-tag">gRPC</span></td>
+                <td>Logique métier, microservices performants, validation.</td>
+            </tr>
+            <tr>
+                <td><strong>Sécurité & Data</strong></td>
+                <td><span class="tech-tag">Keycloak</span> <span class="tech-tag">PostgreSQL</span> <span class="tech-tag">FIDO2</span></td>
+                <td>Authentification, isolation des données (RLS), chiffrement (AES-256).</td>
+            </tr>
+            <tr>
+                <td><strong>API & Événements</strong></td>
+                <td><span class="tech-tag">OpenAPI 3.1</span> <span class="tech-tag">Kafka</span> <span class="tech-tag">AsyncAPI</span></td>
+                <td>Documentation interactive, webhooks, flux de données asynchrones.</td>
+            </tr>
+            <tr>
+                <td><strong>DevOps & SaaS</strong></td>
+                <td><span class="tech-tag">Terraform</span> <span class="tech-tag">ArgoCD</span> <span class="tech-tag">Stripe</span></td>
+                <td>Déploiement GitOps (IaC), facturation et gestion des abonnements.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,2487 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ComplianceOS — Cours Complet</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+/* ============================================================
+   ComplianceOS — Cours Complet · Thème Pédagogique Clair
+   ============================================================ */
+
+:root {
+  /* Couleurs de base — fond clair, texte sombre */
+  --bg:         #F7F8FA;
+  --surface:    #FFFFFF;
+  --surface2:   #F0F2F5;
+  --border:     #E2E6EC;
+  --border2:    #CBD2DA;
+
+  /* Texte */
+  --text:       #1A1D23;
+  --muted:      #4B5563;
+  --faint:      #9CA3AF;
+
+  /* Couleurs des phases — vives mais lisibles sur fond blanc */
+  --green:        #16A34A;
+  --green-light:  #DCFCE7;
+  --green-border: #BBF7D0;
+
+  --blue:         #1D4ED8;
+  --blue-light:   #DBEAFE;
+  --blue-border:  #BFDBFE;
+
+  --orange:       #C2410C;
+  --orange-light: #FFEDD5;
+  --orange-border:#FED7AA;
+
+  --red:          #B91C1C;
+  --red-light:    #FEE2E2;
+  --red-border:   #FECACA;
+
+  --purple:       #7C3AED;
+  --purple-light: #EDE9FE;
+  --purple-border:#DDD6FE;
+
+  --yellow:       #92400E;
+  --yellow-light: #FEF3C7;
+  --yellow-border:#FDE68A;
+
+  --teal:         #0F766E;
+  --teal-light:   #CCFBF1;
+  --teal-border:  #99F6E4;
+
+  /* Code */
+  --code-bg:      #1E2330;
+  --code-comment: #6B7A99;
+  --code-keyword: #79B8FF;
+  --code-string:  #9ECE6A;
+  --code-type:    #E5C07B;
+  --code-fn:      #61AFEF;
+  --code-num:     #D19A66;
+  --code-ann:     #C678DD;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  display: flex;
+  min-height: 100vh;
+  font-size: 15px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ==============================
+   SIDEBAR
+   ============================== */
+#sidebar {
+  width: 272px;
+  min-width: 272px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  height: 100vh;
+  position: fixed;
+  top: 0; left: 0;
+  overflow-y: auto;
+  z-index: 100;
+  padding-bottom: 48px;
+}
+#sidebar::-webkit-scrollbar { width: 3px; }
+#sidebar::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+.sidebar-header {
+  padding: 24px 20px 18px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+.sidebar-logo {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.3px;
+  margin-bottom: 4px;
+}
+.sidebar-logo span { color: var(--green); }
+.sidebar-sub {
+  font-size: 11px;
+  color: var(--faint);
+  font-weight: 500;
+}
+
+.nav-section-title {
+  padding: 20px 20px 5px;
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--faint);
+  font-weight: 600;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 20px;
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  border-left: 3px solid transparent;
+  transition: all 0.12s;
+  font-weight: 450;
+}
+.nav-item:hover {
+  color: var(--text);
+  background: var(--bg);
+}
+.nav-item.active {
+  color: var(--blue);
+  border-left-color: var(--blue);
+  background: var(--blue-light);
+  font-weight: 600;
+}
+.nav-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+
+/* ==============================
+   MAIN
+   ============================== */
+#main {
+  margin-left: 272px;
+  flex: 1;
+  max-width: calc(100vw - 272px);
+}
+
+/* ==============================
+   HERO
+   ============================== */
+.hero {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 56px 64px 48px;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--green-light);
+  border: 1px solid var(--green-border);
+  border-radius: 6px;
+  padding: 4px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--green);
+  margin-bottom: 20px;
+  letter-spacing: 0.2px;
+}
+
+.hero h1 {
+  font-size: clamp(36px, 5vw, 56px);
+  font-weight: 800;
+  letter-spacing: -1.5px;
+  line-height: 1.05;
+  margin-bottom: 16px;
+  color: var(--text);
+}
+.hero h1 em {
+  color: var(--green);
+  font-style: normal;
+}
+.hero-desc {
+  font-size: 16px;
+  color: var(--muted);
+  max-width: 620px;
+  line-height: 1.75;
+  margin-bottom: 32px;
+  font-weight: 400;
+}
+.hero-stats {
+  display: flex;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+.stat-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--faint);
+  margin-bottom: 3px;
+}
+.stat-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: -0.5px;
+}
+
+/* ==============================
+   CONTENT
+   ============================== */
+.content {
+  padding: 56px 64px;
+}
+
+/* ==============================
+   SECTIONS
+   ============================== */
+.section {
+  margin-bottom: 72px;
+  scroll-margin-top: 32px;
+}
+
+.section-phase-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  margin-bottom: 14px;
+  letter-spacing: 0.2px;
+}
+
+.section-title {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  margin-bottom: 8px;
+  line-height: 1.2;
+  color: var(--text);
+}
+.section-subtitle {
+  font-size: 15px;
+  color: var(--muted);
+  margin-bottom: 32px;
+  max-width: 680px;
+  line-height: 1.75;
+}
+
+/* ==============================
+   TECH CARDS
+   ============================== */
+.tech-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
+}
+.tech-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 22px;
+  transition: box-shadow 0.15s, border-color 0.15s;
+}
+.tech-card:hover {
+  border-color: var(--border2);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+.tech-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.tech-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+.tech-version {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--faint);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+.tech-role-badge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.tech-desc {
+  font-size: 13.5px;
+  color: var(--muted);
+  line-height: 1.65;
+  margin-bottom: 12px;
+}
+.tech-why {
+  background: var(--bg);
+  border-left: 3px solid;
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+.tech-why strong { color: var(--text); font-weight: 600; }
+
+/* ==============================
+   CODE BLOCKS
+   ============================== */
+.code-block {
+  background: var(--code-bg);
+  border: 1px solid #2D3448;
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 20px 0;
+  font-family: 'JetBrains Mono', monospace;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.12);
+}
+.code-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  background: #252B3B;
+  border-bottom: 1px solid #2D3448;
+}
+.code-lang {
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #6B7A99;
+  font-weight: 600;
+}
+.code-file {
+  font-size: 11.5px;
+  color: #8892A4;
+}
+.code-body {
+  padding: 22px 24px;
+  font-size: 12.5px;
+  line-height: 1.9;
+  overflow-x: auto;
+  white-space: pre;
+  color: #ABB2BF;
+}
+.code-comment { color: var(--code-comment); font-style: italic; }
+.code-keyword { color: var(--code-keyword); font-weight: 500; }
+.code-string  { color: var(--code-string); }
+.code-type    { color: var(--code-type); }
+.code-fn      { color: var(--code-fn); }
+.code-num     { color: var(--code-num); }
+.code-ann     { color: var(--code-ann); }
+
+/* ==============================
+   CONCEPT BOXES
+   ============================== */
+.concept-box {
+  border-radius: 10px;
+  padding: 20px 24px;
+  margin: 20px 0;
+  border: 1px solid;
+}
+.concept-box .box-title {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.concept-box p, .concept-box li {
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--muted);
+}
+.concept-box li { margin-left: 20px; margin-bottom: 5px; }
+.concept-box strong { color: var(--text); font-weight: 600; }
+code { font-family: 'JetBrains Mono', monospace; font-size: 12px; background: var(--surface2); border: 1px solid var(--border); padding: 1px 6px; border-radius: 4px; color: var(--text); }
+
+/* ==============================
+   FLOW DIAGRAM
+   ============================== */
+.flow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0;
+  margin: 16px 0;
+}
+.flow-step {
+  background: var(--surface);
+  border: 1.5px solid var(--border2);
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 12.5px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text);
+  white-space: nowrap;
+  font-weight: 500;
+}
+.flow-arrow {
+  color: var(--faint);
+  padding: 0 8px;
+  font-size: 18px;
+}
+
+/* ==============================
+   TABLES
+   ============================== */
+.styled-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+  margin: 16px 0;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.styled-table th {
+  background: var(--surface2);
+  border-bottom: 2px solid var(--border);
+  border-right: 1px solid var(--border);
+  padding: 11px 16px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--faint);
+}
+.styled-table td {
+  border-bottom: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  padding: 11px 16px;
+  color: var(--muted);
+  line-height: 1.6;
+  background: var(--surface);
+}
+.styled-table tr:nth-child(even) td { background: #FAFBFC; }
+.styled-table td:first-child {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12.5px;
+  color: var(--text);
+  font-weight: 500;
+}
+
+/* ==============================
+   DIVIDER
+   ============================== */
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 56px 0;
+}
+
+/* ==============================
+   INTRO CARDS
+   ============================== */
+.intro-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 14px;
+  margin: 24px 0;
+}
+.intro-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+}
+.intro-card-icon { font-size: 26px; margin-bottom: 10px; }
+.intro-card-title { font-weight: 700; font-size: 14px; margin-bottom: 6px; color: var(--text); }
+.intro-card-desc { font-size: 13.5px; color: var(--muted); line-height: 1.65; }
+
+/* ==============================
+   PROGRESS BAR
+   ============================== */
+.progress-bar {
+  background: var(--surface2);
+  border-radius: 6px;
+  height: 8px;
+  overflow: hidden;
+  margin-top: 6px;
+  border: 1px solid var(--border);
+}
+.progress-fill {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 1s ease;
+}
+
+/* ==============================
+   DEFINITION LIST
+   ============================== */
+.def-list { margin: 16px 0; }
+.def-item {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13.5px;
+}
+.def-term {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text);
+  font-size: 12.5px;
+  font-weight: 600;
+  padding-top: 2px;
+}
+.def-desc { color: var(--muted); line-height: 1.65; }
+
+/* ==============================
+   STEP LIST
+   ============================== */
+.step-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.step-row {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+.step-content { font-size: 14px; color: var(--muted); line-height: 1.7; }
+.step-content strong { color: var(--text); font-weight: 600; }
+
+/* ==============================
+   HIGHLIGHT QUOTE
+   ============================== */
+.highlight-quote {
+  border-radius: 10px;
+  padding: 20px 24px;
+  margin: 24px 0;
+  border-left: 4px solid;
+  font-size: 15px;
+  font-style: italic;
+  line-height: 1.75;
+}
+
+/* ==============================
+   RESPONSIVE
+   ============================== */
+@media (max-width: 900px) {
+  #sidebar { display: none; }
+  #main { margin-left: 0; max-width: 100vw; }
+  .hero { padding: 36px 24px 28px; }
+  .content { padding: 36px 24px; }
+}
+
+/* ==============================
+   SCROLLBAR
+   ============================== */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #A0AEC0; }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">Compliance<span>OS</span></div>
+    <div class="sidebar-sub">Cours Complet · 12 mois · 55+ techs</div>
+  </div>
+
+  <div class="nav-section-title">Introduction</div>
+  <a class="nav-item active" href="#intro"><span class="nav-dot" style="background:#4ADE80"></span>Vue d'ensemble</a>
+  <a class="nav-item" href="#architecture"><span class="nav-dot" style="background:#4ADE80"></span>Architecture macro</a>
+  <a class="nav-item" href="#methodologie"><span class="nav-dot" style="background:#4ADE80"></span>Méthodologie</a>
+
+  <div class="nav-section-title">Phase 1 — Core & Auth</div>
+  <a class="nav-item" href="#java24"><span class="nav-dot" style="background:#60A5FA"></span>Java 24</a>
+  <a class="nav-item" href="#springboot"><span class="nav-dot" style="background:#60A5FA"></span>Spring Boot 3.4</a>
+  <a class="nav-item" href="#postgresql"><span class="nav-dot" style="background:#60A5FA"></span>PostgreSQL 17</a>
+  <a class="nav-item" href="#keycloak"><span class="nav-dot" style="background:#60A5FA"></span>Keycloak 25 + FIDO2</a>
+  <a class="nav-item" href="#grpc"><span class="nav-dot" style="background:#60A5FA"></span>gRPC + Protobuf</a>
+  <a class="nav-item" href="#graphql"><span class="nav-dot" style="background:#60A5FA"></span>GraphQL Netflix DGS</a>
+  <a class="nav-item" href="#argocd"><span class="nav-dot" style="background:#60A5FA"></span>GitOps + ArgoCD</a>
+
+  <div class="nav-section-title">Phase 2 — Python ML</div>
+  <a class="nav-item" href="#fastapi"><span class="nav-dot" style="background:#FB923C"></span>FastAPI 0.115</a>
+  <a class="nav-item" href="#langchain-py"><span class="nav-dot" style="background:#FB923C"></span>LangChain (Python)</a>
+  <a class="nav-item" href="#polars"><span class="nav-dot" style="background:#FB923C"></span>Polars + ETL</a>
+  <a class="nav-item" href="#xgboost"><span class="nav-dot" style="background:#FB923C"></span>XGBoost + ML</a>
+  <a class="nav-item" href="#celery"><span class="nav-dot" style="background:#FB923C"></span>Celery + Redis</a>
+  <a class="nav-item" href="#streamlit"><span class="nav-dot" style="background:#FB923C"></span>Streamlit</a>
+
+  <div class="nav-section-title">Phase 3 — AI Agents</div>
+  <a class="nav-item" href="#langchain4j"><span class="nav-dot" style="background:#4ADE80"></span>LangChain4j</a>
+  <a class="nav-item" href="#temporal"><span class="nav-dot" style="background:#4ADE80"></span>Temporal.io</a>
+  <a class="nav-item" href="#bedrock"><span class="nav-dot" style="background:#4ADE80"></span>AWS Bedrock + RAG</a>
+  <a class="nav-item" href="#qdrant"><span class="nav-dot" style="background:#4ADE80"></span>Qdrant + pgvector</a>
+
+  <div class="nav-section-title">Phase 4 — Cryptographie</div>
+  <a class="nav-item" href="#eidas"><span class="nav-dot" style="background:#F87171"></span>eIDAS 2.0 + QES</a>
+  <a class="nav-item" href="#bouncy"><span class="nav-dot" style="background:#F87171"></span>BouncyCastle PKI</a>
+  <a class="nav-item" href="#vault"><span class="nav-dot" style="background:#F87171"></span>HashiCorp Vault</a>
+  <a class="nav-item" href="#istio"><span class="nav-dot" style="background:#F87171"></span>Istio + Zero-Trust</a>
+
+  <div class="nav-section-title">Phase 5 — Event-Driven</div>
+  <a class="nav-item" href="#kafka"><span class="nav-dot" style="background:#A78BFA"></span>Kafka 3.8 KRaft</a>
+  <a class="nav-item" href="#quarkus"><span class="nav-dot" style="background:#A78BFA"></span>Quarkus + GraalVM</a>
+  <a class="nav-item" href="#keda"><span class="nav-dot" style="background:#A78BFA"></span>KEDA Autoscaling</a>
+  <a class="nav-item" href="#timescaledb"><span class="nav-dot" style="background:#A78BFA"></span>TimescaleDB</a>
+
+  <div class="nav-section-title">Phase 6 — Cloud & Obs.</div>
+  <a class="nav-item" href="#terraform"><span class="nav-dot" style="background:#FBBF24"></span>Terraform CDK</a>
+  <a class="nav-item" href="#otel"><span class="nav-dot" style="background:#FBBF24"></span>OpenTelemetry</a>
+  <a class="nav-item" href="#chaos"><span class="nav-dot" style="background:#FBBF24"></span>Chaos Engineering</a>
+  <a class="nav-item" href="#nextjs"><span class="nav-dot" style="background:#FBBF24"></span>Next.js 15</a>
+  <a class="nav-item" href="#stripe"><span class="nav-dot" style="background:#FBBF24"></span>Stripe + Paddle</a>
+
+  <div class="nav-section-title">Synthèse</div>
+  <a class="nav-item" href="#recap"><span class="nav-dot" style="background:#2DD4BF"></span>Récapitulatif</a>
+</nav>
+
+<!-- MAIN -->
+<div id="main">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-badge">
+      <span style="width:5px;height:5px;border-radius:50%;background:var(--green);display:inline-block"></span>
+      Cours de Formation Complet
+    </div>
+    <h1>Maîtrise tout ce que<br/>tu vas <em>construire</em></h1>
+    <p class="hero-desc">
+      Avant d'écrire la première ligne de ComplianceOS, comprends chaque brique : son rôle, son fonctionnement, ses concepts clés et comment elle s'imbrique dans l'architecture globale. Ce cours est ton guide de référence pour les 12 mois à venir.
+    </p>
+    <div class="hero-stats">
+      <div class="stat-item"><div class="stat-label">Technologies</div><div class="stat-value">55+</div></div>
+      <div class="stat-item"><div class="stat-label">Phases</div><div class="stat-value">6</div></div>
+      <div class="stat-item"><div class="stat-label">Durée projet</div><div class="stat-value">12 mois</div></div>
+      <div class="stat-item"><div class="stat-label">TJM cible</div><div class="stat-value">950–1200€/j</div></div>
+    </div>
+  </div>
+
+  <div class="content">
+
+  <!-- ========================= INTRODUCTION ========================= -->
+  <div class="section" id="intro">
+    <div class="section-phase-tag" style="background:rgba(74,222,128,0.08);border:1px solid var(--green-border);color:var(--green)">
+      ⬡ Introduction
+    </div>
+    <h2 class="section-title">Qu'est-ce que ComplianceOS ?</h2>
+    <p class="section-subtitle">
+      Une plateforme SaaS d'intelligence réglementaire qui aide les entreprises à se conformer à NIS2, DORA, RGPD et ISO 27001 grâce à l'IA, la signature électronique qualifiée et une architecture cloud-native moderne.
+    </p>
+
+    <div class="concept-box" style="background:rgba(74,222,128,0.04);border-color:var(--green-border)">
+      <div class="box-title" style="color:var(--green)">🎯 Le problème que tu résous</div>
+      <p>Depuis octobre 2024, la directive <strong>NIS2</strong> impose à 100 000+ entreprises européennes des obligations strictes en cybersécurité. Chaque audit est aujourd'hui un processus manuel, long, coûteux. ComplianceOS automatise ce processus avec des agents IA, du scoring ML et une signature électronique juridiquement valable.</p>
+    </div>
+
+    <div class="intro-grid">
+      <div class="intro-card">
+        <div class="intro-card-icon">⚡</div>
+        <div class="intro-card-title">Pourquoi ce projet est bankable</div>
+        <div class="intro-card-desc">Marché réel en croissance. Tu combines des compétences rares (eIDAS + LangChain4j + Java) que très peu de freelances maîtrisent.</div>
+      </div>
+      <div class="intro-card">
+        <div class="intro-card-icon">🧠</div>
+        <div class="intro-card-title">Ce que tu vas vraiment apprendre</div>
+        <div class="intro-card-desc">Pas des tutoriels. Une architecture enterprise complète : microservices, agents IA, cryptographie qualifiée, event-driven, cloud AWS déclaratif.</div>
+      </div>
+      <div class="intro-card">
+        <div class="intro-card-icon">🏗️</div>
+        <div class="intro-card-title">La logique des phases</div>
+        <div class="intro-card-desc">Chaque phase construit sur la précédente. Phase 1 = fondations. Phase 6 = SaaS vendable. Chaque phase a un livrable concret.</div>
+      </div>
+      <div class="intro-card">
+        <div class="intro-card-icon">💼</div>
+        <div class="intro-card-title">La valeur freelance</div>
+        <div class="intro-card-desc">Ce projet est ta démo. "J'ai déployé un agent IA avec eIDAS 2.0 sur AWS Bedrock" vaut 950–1 200€/j. Sans démo, tu restes à 600€/j.</div>
+      </div>
+    </div>
+
+    <div class="highlight-quote" style="background:rgba(96,165,250,0.04);border-color:var(--blue);color:var(--muted)">
+      "Un bon projet portfolio n'est pas un exercice scolaire. C'est une démonstration que tu peux résoudre un vrai problème business avec des vraies technologies enterprise. ComplianceOS coche toutes ces cases."
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- ARCHITECTURE -->
+  <div class="section" id="architecture">
+    <div class="section-phase-tag" style="background:rgba(74,222,128,0.08);border:1px solid var(--green-border);color:var(--green)">
+      ⬡ Architecture
+    </div>
+    <h2 class="section-title">Architecture macro — comment les pièces s'assemblent</h2>
+    <p class="section-subtitle">
+      Avant de plonger dans chaque technologie, comprends l'image globale. Chaque service a un rôle précis, chaque choix technologique est justifié.
+    </p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">Architecture Overview</span>
+        <span class="code-file">vue simplifiée</span>
+      </div>
+      <div class="code-body"><span class="code-comment">┌─────────────────────────────────────────────────────────────────┐
+│                     CLIENT (Next.js 15)                         │
+│        Dashboard · Timeline Audit · Rapport PDF                 │
+└──────────────────────────┬──────────────────────────────────────┘
+                           │ HTTPS / GraphQL
+┌──────────────────────────▼──────────────────────────────────────┐
+│                   API GATEWAY (Spring Boot)                     │
+│        GraphQL DGS · JWT/Keycloak · Rate Limiting               │
+└─────┬──────────────┬───────────────┬──────────────┬────────────┘
+      │ gRPC/mTLS    │ gRPC/mTLS     │ gRPC/mTLS    │ gRPC/mTLS
+      ▼              ▼               ▼              ▼
+┌──────────┐  ┌──────────────┐  ┌──────────┐  ┌──────────────┐
+│  Service │  │   Service    │  │ Service  │  │  Service     │
+│  Audit   │  │  Python ML   │  │  Agent   │  │  Notif.      │
+│(Java 24) │  │ (FastAPI)    │  │(LangC4j) │  │ (Quarkus)    │
+└────┬─────┘  └──────┬───────┘  └────┬─────┘  └──────┬───────┘
+     │               │               │                │
+     └───────────────▼───────────────┘                │
+                     │ Kafka 3.8 (Events)              │
+                     ▼                                 ▼
+┌────────────────────────────────────────────────────────────────┐
+│              COUCHE DATA                                       │
+│  PostgreSQL 17 · pgvector · TimescaleDB · Redis · Qdrant       │
+└────────────────────────────────────────────────────────────────┘
+                     │
+                     ▼
+┌────────────────────────────────────────────────────────────────┐
+│              INFRASTRUCTURE AWS (Terraform CDK)                 │
+│         EKS · Bedrock · CloudHSM · Vault · Istio               │
+└────────────────────────────────────────────────────────────────┘</span></div>
+    </div>
+
+    <table class="styled-table">
+      <thead>
+        <tr><th>Couche</th><th>Service</th><th>Rôle</th><th>Pourquoi ce choix ?</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Frontend</td><td>Next.js 15</td><td>Dashboard conformité temps réel</td><td>Server Components = perf, SSR = SEO, App Router = patterns modernes</td></tr>
+        <tr><td>API externe</td><td>GraphQL DGS</td><td>API publique flexible pour clients SaaS</td><td>GraphQL = le client demande exactement ce dont il a besoin, pas plus</td></tr>
+        <tr><td>API interne</td><td>gRPC + Protobuf</td><td>Communication inter-microservices</td><td>10x plus rapide que REST/JSON, typage fort, streaming natif</td></tr>
+        <tr><td>Auth</td><td>Keycloak 25</td><td>SSO, RBAC, Passkeys FIDO2</td><td>Standard enterprise, évite de réinventer la roue sécurité</td></tr>
+        <tr><td>ML/IA Python</td><td>FastAPI + LangChain</td><td>Scoring risque + analyse documentaire</td><td>Python = langue naturelle du ML. Java ne fait pas mieux ici.</td></tr>
+        <tr><td>Agent Java</td><td>LangChain4j + Temporal</td><td>Orchestration workflow audit IA</td><td>Java = transactions, durabilité. LangChain4j = agents robustes.</td></tr>
+        <tr><td>Messaging</td><td>Kafka 3.8</td><td>Event streaming entre services</td><td>Découplage total, rejeu d'événements, scale horizontal</td></tr>
+        <tr><td>Crypto</td><td>BouncyCastle + Vault</td><td>Signature qualifiée eIDAS 2.0</td><td>Valeur légale EU, PKI dynamique, rotation auto des secrets</td></tr>
+        <tr><td>Infra</td><td>Terraform CDK</td><td>Infrastructure déclarative AWS</td><td>TypeScript typé = moins d'erreurs qu'HCL, même puissance Terraform</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- METHODOLOGIE -->
+  <div class="section" id="methodologie">
+    <div class="section-phase-tag" style="background:rgba(74,222,128,0.08);border:1px solid var(--green-border);color:var(--green)">
+      ⬡ Méthodologie
+    </div>
+    <h2 class="section-title">Comment aborder ce projet</h2>
+    <p class="section-subtitle">Principes fondamentaux à garder en tête tout au long des 12 mois.</p>
+
+    <div class="concept-box" style="background:rgba(96,165,250,0.06);border-color:var(--blue)">
+      <div class="box-title" style="color:var(--blue)">📐 DDD — Domain-Driven Design</div>
+      <p>Le code est organisé autour du <strong>domaine métier</strong>, pas des frameworks. Tes entités principales : <strong>Company</strong> (l'entreprise cliente), <strong>Audit</strong> (un audit de conformité), <strong>Policy</strong> (une politique interne), <strong>RiskItem</strong> (un écart identifié), <strong>Evidence</strong> (une preuve). Tout le reste gravite autour de ces entités.</p>
+    </div>
+
+    <div class="concept-box" style="background:rgba(251,146,60,0.06);border-color:var(--orange)">
+      <div class="box-title" style="color:var(--orange)">🔑 Multi-tenancy — Isolation par tenant</div>
+      <p>Chaque client (entreprise) est un <strong>tenant isolé</strong>. En pratique : Row-Level Security PostgreSQL pour que les données d'un tenant ne soient jamais visibles par un autre. C'est la base du SaaS B2B. Chaque requête SQL filtre automatiquement par <strong>tenant_id</strong>.</p>
+    </div>
+
+    <div class="concept-box" style="background:rgba(167,139,250,0.06);border-color:var(--purple)">
+      <div class="box-title" style="color:var(--purple)">📡 API-First</div>
+      <p>Le contrat API (Protobuf pour gRPC, GraphQL schema, OpenAPI 3.1 pour REST) est défini <strong>avant</strong> le code. Cela permet aux services de se développer en parallèle. Les tests de contrat Pact valident que l'API respecte sa promesse.</p>
+    </div>
+
+    <div class="concept-box" style="background:rgba(74,222,128,0.06);border-color:var(--green-border)">
+      <div class="box-title" style="color:var(--green)">🔄 GitOps — Infrastructure comme code</div>
+      <p>Tout est versionné : le code, la configuration Kubernetes, l'infrastructure AWS. ArgoCD surveille le repo Git et déploie automatiquement ce qui y est décrit. La production = le contenu du repo Git. Pas de surprises, pas de config manuelle.</p>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- ========================= PHASE 1 ========================= -->
+  <div class="section" id="java24">
+    <div class="section-phase-tag" style="background:rgba(96,165,250,0.08);border:1px solid var(--blue-border);color:var(--blue)">
+      Phase 1 · Core Platform & Auth · Mois 1–2
+    </div>
+    <h2 class="section-title">Java 24 — Le langage du backend</h2>
+    <p class="section-subtitle">Java 24 introduit des fonctionnalités majeures qui changent la façon d'écrire du code concurrentiel et expressif. Voici ce que tu vas utiliser concrètement.</p>
+
+    <div class="tech-grid">
+      <div class="tech-card" style="border-top: 3px solid var(--blue)">
+        <div class="tech-card-header">
+          <div class="tech-name">Virtual Threads</div>
+          <div class="tech-version">Project Loom</div>
+        </div>
+        <div class="tech-role-badge" style="color:var(--blue)">CONCURRENCE</div>
+        <div class="tech-desc">Les virtual threads permettent d'écrire du code concurrent comme du code séquentiel, mais avec des performances asynchrones. Finis les callbacks et CompletableFuture complexes.</div>
+        <div class="tech-why" style="border-color:var(--blue)">Dans ComplianceOS : chaque requête HTTP est traitée dans un virtual thread. Avec 10 000 requêtes simultanées, Java 24 utilise <strong>quelques threads OS</strong> seulement au lieu de 10 000.</div>
+      </div>
+      <div class="tech-card" style="border-top: 3px solid var(--blue)">
+        <div class="tech-card-header">
+          <div class="tech-name">Structured Concurrency</div>
+          <div class="tech-version">JEP 462</div>
+        </div>
+        <div class="tech-role-badge" style="color:var(--blue)">CONCURRENCE</div>
+        <div class="tech-desc">Gère des tâches parallèles comme une unité : si une tâche échoue, les autres sont annulées automatiquement. Plus de fuite de threads.</div>
+        <div class="tech-why" style="border-color:var(--blue)">Utilisation : appel parallèle vers le service ML Python ET le service RAG, avec timeout global sur les deux.</div>
+      </div>
+      <div class="tech-card" style="border-top: 3px solid var(--blue)">
+        <div class="tech-card-header">
+          <div class="tech-name">Records + Sealed Classes</div>
+          <div class="tech-version">Java 17+, stabilisé</div>
+        </div>
+        <div class="tech-role-badge" style="color:var(--blue)">EXPRESSIVITÉ</div>
+        <div class="tech-desc">Records = classes immuables en une ligne. Sealed classes = hiérarchies fermées pour les types algébriques. Idéal pour les événements Kafka.</div>
+        <div class="tech-why" style="border-color:var(--blue)">Exemple : <code style="font-family:monospace;font-size:11px">record AuditCreatedEvent(UUID auditId, String tenantId, Instant timestamp){}</code></div>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">Java 24</span>
+        <span class="code-file">AuditService.java — Virtual Threads + Structured Concurrency</span>
+      </div>
+      <div class="code-body"><span class="code-ann">@Service</span>
+<span class="code-keyword">public class</span> <span class="code-type">AuditService</span> {
+
+    <span class="code-comment">// Virtual Thread ExecutorService — c'est tout ce qu'il faut configurer</span>
+    <span class="code-keyword">private final</span> <span class="code-type">ExecutorService</span> executor =
+        <span class="code-type">Executors</span>.<span class="code-fn">newVirtualThreadPerTaskExecutor</span>();
+
+    <span class="code-ann">@Transactional</span>
+    <span class="code-keyword">public</span> <span class="code-type">AuditResult</span> <span class="code-fn">processAudit</span>(<span class="code-type">UUID</span> auditId) {
+        <span class="code-comment">// Structured Concurrency : les 2 tâches tournent en parallèle</span>
+        <span class="code-keyword">try</span> (<span class="code-keyword">var</span> scope = <span class="code-keyword">new</span> <span class="code-type">StructuredTaskScope.ShutdownOnFailure</span>()) {
+
+            <span class="code-keyword">var</span> mlScore   = scope.<span class="code-fn">fork</span>(() -> mlService.<span class="code-fn">scoreRisk</span>(auditId));
+            <span class="code-keyword">var</span> ragResult = scope.<span class="code-fn">fork</span>(() -> ragService.<span class="code-fn">analyze</span>(auditId));
+
+            scope.<span class="code-fn">join</span>().<span class="code-fn">throwIfFailed</span>(); <span class="code-comment">// attend les 2, fail-fast si l'une échoue</span>
+
+            <span class="code-keyword">return new</span> <span class="code-type">AuditResult</span>(mlScore.<span class="code-fn">get</span>(), ragResult.<span class="code-fn">get</span>());
+        }
+    }
+}
+
+<span class="code-comment">// Record immuable pour l'event Kafka</span>
+<span class="code-keyword">public record</span> <span class="code-type">AuditCreatedEvent</span>(
+    <span class="code-type">UUID</span>    auditId,
+    <span class="code-type">String</span>  tenantId,
+    <span class="code-type">String</span>  companyName,
+    <span class="code-type">Instant</span> createdAt
+) {}
+
+<span class="code-comment">// Sealed class pour les statuts d'audit (type algébrique)</span>
+<span class="code-keyword">public sealed interface</span> <span class="code-type">AuditStatus</span>
+    <span class="code-keyword">permits</span> <span class="code-type">Draft</span>, <span class="code-type">InProgress</span>, <span class="code-type">Completed</span>, <span class="code-type">Archived</span> {}
+</div>
+    </div>
+
+    <div class="concept-box" style="background:rgba(96,165,250,0.04);border-color:var(--blue)">
+      <div class="box-title" style="color:var(--blue)">💡 Concepts clés à retenir</div>
+      <ul>
+        <li><strong>Thread OS</strong> : thread natif du système, coûteux (1–2 Mo de mémoire). Limité à quelques milliers.</li>
+        <li><strong>Virtual Thread</strong> : thread géré par la JVM, ultra-léger (quelques Ko). Peut en créer des millions.</li>
+        <li><strong>Blocking = OK avec virtual threads</strong> : si le virtual thread attend une I/O, la JVM le "démonte" du thread OS et réutilise ce thread OS pour autre chose.</li>
+        <li><strong>Record</strong> : génère automatiquement constructeur, equals, hashCode, toString. Immuable par design.</li>
+        <li><strong>Sealed interface</strong> : le compilateur sait tous les types possibles → pattern matching exhaustif avec switch.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- SPRING BOOT -->
+  <div class="section" id="springboot">
+    <h2 class="section-title">Spring Boot 3.4 — Le framework du backend</h2>
+    <p class="section-subtitle">Spring Boot est le framework Java numéro 1 en entreprise. Il configure automatiquement 90% de l'infrastructure technique pour que tu puisses te concentrer sur le domaine métier.</p>
+
+    <div class="tech-grid">
+      <div class="tech-card" style="border-top: 3px solid var(--blue)">
+        <div class="tech-name">Auto-configuration</div>
+        <div class="tech-desc" style="margin-top:10px">Spring Boot détecte tes dépendances (Kafka, PostgreSQL, Redis...) et configure automatiquement les beans nécessaires. Tu déclares, il configure.</div>
+        <div class="tech-why" style="border-color:var(--blue)">Tu ajoutes <code style="font-family:monospace">spring-boot-starter-data-jpa</code> et Spring Boot configure Hibernate, le pool de connexions, les transactions automatiquement.</div>
+      </div>
+      <div class="tech-card" style="border-top: 3px solid var(--blue)">
+        <div class="tech-name">Spring Security 6</div>
+        <div class="tech-desc" style="margin-top:10px">Sécurité déclarative : authentification, autorisation, RBAC via annotations. Intégration native avec Keycloak JWT.</div>
+        <div class="tech-why" style="border-color:var(--blue)"><code style="font-family:monospace">@PreAuthorize("hasRole('ADMIN')")</code> sur un endpoint = seul l'ADMIN peut y accéder. Vérifié à chaque appel.</div>
+      </div>
+      <div class="tech-card" style="border-top: 3px solid var(--blue)">
+        <div class="tech-name">Spring Data JPA</div>
+        <div class="tech-desc" style="margin-top:10px">Repositories qui génèrent le SQL automatiquement depuis la signature de la méthode. Plus de SQL boilerplate pour les requêtes simples.</div>
+        <div class="tech-why" style="border-color:var(--blue)"><code style="font-family:monospace">findByTenantIdAndStatus(tenantId, status)</code> → génère automatiquement la requête SQL avec les bons paramètres.</div>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">Java — Spring Boot 3.4</span>
+        <span class="code-file">AuditController.java — REST + Sécurité + Validation</span>
+      </div>
+      <div class="code-body"><span class="code-ann">@RestController</span>
+<span class="code-ann">@RequestMapping</span>(<span class="code-string">"/api/v1/audits"</span>)
+<span class="code-ann">@RequiredArgsConstructor</span>
+<span class="code-keyword">public class</span> <span class="code-type">AuditController</span> {
+
+    <span class="code-keyword">private final</span> <span class="code-type">AuditService</span> auditService;
+
+    <span class="code-comment">// Seul AUDITOR ou ADMIN peut créer un audit</span>
+    <span class="code-ann">@PostMapping</span>
+    <span class="code-ann">@PreAuthorize</span>(<span class="code-string">"hasAnyRole('ADMIN', 'AUDITOR')"</span>)
+    <span class="code-keyword">public</span> <span class="code-type">ResponseEntity</span>&lt;<span class="code-type">AuditResponse</span>&gt; <span class="code-fn">createAudit</span>(
+        <span class="code-ann">@Valid</span> <span class="code-ann">@RequestBody</span> <span class="code-type">CreateAuditRequest</span> request,
+        <span class="code-ann">@AuthenticationPrincipal</span> <span class="code-type">Jwt</span> jwt  <span class="code-comment">// token Keycloak injecté</span>
+    ) {
+        <span class="code-keyword">var</span> tenantId = jwt.<span class="code-fn">getClaim</span>(<span class="code-string">"tenant_id"</span>);
+        <span class="code-keyword">var</span> audit = auditService.<span class="code-fn">create</span>(request, tenantId);
+        <span class="code-keyword">return</span> <span class="code-type">ResponseEntity</span>.<span class="code-fn">created</span>(URI.<span class="code-fn">create</span>(<span class="code-string">"/api/v1/audits/"</span> + audit.id()))
+                                   .<span class="code-fn">body</span>(audit);
+    }
+
+    <span class="code-comment">// Tous les rôles peuvent lire</span>
+    <span class="code-ann">@GetMapping</span>(<span class="code-string">"/{id}"</span>)
+    <span class="code-ann">@PreAuthorize</span>(<span class="code-string">"isAuthenticated()"</span>)
+    <span class="code-keyword">public</span> <span class="code-type">AuditResponse</span> <span class="code-fn">getAudit</span>(<span class="code-ann">@PathVariable</span> <span class="code-type">UUID</span> id) {
+        <span class="code-keyword">return</span> auditService.<span class="code-fn">findById</span>(id);
+    }
+}
+
+<span class="code-comment">// Repository : le SQL est généré automatiquement par Spring Data</span>
+<span class="code-keyword">public interface</span> <span class="code-type">AuditRepository</span> <span class="code-keyword">extends</span> <span class="code-type">JpaRepository</span>&lt;<span class="code-type">Audit</span>, <span class="code-type">UUID</span>&gt; {
+
+    <span class="code-comment">// SELECT * FROM audit WHERE tenant_id = ? AND status = ?</span>
+    <span class="code-type">List</span>&lt;<span class="code-type">Audit</span>&gt; <span class="code-fn">findByTenantIdAndStatus</span>(<span class="code-type">String</span> tenantId, <span class="code-type">AuditStatus</span> status);
+
+    <span class="code-comment">// Avec une requête personnalisée + RLS tenant_id</span>
+    <span class="code-ann">@Query</span>(<span class="code-string">"SELECT a FROM Audit a WHERE a.tenantId = :tenantId ORDER BY a.createdAt DESC"</span>)
+    <span class="code-type">Page</span>&lt;<span class="code-type">Audit</span>&gt; <span class="code-fn">findAllForTenant</span>(<span class="code-type">String</span> tenantId, <span class="code-type">Pageable</span> pageable);
+}
+</div>
+    </div>
+
+    <div class="concept-box" style="background:rgba(96,165,250,0.04);border-color:var(--blue)">
+      <div class="box-title" style="color:var(--blue)">🔑 Concepts Spring essentiels</div>
+      <ul>
+        <li><strong>IoC (Inversion of Control)</strong> : tu ne crées pas les objets, Spring les crée et les injecte où tu en as besoin via <code style="font-family:monospace">@Autowired</code> ou constructeur.</li>
+        <li><strong>Bean</strong> : un objet géré par Spring. Annoté <code style="font-family:monospace">@Service</code>, <code style="font-family:monospace">@Repository</code>, <code style="font-family:monospace">@Component</code>, etc.</li>
+        <li><strong>@Transactional</strong> : toute la méthode s'exécute dans une transaction DB. Si une exception survient → rollback automatique.</li>
+        <li><strong>@Valid</strong> : valide automatiquement le body de la requête selon les annotations Bean Validation (<code style="font-family:monospace">@NotNull</code>, <code style="font-family:monospace">@Size</code>, etc.).</li>
+        <li><strong>Testcontainers</strong> : démarre de vraies instances PostgreSQL, Redis, Kafka dans Docker lors des tests. Pas de mocks fragiles.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- POSTGRESQL -->
+  <div class="section" id="postgresql">
+    <h2 class="section-title">PostgreSQL 17 — La base de données principale</h2>
+    <p class="section-subtitle">PostgreSQL 17 est la base de données relationnelle la plus avancée du monde open source. Dans ComplianceOS, elle fait tout : données métier, isolation multi-tenant, vecteurs pour l'IA.</p>
+
+    <div class="tech-grid">
+      <div class="tech-card" style="border-top: 3px solid var(--blue)">
+        <div class="tech-name">Row-Level Security (RLS)</div>
+        <div class="tech-desc" style="margin-top:10px">Politique de sécurité au niveau de chaque ligne. PostgreSQL filtre automatiquement les données par tenant_id, côté base de données. Même si le code oublie le filtre, la DB refuse de montrer les données d'un autre tenant.</div>
+        <div class="tech-why" style="border-color:var(--blue)">C'est le <strong>verrou ultime</strong> de la multi-tenancy. Même un bug dans le code Java ne peut pas exposer les données d'un autre client.</div>
+      </div>
+      <div class="tech-card" style="border-top: 3px solid var(--blue)">
+        <div class="tech-name">pgvector</div>
+        <div class="tech-desc" style="margin-top:10px">Extension PostgreSQL qui ajoute un type de données VECTOR et des index pour la recherche par similarité cosine. Permet le RAG directement dans PostgreSQL.</div>
+        <div class="tech-why" style="border-color:var(--blue)">Les embeddings des articles NIS2/DORA sont stockés ici. La recherche sémantique "trouve les articles similaires à ma question" tourne dans la DB.</div>
+      </div>
+      <div class="tech-card" style="border-top: 3px solid var(--blue)">
+        <div class="tech-name">Flyway</div>
+        <div class="tech-desc" style="margin-top:10px">Versionning des migrations SQL. Chaque changement de schéma est un fichier SQL numéroté. Flyway les applique dans l'ordre au démarrage.</div>
+        <div class="tech-why" style="border-color:var(--blue)">Le schéma en production est <strong>identique</strong> au schéma de développement. Jamais de "ça marche chez moi mais pas en prod".</div>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">SQL — PostgreSQL 17</span>
+        <span class="code-file">V1__init_schema.sql — Multi-tenancy + RLS + pgvector</span>
+      </div>
+      <div class="code-body"><span class="code-comment">-- Table principale des audits (toutes les données filtrées par tenant_id)</span>
+<span class="code-keyword">CREATE TABLE</span> audit (
+    id          <span class="code-type">UUID</span>         <span class="code-keyword">PRIMARY KEY DEFAULT</span> gen_random_uuid(),
+    tenant_id   <span class="code-type">TEXT</span>         <span class="code-keyword">NOT NULL</span>,   <span class="code-comment">-- clé de partition tenant</span>
+    company_id  <span class="code-type">UUID</span>         <span class="code-keyword">NOT NULL</span>,
+    status      <span class="code-type">TEXT</span>         <span class="code-keyword">NOT NULL DEFAULT</span> <span class="code-string">'DRAFT'</span>,
+    regulation  <span class="code-type">TEXT</span>         <span class="code-keyword">NOT NULL</span>,
+    created_at  <span class="code-type">TIMESTAMPTZ</span>  <span class="code-keyword">NOT NULL DEFAULT NOW</span>(),
+    updated_at  <span class="code-type">TIMESTAMPTZ</span>  <span class="code-keyword">NOT NULL DEFAULT NOW</span>()
+);
+
+<span class="code-comment">-- Row-Level Security : la DB elle-même filtre par tenant</span>
+<span class="code-keyword">ALTER TABLE</span> audit <span class="code-keyword">ENABLE ROW LEVEL SECURITY</span>;
+
+<span class="code-keyword">CREATE POLICY</span> tenant_isolation <span class="code-keyword">ON</span> audit
+    <span class="code-keyword">USING</span> (tenant_id = <span class="code-fn">current_setting</span>(<span class="code-string">'app.tenant_id'</span>));
+
+<span class="code-comment">-- Extension pgvector pour les embeddings IA</span>
+<span class="code-keyword">CREATE EXTENSION IF NOT EXISTS</span> vector;
+
+<span class="code-comment">-- Table des chunks réglementaires vectorisés (pour le RAG)</span>
+<span class="code-keyword">CREATE TABLE</span> regulatory_chunk (
+    id          <span class="code-type">UUID</span>           <span class="code-keyword">PRIMARY KEY DEFAULT</span> gen_random_uuid(),
+    article_id  <span class="code-type">TEXT</span>           <span class="code-keyword">NOT NULL</span>,       <span class="code-comment">-- ex: "NIS2-Art-21"</span>
+    regulation  <span class="code-type">TEXT</span>           <span class="code-keyword">NOT NULL</span>,
+    content     <span class="code-type">TEXT</span>           <span class="code-keyword">NOT NULL</span>,
+    embedding   <span class="code-type">vector(1536)</span>   <span class="code-keyword">NOT NULL</span>        <span class="code-comment">-- 1536 dims pour Titan v2</span>
+);
+
+<span class="code-comment">-- Index HNSW pour la recherche cosine rapide</span>
+<span class="code-keyword">CREATE INDEX</span> ON regulatory_chunk
+    <span class="code-keyword">USING</span> <span class="code-fn">hnsw</span> (embedding vector_cosine_ops)
+    <span class="code-keyword">WITH</span> (m = <span class="code-num">16</span>, ef_construction = <span class="code-num">64</span>);
+
+<span class="code-comment">-- Recherche : les 5 chunks les plus proches d'un embedding de question</span>
+<span class="code-keyword">SELECT</span> article_id, content,
+       <span class="code-num">1</span> - (embedding <&lt;=> <span class="code-string">'[0.1, 0.3, ...]'</span>::vector) <span class="code-keyword">AS</span> similarity
+<span class="code-keyword">FROM</span> regulatory_chunk
+<span class="code-keyword">ORDER BY</span> embedding <&lt;=> <span class="code-string">'[0.1, 0.3, ...]'</span>::vector
+<span class="code-keyword">LIMIT</span> <span class="code-num">5</span>;
+</div>
+    </div>
+  </div>
+
+  <!-- KEYCLOAK -->
+  <div class="section" id="keycloak">
+    <h2 class="section-title">Keycloak 25 + Passkeys FIDO2 — Authentification enterprise</h2>
+    <p class="section-subtitle">Keycloak est le serveur d'identité open source de référence. Il gère SSO, RBAC, tokens JWT et les méthodes d'auth modernes (Passkeys, MFA). Tu ne codes plus d'authentification from scratch.</p>
+
+    <div class="concept-box" style="background:rgba(96,165,250,0.06);border-color:var(--blue)">
+      <div class="box-title" style="color:var(--blue)">🔐 Flux OAuth2 / OIDC — ce qui se passe quand un utilisateur se connecte</div>
+      <div class="flow">
+        <div class="flow-step">Utilisateur</div><div class="flow-arrow">→</div>
+        <div class="flow-step">App (Next.js)</div><div class="flow-arrow">→</div>
+        <div class="flow-step">Keycloak</div><div class="flow-arrow">→</div>
+        <div class="flow-step">FIDO2 / Passkey</div><div class="flow-arrow">→</div>
+        <div class="flow-step">JWT Token</div><div class="flow-arrow">→</div>
+        <div class="flow-step">Spring Boot API</div>
+      </div>
+      <p style="margin-top:12px">Le JWT contient : <strong>user_id, tenant_id, rôles</strong>. Chaque microservice valide le JWT localement (sans appeler Keycloak). C'est du <strong>stateless auth</strong>.</p>
+    </div>
+
+    <div class="tech-grid">
+      <div class="tech-card" style="border-top: 3px solid var(--blue)">
+        <div class="tech-name">Passkeys FIDO2</div>
+        <div class="tech-desc" style="margin-top:10px">Authentification sans mot de passe. La clé privée ne quitte jamais l'appareil de l'utilisateur. Résistant au phishing, conforme NIS2 (MFA fort).</div>
+        <div class="tech-why" style="border-color:var(--blue)">NIS2 exige l'authentification multi-facteurs pour les systèmes critiques. Passkeys = solution la plus robuste et la meilleure UX.</div>
+      </div>
+      <div class="tech-card" style="border-top: 3px solid var(--blue)">
+        <div class="tech-name">RBAC / ABAC</div>
+        <div class="tech-desc" style="margin-top:10px">4 rôles : ADMIN (tout), AUDITOR (audits R/W), VIEWER (lecture seule), EXTERNAL_AUDITOR (audits partagés uniquement). Les permissions sont dans le JWT.</div>
+        <div class="tech-why" style="border-color:var(--blue)">Quand un admin change le rôle d'un utilisateur, le token est invalidé dans Redis et un nouveau token avec les bons rôles est émis. Instantané.</div>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">YAML + Java</span>
+        <span class="code-file">SecurityConfig.java — Keycloak JWT dans Spring Security</span>
+      </div>
+      <div class="code-body"><span class="code-comment"># application.yml — Spring sait où valider les JWT Keycloak</span>
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: <span class="code-string">https://auth.complianceos.io/realms/complianceos</span>
+          jwk-set-uri: <span class="code-string">https://auth.complianceos.io/realms/complianceos/protocol/openid-connect/certs</span>
+
+<span class="code-comment">---</span>
+<span class="code-comment">// SecurityConfig.java — configuration de la sécurité</span>
+<span class="code-ann">@Configuration</span>
+<span class="code-ann">@EnableMethodSecurity</span>   <span class="code-comment">// active @PreAuthorize</span>
+<span class="code-keyword">public class</span> <span class="code-type">SecurityConfig</span> {
+
+    <span class="code-ann">@Bean</span>
+    <span class="code-keyword">public</span> <span class="code-type">SecurityFilterChain</span> <span class="code-fn">filterChain</span>(<span class="code-type">HttpSecurity</span> http) <span class="code-keyword">throws</span> <span class="code-type">Exception</span> {
+        <span class="code-keyword">return</span> http
+            .<span class="code-fn">authorizeHttpRequests</span>(auth -> auth
+                .<span class="code-fn">requestMatchers</span>(<span class="code-string">"/actuator/health"</span>).<span class="code-fn">permitAll</span>()
+                .<span class="code-fn">anyRequest</span>().<span class="code-fn">authenticated</span>()
+            )
+            .<span class="code-fn">oauth2ResourceServer</span>(oauth2 -> oauth2
+                .<span class="code-fn">jwt</span>(jwt -> jwt.<span class="code-fn">jwtAuthenticationConverter</span>(
+                    <span class="code-keyword">new</span> <span class="code-type">KeycloakJwtConverter</span>()  <span class="code-comment">// extrait les rôles Keycloak</span>
+                ))
+            )
+            .<span class="code-fn">build</span>();
+    }
+}
+</div>
+    </div>
+  </div>
+
+  <!-- gRPC -->
+  <div class="section" id="grpc">
+    <h2 class="section-title">gRPC + Protobuf — Communication inter-services</h2>
+    <p class="section-subtitle">gRPC est le protocole de communication entre microservices de Google. Il remplace REST/JSON pour les appels internes : 10x plus rapide, typé, avec génération automatique de code.</p>
+
+    <div class="concept-box" style="background:rgba(96,165,250,0.06);border-color:var(--blue)">
+      <div class="box-title" style="color:var(--blue)">⚡ gRPC vs REST — Pourquoi gRPC pour les appels internes</div>
+      <table class="styled-table" style="margin-top:12px">
+        <tr><th>Critère</th><th>REST + JSON</th><th>gRPC + Protobuf</th></tr>
+        <tr><td>Format</td><td>Texte (JSON, verbose)</td><td>Binaire (compact, rapide)</td></tr>
+        <tr><td>Typage</td><td>Aucun (string partout)</td><td>Fort (généré depuis .proto)</td></tr>
+        <tr><td>Performance</td><td>Base</td><td>10x plus rapide en sérialisation</td></tr>
+        <tr><td>Contrat API</td><td>OpenAPI (facultatif)</td><td>.proto (obligatoire et unique)</td></tr>
+        <tr><td>Streaming</td><td>Complexe (WebSocket)</td><td>Natif (server/client/bidi)</td></tr>
+        <tr><td>Génération code</td><td>Non</td><td>Oui (stubs Java + Python générés)</td></tr>
+      </table>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">Protobuf</span>
+        <span class="code-file">compliance.proto — contrat partagé Java ↔ Python</span>
+      </div>
+      <div class="code-body"><span class="code-comment">// compliance.proto — fichier partagé entre tous les services</span>
+syntax = <span class="code-string">"proto3"</span>;
+<span class="code-keyword">package</span> complianceos;
+
+<span class="code-comment">// Service ML Python exposé via gRPC</span>
+<span class="code-keyword">service</span> <span class="code-type">ComplianceMLService</span> {
+    rpc <span class="code-fn">AnalyzeDocument</span> (<span class="code-type">DocumentRequest</span>)  <span class="code-keyword">returns</span> (<span class="code-type">AnalysisResponse</span>);
+    rpc <span class="code-fn">ScoreRisk</span>       (<span class="code-type">RiskRequest</span>)      <span class="code-keyword">returns</span> (<span class="code-type">RiskScore</span>);
+}
+
+<span class="code-keyword">message</span> <span class="code-type">RiskRequest</span> {
+    <span class="code-type">string</span> company_id = <span class="code-num">1</span>;
+    <span class="code-type">string</span> tenant_id  = <span class="code-num">2</span>;
+    <span class="code-type">string</span> sector     = <span class="code-num">3</span>;
+    <span class="code-type">int32</span>  employee_count = <span class="code-num">4</span>;
+}
+
+<span class="code-keyword">message</span> <span class="code-type">RiskScore</span> {
+    <span class="code-type">float</span>  score    = <span class="code-num">1</span>;   <span class="code-comment">// 0.0 à 100.0</span>
+    <span class="code-type">string</span> level    = <span class="code-num">2</span>;   <span class="code-comment">// LOW / MEDIUM / HIGH / CRITICAL</span>
+    <span class="code-keyword">repeated</span> <span class="code-type">string</span> top_factors = <span class="code-num">3</span>;
+}
+
+<span class="code-comment">---</span>
+<span class="code-comment">// Java : le stub est généré automatiquement par Maven</span>
+<span class="code-type">ComplianceMLServiceGrpc</span>.<span class="code-type">ComplianceMLServiceBlockingStub</span> stub = ...;
+
+<span class="code-type">RiskScore</span> score = stub.<span class="code-fn">scoreRisk</span>(<span class="code-type">RiskRequest</span>.<span class="code-fn">newBuilder</span>()
+    .<span class="code-fn">setCompanyId</span>(companyId)
+    .<span class="code-fn">setTenantId</span>(tenantId)
+    .<span class="code-fn">setSector</span>(<span class="code-string">"FINANCE"</span>)
+    .<span class="code-fn">build</span>());
+
+<span class="code-comment">// Python : le stub est généré automatiquement par grpc_tools</span>
+<span class="code-keyword">class</span> <span class="code-type">MLServicer</span>(ComplianceMLServiceServicer):
+    <span class="code-keyword">def</span> <span class="code-fn">ScoreRisk</span>(self, request, context):
+        score = model.<span class="code-fn">predict</span>([[request.employee_count, ...]])
+        <span class="code-keyword">return</span> <span class="code-type">RiskScore</span>(score=score, level=<span class="code-fn">classify</span>(score))
+</div>
+    </div>
+  </div>
+
+  <!-- GRAPHQL -->
+  <div class="section" id="graphql">
+    <h2 class="section-title">GraphQL Netflix DGS — API externe flexible</h2>
+    <p class="section-subtitle">GraphQL est l'API publique de ComplianceOS. Contrairement à REST, le client demande exactement les champs dont il a besoin. Pas de sur-fetch, pas de sous-fetch.</p>
+
+    <div class="tech-grid">
+      <div class="tech-card" style="border-top:3px solid var(--blue)">
+        <div class="tech-name">GraphQL vs REST</div>
+        <div class="tech-desc" style="margin-top:10px">Avec REST, tu as 5 endpoints pour obtenir les infos d'un audit. Avec GraphQL, une seule requête demande exactement les champs voulus, depuis n'importe quelle profondeur du graphe de données.</div>
+        <div class="tech-why" style="border-color:var(--blue)">Idéal pour les clients SaaS qui ont des besoins variés. Le frontend Next.js peut optimiser ses queries sans changer le backend.</div>
+      </div>
+      <div class="tech-card" style="border-top:3px solid var(--blue)">
+        <div class="tech-name">Netflix DGS</div>
+        <div class="tech-desc" style="margin-top:10px">Framework GraphQL pour Spring Boot, développé par Netflix. Annotations simples, intégration Spring native, DataLoaders pour éviter le N+1 problem.</div>
+        <div class="tech-why" style="border-color:var(--blue)">Le N+1 problem : charger 100 audits puis 100 queries pour charger leurs entreprises. DataLoader batch tout en 1 query.</div>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">GraphQL</span>
+        <span class="code-file">schema.graphqls — Schéma de l'API publique</span>
+      </div>
+      <div class="code-body"><span class="code-keyword">type</span> <span class="code-type">Query</span> {
+    audits(
+        status:     <span class="code-type">AuditStatus</span>
+        regulation: <span class="code-type">Regulation</span>
+        first:      <span class="code-type">Int</span>
+        after:      <span class="code-type">String</span>       <span class="code-comment"># pagination cursor</span>
+    ): <span class="code-type">AuditConnection</span>!
+
+    audit(id: <span class="code-type">ID</span>!): <span class="code-type">Audit</span>
+}
+
+<span class="code-keyword">type</span> <span class="code-type">Audit</span> {
+    id:          <span class="code-type">ID</span>!
+    status:      <span class="code-type">AuditStatus</span>!
+    regulation:  <span class="code-type">Regulation</span>!
+    riskScore:   <span class="code-type">Float</span>
+    company:     <span class="code-type">Company</span>!          <span class="code-comment"># relation chargée à la demande</span>
+    gapItems:    [<span class="code-type">GapItem</span>!]!       <span class="code-comment"># uniquement si demandé</span>
+    createdAt:   <span class="code-type">DateTime</span>!
+}
+
+<span class="code-keyword">enum</span> <span class="code-type">AuditStatus</span> { DRAFT  IN_PROGRESS  COMPLETED  ARCHIVED }
+<span class="code-keyword">enum</span> <span class="code-type">Regulation</span>   { NIS2   DORA   RGPD   ISO27001 }
+
+<span class="code-comment">---</span>
+<span class="code-comment">// Requête GraphQL côté frontend — ne demande que ce qu'il faut</span>
+query <span class="code-fn">GetDashboardAudits</span> {
+    audits(status: IN_PROGRESS, first: <span class="code-num">10</span>) {
+        edges {
+            node {
+                id
+                status
+                riskScore        <span class="code-comment"># juste le score, pas toute l'entité</span>
+                company { name } <span class="code-comment"># juste le nom de la company</span>
+            }
+        }
+    }
+}
+</div>
+    </div>
+  </div>
+
+  <!-- ARGOCD -->
+  <div class="section" id="argocd">
+    <h2 class="section-title">GitOps avec ArgoCD + SonarQube — CI/CD déclaratif</h2>
+    <p class="section-subtitle">GitOps : Git est la source de vérité. Ce qui est dans le repo = ce qui tourne en production. ArgoCD surveille le repo et applique automatiquement les changements sur Kubernetes.</p>
+
+    <div class="concept-box" style="background:rgba(96,165,250,0.06);border-color:var(--blue)">
+      <div class="box-title" style="color:var(--blue)">🔄 Pipeline CI/CD — du commit au déploiement</div>
+      <div class="flow" style="flex-wrap:wrap;gap:8px;margin-top:12px">
+        <div class="flow-step">git push</div><div class="flow-arrow">→</div>
+        <div class="flow-step">GitLab CI</div><div class="flow-arrow">→</div>
+        <div class="flow-step">Tests + SonarQube</div><div class="flow-arrow">→</div>
+        <div class="flow-step">Build Docker</div><div class="flow-arrow">→</div>
+        <div class="flow-step">Push Registry</div><div class="flow-arrow">→</div>
+        <div class="flow-step">ArgoCD sync</div><div class="flow-arrow">→</div>
+        <div class="flow-step">Kubernetes</div>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">YAML</span>
+        <span class="code-file">.gitlab-ci.yml — Pipeline complet</span>
+      </div>
+      <div class="code-body">stages:
+  - lint
+  - test
+  - quality
+  - build
+  - deploy
+
+<span class="code-fn">unit-tests</span>:
+  stage: test
+  script:
+    - mvn test <span class="code-comment"># JUnit 5 + Testcontainers</span>
+  coverage: <span class="code-string">'/Total.*?([0-9]{1,3})%/'</span>
+
+<span class="code-fn">sonarqube</span>:
+  stage: quality
+  script:
+    - mvn sonar:sonar
+      -Dsonar.projectKey=complianceos
+      -Dsonar.qualitygate.wait=true   <span class="code-comment"># bloque si qualité insuffisante</span>
+  <span class="code-comment"># Coverage > 80%, 0 bug critique → pipeline continue</span>
+
+<span class="code-fn">build-image</span>:
+  stage: build
+  script:
+    - docker build -t registry.io/complianceos/api:$CI_COMMIT_SHA .
+    - trivy image registry.io/complianceos/api:$CI_COMMIT_SHA  <span class="code-comment"># scan vulnérabilités</span>
+    - docker push registry.io/complianceos/api:$CI_COMMIT_SHA
+
+<span class="code-fn">update-manifests</span>:
+  stage: deploy
+  script:
+    <span class="code-comment"># Met à jour le tag image dans le repo GitOps → ArgoCD déploie automatiquement</span>
+    - sed -i "s|image:.*|image: registry.io/complianceos/api:$CI_COMMIT_SHA|" k8s/deployment.yaml
+    - git add k8s/ && git commit -m "deploy: $CI_COMMIT_SHA" && git push
+</div>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- ========================= PHASE 2 ========================= -->
+  <div class="section" id="fastapi">
+    <div class="section-phase-tag" style="background:rgba(251,146,60,0.08);border:1px solid var(--orange-border);color:var(--orange)">
+      Phase 2 · Python ML & Intelligence · Mois 3–4
+    </div>
+    <h2 class="section-title">FastAPI 0.115 — L'API Python haute performance</h2>
+    <p class="section-subtitle">FastAPI est le framework Python préféré pour les APIs de ML. Async natif, validation automatique des données avec Pydantic, génération OpenAPI automatique.</p>
+
+    <div class="tech-grid">
+      <div class="tech-card" style="border-top:3px solid var(--orange)">
+        <div class="tech-name">Async natif</div>
+        <div class="tech-desc" style="margin-top:10px">FastAPI est basé sur ASGI (comme WSGI mais async). Chaque endpoint peut être <code style="font-family:monospace">async def</code>. Idéal pour appels parallèles vers des LLMs ou bases de données.</div>
+        <div class="tech-why" style="border-color:var(--orange)">L'analyse d'un document fait 3 appels : extraction texte, embedding, appel LLM. Avec async, les appels indépendants tournent en parallèle.</div>
+      </div>
+      <div class="tech-card" style="border-top:3px solid var(--orange)">
+        <div class="tech-name">Pydantic v2</div>
+        <div class="tech-desc" style="margin-top:10px">Validation automatique des données d'entrée et de sortie. Si le body JSON ne correspond pas au schéma → HTTP 422 automatique avec le détail de l'erreur.</div>
+        <div class="tech-why" style="border-color:var(--orange)">Les réponses JSON du service ML sont toujours conformes au schéma. Plus de "KeyError" en prod parce qu'un champ était absent.</div>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">Python — FastAPI 0.115</span>
+        <span class="code-file">main.py — Endpoints ML</span>
+      </div>
+      <div class="code-body"><span class="code-keyword">from</span> fastapi <span class="code-keyword">import</span> FastAPI, UploadFile, BackgroundTasks
+<span class="code-keyword">from</span> pydantic <span class="code-keyword">import</span> BaseModel
+<span class="code-keyword">import</span> uuid
+
+app = <span class="code-fn">FastAPI</span>(title=<span class="code-string">"ComplianceOS ML Service"</span>)
+
+<span class="code-comment"># Schéma de réponse — Pydantic valide automatiquement</span>
+<span class="code-keyword">class</span> <span class="code-type">RiskScoreResponse</span>(BaseModel):
+    company_id:   str
+    score:        <span class="code-type">float</span>         <span class="code-comment"># 0.0 à 100.0</span>
+    level:        str           <span class="code-comment"># LOW / MEDIUM / HIGH / CRITICAL</span>
+    top_factors:  <span class="code-type">list</span>[str]    <span class="code-comment"># top 5 facteurs SHAP</span>
+    computed_at:  str
+
+<span class="code-comment"># Endpoint synchrone simple</span>
+<span class="code-ann">@app.get</span>(<span class="code-string">"/score-risk/{company_id}"</span>, response_model=<span class="code-type">RiskScoreResponse</span>)
+<span class="code-keyword">async def</span> <span class="code-fn">score_risk</span>(company_id: str):
+    features = <span class="code-keyword">await</span> db.<span class="code-fn">get_features</span>(company_id)
+    result   = model.<span class="code-fn">predict</span>([features])
+    shap_vals = explainer.<span class="code-fn">shap_values</span>([features])
+    <span class="code-keyword">return</span> <span class="code-type">RiskScoreResponse</span>(
+        company_id=company_id,
+        score=<span class="code-type">float</span>(result[<span class="code-num">0</span>]),
+        level=<span class="code-fn">classify_level</span>(result[<span class="code-num">0</span>]),
+        top_factors=<span class="code-fn">get_top_factors</span>(shap_vals),
+        computed_at=datetime.now().<span class="code-fn">isoformat</span>()
+    )
+
+<span class="code-comment"># Analyse de document — tâche longue → Celery en background</span>
+<span class="code-ann">@app.post</span>(<span class="code-string">"/analyze-document"</span>)
+<span class="code-keyword">async def</span> <span class="code-fn">analyze_document</span>(file: <span class="code-type">UploadFile</span>, bg: <span class="code-type">BackgroundTasks</span>):
+    job_id = str(uuid.<span class="code-fn">uuid4</span>())
+    <span class="code-comment"># Pour les gros docs : délègue à Celery, répond immédiatement</span>
+    bg.<span class="code-fn">add_task</span>(celery_analyze_task.delay, job_id, file)
+    <span class="code-keyword">return</span> {<span class="code-string">"job_id"</span>: job_id, <span class="code-string">"status"</span>: <span class="code-string">"processing"</span>}
+</div>
+    </div>
+  </div>
+
+  <!-- LANGCHAIN PYTHON -->
+  <div class="section" id="langchain-py">
+    <h2 class="section-title">LangChain 0.3 (Python) — Agents et RAG</h2>
+    <p class="section-subtitle">LangChain est le framework Python pour construire des applications basées sur des LLMs. Tu y définis des chaînes de traitement, des agents avec des outils, et des pipelines RAG.</p>
+
+    <div class="concept-box" style="background:rgba(251,146,60,0.06);border-color:var(--orange)">
+      <div class="box-title" style="color:var(--orange)">🤖 Qu'est-ce qu'un Agent LangChain ?</div>
+      <p>Un agent est un LLM qui peut <strong>décider d'utiliser des outils</strong> pour répondre à une question. Il raisonne en boucle : "j'ai besoin d'info X → j'utilise l'outil search → j'ai le résultat → je peux maintenant répondre". C'est fondamentalement différent d'un simple prompt.</p>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">Python — LangChain 0.3</span>
+        <span class="code-file">document_analyzer_agent.py</span>
+      </div>
+      <div class="code-body"><span class="code-keyword">from</span> langchain.agents <span class="code-keyword">import</span> AgentExecutor, create_tool_calling_agent
+<span class="code-keyword">from</span> langchain_community.tools <span class="code-keyword">import</span> tool
+<span class="code-keyword">from</span> langchain_aws <span class="code-keyword">import</span> ChatBedrock
+
+<span class="code-comment"># LLM : Claude 3.5 Sonnet via AWS Bedrock (données privées dans le VPC)</span>
+llm = <span class="code-fn">ChatBedrock</span>(
+    model_id=<span class="code-string">"anthropic.claude-3-5-sonnet-20241022-v2:0"</span>,
+    region_name=<span class="code-string">"eu-west-1"</span>
+)
+
+<span class="code-comment"># Outil 1 : recherche dans le corpus réglementaire</span>
+<span class="code-ann">@tool</span>
+<span class="code-keyword">def</span> <span class="code-fn">search_regulation_corpus</span>(query: str) -> str:
+    <span class="code-string">"""Recherche dans les articles NIS2, DORA, RGPD et ISO 27001."""</span>
+    results = vector_store.<span class="code-fn">similarity_search</span>(query, k=<span class="code-num">5</span>)
+    <span class="code-keyword">return</span> <span class="code-string">"\n\n"</span>.<span class="code-fn">join</span>([r.page_content <span class="code-keyword">for</span> r <span class="code-keyword">in</span> results])
+
+<span class="code-comment"># Outil 2 : classification d'un écart (gap)</span>
+<span class="code-ann">@tool</span>
+<span class="code-keyword">def</span> <span class="code-fn">classify_gap</span>(gap_description: str) -> str:
+    <span class="code-string">"""Classifie un gap de conformité : LOW / MEDIUM / HIGH / CRITICAL."""</span>
+    <span class="code-comment"># Logique de classification basée sur le contexte réglementaire</span>
+    <span class="code-keyword">return</span> gap_classifier.<span class="code-fn">predict</span>(gap_description)
+
+<span class="code-comment"># Agent avec ses outils</span>
+tools  = [search_regulation_corpus, classify_gap]
+agent  = <span class="code-fn">create_tool_calling_agent</span>(llm, tools, prompt)
+runner = <span class="code-fn">AgentExecutor</span>(agent=agent, tools=tools, verbose=<span class="code-keyword">True</span>)
+
+<span class="code-comment"># L'agent raisonne autonomement et utilise les outils selon ses besoins</span>
+result = runner.<span class="code-fn">invoke</span>({
+    <span class="code-string">"input"</span>: <span class="code-string">"Analysez cette politique de sécurité et identifiez les gaps NIS2"</span>,
+    <span class="code-string">"document_text"</span>: extracted_text
+})
+</div>
+    </div>
+  </div>
+
+  <!-- POLARS -->
+  <div class="section" id="polars">
+    <h2 class="section-title">Polars — ETL ultra-rapide</h2>
+    <p class="section-subtitle">Polars est la bibliothèque Python de manipulation de DataFrames la plus rapide. Écrite en Rust, parallèle par design. Remplace Pandas pour les gros volumes.</p>
+
+    <div class="concept-box" style="background:rgba(251,146,60,0.06);border-color:var(--orange)">
+      <div class="box-title" style="color:var(--orange)">📊 Polars vs Pandas — Quand et pourquoi</div>
+      <table class="styled-table" style="margin-top:12px">
+        <tr><th>Critère</th><th>Pandas</th><th>Polars</th></tr>
+        <tr><td>Performance 1M lignes</td><td>~10s</td><td>~0.5s (20x plus rapide)</td></tr>
+        <tr><td>Mémoire</td><td>Élevée (copy-on-write tardif)</td><td>Faible (Apache Arrow natif)</td></tr>
+        <tr><td>Parallélisme</td><td>Non (GIL Python)</td><td>Oui (Rust multi-thread)</td></tr>
+        <tr><td>API</td><td>Impérative</td><td>Déclarative (lazy evaluation)</td></tr>
+        <tr><td>Usage ComplianceOS</td><td>–</td><td>Import CSV/Excel 100k lignes en &lt;30s</td></tr>
+      </table>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">Python — Polars</span>
+        <span class="code-file">etl_compliance_data.py — Pipeline ETL</span>
+      </div>
+      <div class="code-body"><span class="code-keyword">import</span> polars <span class="code-keyword">as</span> pl
+
+<span class="code-keyword">def</span> <span class="code-fn">process_compliance_data</span>(file_path: str) -> dict:
+    <span class="code-comment"># Lecture lazy — ne charge pas tout en mémoire d'un coup</span>
+    df = pl.<span class="code-fn">scan_csv</span>(file_path).<span class="code-fn">lazy</span>()
+
+    <span class="code-comment"># Pipeline déclaratif — Polars optimise l'ordre d'exécution</span>
+    valid_df = (
+        df
+        .<span class="code-fn">filter</span>(pl.col(<span class="code-string">"regulation_code"</span>).<span class="code-fn">is_in</span>([<span class="code-string">"NIS2"</span>, <span class="code-string">"DORA"</span>, <span class="code-string">"RGPD"</span>]))
+        .<span class="code-fn">filter</span>(pl.col(<span class="code-string">"company_id"</span>).<span class="code-fn">is_not_null</span>())
+        .<span class="code-fn">with_columns</span>([
+            pl.col(<span class="code-string">"date"</span>).<span class="code-fn">str.to_date</span>(<span class="code-string">"%Y-%m-%d"</span>),
+            pl.col(<span class="code-string">"score"</span>).<span class="code-fn">cast</span>(pl.Float64).<span class="code-fn">clip</span>(<span class="code-num">0.0</span>, <span class="code-num">100.0</span>),
+        ])
+        .<span class="code-fn">collect</span>()   <span class="code-comment"># exécution réelle ici seulement</span>
+    )
+
+    <span class="code-comment"># Lignes invalides pour rapport d'erreurs</span>
+    invalid_df = df.<span class="code-fn">filter</span>(~pl.col(<span class="code-string">"company_id"</span>).<span class="code-fn">is_not_null</span>()).<span class="code-fn">collect</span>()
+    invalid_df.<span class="code-fn">write_csv</span>(<span class="code-string">"errors.csv"</span>)
+
+    <span class="code-comment"># Chargement PostgreSQL via COPY (bulk insert ultra-rapide)</span>
+    <span class="code-fn">bulk_insert_to_postgres</span>(valid_df, table=<span class="code-string">"compliance_declarations"</span>)
+
+    <span class="code-keyword">return</span> {<span class="code-string">"loaded"</span>: <span class="code-type">len</span>(valid_df), <span class="code-string">"errors"</span>: <span class="code-type">len</span>(invalid_df)}
+</div>
+    </div>
+  </div>
+
+  <!-- XGBOOST -->
+  <div class="section" id="xgboost">
+    <h2 class="section-title">XGBoost + SHAP — Scoring de risque ML</h2>
+    <p class="section-subtitle">XGBoost est l'algorithme de gradient boosting le plus utilisé dans l'industrie. Rapide, précis, interprétable avec SHAP. Tu l'utilises pour calculer le score de risque réglementaire de chaque entreprise.</p>
+
+    <div class="concept-box" style="background:rgba(251,146,60,0.06);border-color:var(--orange)">
+      <div class="box-title" style="color:var(--orange)">🌳 Comment fonctionne XGBoost (simplifié)</div>
+      <p>XGBoost construit une <strong>forêt d'arbres de décision</strong> en séquence. Chaque arbre corrige les erreurs du précédent. Au final : 100 arbres légers qui votent ensemble = prédiction robuste. Bien meilleur qu'un seul gros arbre.</p>
+      <p style="margin-top:8px"><strong>SHAP (SHapley Additive exPlanations)</strong> : explique pourquoi le modèle a donné ce score. "Le secteur Santé contribue +15 points au risque car c'est un secteur critique NIS2." Indispensable pour la conformité réglementaire.</p>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">Python — scikit-learn + XGBoost + SHAP</span>
+        <span class="code-file">risk_scorer.py</span>
+      </div>
+      <div class="code-body"><span class="code-keyword">import</span> xgboost <span class="code-keyword">as</span> xgb
+<span class="code-keyword">import</span> shap
+<span class="code-keyword">import</span> numpy <span class="code-keyword">as</span> np
+
+<span class="code-comment"># Features (40+) que le modèle utilise pour prédire le risque</span>
+FEATURES = [
+    <span class="code-string">"sector_encoded"</span>,         <span class="code-comment"># 0=Finance, 1=Santé, 2=Énergie...</span>
+    <span class="code-string">"employee_count_log"</span>,      <span class="code-comment"># log(nb_employés)</span>
+    <span class="code-string">"previous_audit_score"</span>,    <span class="code-comment"># score du dernier audit</span>
+    <span class="code-string">"incidents_last_12m"</span>,      <span class="code-comment"># nb incidents déclarés</span>
+    <span class="code-string">"mfa_enabled"</span>,             <span class="code-comment"># MFA en place ?</span>
+    <span class="code-string">"backup_policy_exists"</span>,    <span class="code-comment"># politique de sauvegarde ?</span>
+    <span class="code-comment"># ... 34 autres features</span>
+]
+
+<span class="code-keyword">class</span> <span class="code-type">RiskScorer</span>:
+    <span class="code-keyword">def</span> <span class="code-fn">__init__</span>(self, model_path: str):
+        self.model    = xgb.<span class="code-fn">Booster</span>()
+        self.model.<span class="code-fn">load_model</span>(model_path)
+        self.explainer = shap.<span class="code-fn">TreeExplainer</span>(self.model)
+
+    <span class="code-keyword">def</span> <span class="code-fn">score</span>(self, features: dict) -> dict:
+        X = np.<span class="code-fn">array</span>([[features[f] <span class="code-keyword">for</span> f <span class="code-keyword">in</span> FEATURES]])
+        dmatrix = xgb.<span class="code-fn">DMatrix</span>(X, feature_names=FEATURES)
+
+        score       = self.model.<span class="code-fn">predict</span>(dmatrix)[<span class="code-num">0</span>] * <span class="code-num">100</span>  <span class="code-comment"># 0-100</span>
+        shap_values = self.explainer.<span class="code-fn">shap_values</span>(dmatrix)[<span class="code-num">0</span>]
+
+        <span class="code-comment"># Top 5 facteurs qui influencent le plus le score</span>
+        top5 = sorted(
+            zip(FEATURES, shap_values),
+            key=<span class="code-keyword">lambda</span> x: <span class="code-type">abs</span>(x[<span class="code-num">1</span>]),
+            reverse=<span class="code-keyword">True</span>
+        )[:<span class="code-num">5</span>]
+
+        <span class="code-keyword">return</span> {
+            <span class="code-string">"score"</span>:      round(score, <span class="code-num">2</span>),
+            <span class="code-string">"level"</span>:      <span class="code-fn">classify</span>(score),  <span class="code-comment"># LOW / MEDIUM / HIGH / CRITICAL</span>
+            <span class="code-string">"top_factors"</span>: [{<span class="code-string">"feature"</span>: f, <span class="code-string">"impact"</span>: round(v, <span class="code-num">3</span>)} <span class="code-keyword">for</span> f, v <span class="code-keyword">in</span> top5]
+        }
+</div>
+    </div>
+  </div>
+
+  <!-- CELERY -->
+  <div class="section" id="celery">
+    <h2 class="section-title">Celery + Redis — Tâches asynchrones</h2>
+    <p class="section-subtitle">Celery est la file d'attente de tâches de référence en Python. Quand une analyse de document prend 60 secondes, tu ne bloques pas l'utilisateur : tu envoies la tâche à Celery et tu réponds immédiatement.</p>
+
+    <div class="concept-box" style="background:rgba(251,146,60,0.06);border-color:var(--orange)">
+      <div class="box-title" style="color:var(--orange)">⚙️ Architecture Celery dans ComplianceOS</div>
+      <div class="flow" style="flex-wrap:wrap;gap:8px;margin-top:12px">
+        <div class="flow-step">FastAPI reçoit l'upload</div><div class="flow-arrow">→</div>
+        <div class="flow-step">Envoie task à Redis (broker)</div><div class="flow-arrow">→</div>
+        <div class="flow-step">Celery Worker</div><div class="flow-arrow">→</div>
+        <div class="flow-step">Analyse + LangChain</div><div class="flow-arrow">→</div>
+        <div class="flow-step">Résultat via WebSocket</div>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">Python — Celery + Redis</span>
+        <span class="code-file">tasks.py</span>
+      </div>
+      <div class="code-body"><span class="code-keyword">from</span> celery <span class="code-keyword">import</span> Celery
+
+<span class="code-comment"># Redis comme broker (files de tâches) et backend (résultats)</span>
+app = <span class="code-fn">Celery</span>(
+    <span class="code-string">"complianceos"</span>,
+    broker=<span class="code-string">"redis://redis:6379/0"</span>,
+    backend=<span class="code-string">"redis://redis:6379/1"</span>
+)
+
+<span class="code-ann">@app.task</span>(
+    bind=<span class="code-keyword">True</span>,
+    max_retries=<span class="code-num">3</span>,
+    autoretry_for=(<span class="code-type">Exception</span>,),
+    retry_backoff=<span class="code-keyword">True</span>
+)
+<span class="code-keyword">def</span> <span class="code-fn">analyze_document_task</span>(self, job_id: str, document_content: bytes):
+    <span class="code-keyword">try</span>:
+        <span class="code-comment"># 1. Extraction texte (pdfplumber / python-docx)</span>
+        text = <span class="code-fn">extract_text</span>(document_content)
+
+        <span class="code-comment"># 2. Agent LangChain : analyse + identification des gaps</span>
+        result = langchain_agent.<span class="code-fn">invoke</span>({<span class="code-string">"document"</span>: text})
+
+        <span class="code-comment"># 3. Sauvegarde en DB + notification WebSocket</span>
+        db.<span class="code-fn">save_analysis_result</span>(job_id, result)
+        ws.<span class="code-fn">notify</span>(job_id, <span class="code-string">"completed"</span>)
+
+    <span class="code-keyword">except</span> <span class="code-type">Exception</span> <span class="code-keyword">as</span> exc:
+        <span class="code-comment"># Retry automatique avec backoff exponentiel (1s, 2s, 4s)</span>
+        <span class="code-keyword">raise</span> self.<span class="code-fn">retry</span>(exc=exc)
+
+<span class="code-comment">---</span>
+<span class="code-comment"># FastAPI envoie la tâche (non-bloquant)</span>
+task = analyze_document_task.<span class="code-fn">delay</span>(job_id, file_content)
+<span class="code-keyword">return</span> {<span class="code-string">"job_id"</span>: job_id, <span class="code-string">"task_id"</span>: task.id}  <span class="code-comment"># réponse immédiate</span>
+</div>
+    </div>
+  </div>
+
+  <!-- STREAMLIT -->
+  <div class="section" id="streamlit">
+    <h2 class="section-title">Streamlit — Dashboard ML interne</h2>
+    <p class="section-subtitle">Streamlit transforme un script Python en application web interactive sans écrire de HTML/JS. Idéal pour les data scientists qui veulent monitorer leurs modèles.</p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">Python — Streamlit</span>
+        <span class="code-file">ml_dashboard.py</span>
+      </div>
+      <div class="code-body"><span class="code-keyword">import</span> streamlit <span class="code-keyword">as</span> st
+<span class="code-keyword">import</span> plotly.express <span class="code-keyword">as</span> px
+
+st.<span class="code-fn">title</span>(<span class="code-string">"🎯 ComplianceOS — Monitoring Modèle ML"</span>)
+
+<span class="code-comment"># Chaque widget Streamlit re-exécute le script automatiquement</span>
+regulation = st.<span class="code-fn">selectbox</span>(<span class="code-string">"Réglementation"</span>, [<span class="code-string">"NIS2"</span>, <span class="code-string">"DORA"</span>, <span class="code-string">"RGPD"</span>])
+
+<span class="code-ann">@st.cache_data</span>(ttl=<span class="code-num">3600</span>)  <span class="code-comment"># cache 1h</span>
+<span class="code-keyword">def</span> <span class="code-fn">load_scores</span>(regulation: str):
+    <span class="code-keyword">return</span> db.<span class="code-fn">query</span>(<span class="code-string">"SELECT score FROM risk_scores WHERE regulation=%s"</span>, regulation)
+
+scores = <span class="code-fn">load_scores</span>(regulation)
+
+col1, col2 = st.<span class="code-fn">columns</span>(<span class="code-num">2</span>)
+<span class="code-keyword">with</span> col1:
+    st.<span class="code-fn">metric</span>(<span class="code-string">"Score moyen"</span>, f<span class="code-string">"{scores.mean():.1f}/100"</span>)
+<span class="code-keyword">with</span> col2:
+    st.<span class="code-fn">metric</span>(<span class="code-string">"Entreprises HIGH+CRITICAL"</span>, f<span class="code-string">"{(scores > 70).sum()}"</span>)
+
+fig = px.<span class="code-fn">histogram</span>(scores, x=<span class="code-string">"score"</span>, title=<span class="code-string">"Distribution des scores de risque"</span>)
+st.<span class="code-fn">plotly_chart</span>(fig)
+
+<span class="code-comment"># Alerte data drift</span>
+<span class="code-keyword">if</span> abs(scores.mean() - baseline_mean) > <span class="code-num">20</span>:
+    st.<span class="code-fn">error</span>(<span class="code-string">"⚠️ Data drift détecté ! Distribution > 20% de la baseline."</span>)
+</div>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- ========================= PHASE 3 ========================= -->
+  <div class="section" id="langchain4j">
+    <div class="section-phase-tag" style="background:rgba(74,222,128,0.08);border:1px solid var(--green-border);color:var(--green)">
+      Phase 3 · AI Agents & Orchestration · Mois 5–6
+    </div>
+    <h2 class="section-title">LangChain4j — Agents IA en Java</h2>
+    <p class="section-subtitle">LangChain4j est le portage Java de LangChain. Il permet de construire des agents IA robustes directement dans Spring Boot, avec les garanties transactionnelles de Java.</p>
+
+    <div class="concept-box" style="background:rgba(74,222,128,0.06);border-color:var(--green-border)">
+      <div class="box-title" style="color:var(--green)">🤖 LangChain4j vs LangChain Python — Quel outil pour quoi ?</div>
+      <table class="styled-table" style="margin-top:12px">
+        <tr><th>Critère</th><th>LangChain Python</th><th>LangChain4j</th></tr>
+        <tr><td>Usage dans ComplianceOS</td><td>Analyse documents, scoring ML</td><td>Orchestration audit, workflow Temporal</td></tr>
+        <tr><td>Avantages</td><td>Écosystème ML, plus de connecteurs</td><td>Transactions Java, typage fort, Spring natif</td></tr>
+        <tr><td>Mémoire persistante</td><td>PostgreSQL via LangChain</td><td>ChatMemoryStore → PostgreSQL</td></tr>
+        <tr><td>Intégration</td><td>FastAPI async</td><td>Spring Boot, Temporal.io</td></tr>
+      </table>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">Java — LangChain4j</span>
+        <span class="code-file">AuditAgent.java — Agent avec outils et mémoire</span>
+      </div>
+      <div class="code-body"><span class="code-comment">// Interface : LangChain4j génère l'implémentation automatiquement</span>
+<span class="code-ann">@AiService</span>
+<span class="code-keyword">public interface</span> <span class="code-type">AuditAgent</span> {
+
+    <span class="code-comment">// La mémoire par client est persistée en PostgreSQL</span>
+    <span class="code-ann">@SystemMessage</span>(<span class="code-string">"""
+        Vous êtes un expert en conformité réglementaire (NIS2, DORA, RGPD).
+        Analysez les politiques internes et identifiez les écarts réglementaires.
+        Utilisez toujours les outils disponibles pour sourcer vos réponses.
+        """</span>)
+    <span class="code-type">AuditReport</span> <span class="code-fn">conductAudit</span>(
+        <span class="code-ann">@UserMessage</span> <span class="code-type">String</span> auditRequest,
+        <span class="code-ann">@MemoryId</span>   <span class="code-type">String</span> companyId  <span class="code-comment">// mémoire isolée par client</span>
+    );
+}
+
+<span class="code-comment">// Outils que l'agent peut utiliser</span>
+<span class="code-ann">@Component</span>
+<span class="code-keyword">public class</span> <span class="code-type">AuditTools</span> {
+
+    <span class="code-ann">@Tool</span>(<span class="code-string">"Recherche des articles réglementaires applicables"</span>)
+    <span class="code-keyword">public</span> <span class="code-type">String</span> <span class="code-fn">searchNIS2Corpus</span>(<span class="code-type">String</span> query) {
+        <span class="code-keyword">return</span> ragService.<span class="code-fn">search</span>(query, <span class="code-string">"NIS2"</span>, <span class="code-num">5</span>);
+    }
+
+    <span class="code-ann">@Tool</span>(<span class="code-string">"Analyse une politique interne et identifie les gaps"</span>)
+    <span class="code-keyword">public</span> <span class="code-type">List</span>&lt;<span class="code-type">GapItem</span>&gt; <span class="code-fn">analyzePolicyDocument</span>(<span class="code-type">String</span> policyText) {
+        <span class="code-keyword">return</span> policyAnalyzer.<span class="code-fn">extractGaps</span>(policyText);
+    }
+
+    <span class="code-ann">@Tool</span>(<span class="code-string">"Génère le rapport de gaps structuré"</span>)
+    <span class="code-keyword">public</span> <span class="code-type">AuditReport</span> <span class="code-fn">generateGapReport</span>(<span class="code-type">List</span>&lt;<span class="code-type">GapItem</span>&gt; gaps) {
+        <span class="code-keyword">return</span> reportGenerator.<span class="code-fn">generate</span>(gaps);
+    }
+}
+</div>
+    </div>
+  </div>
+
+  <!-- TEMPORAL -->
+  <div class="section" id="temporal">
+    <h2 class="section-title">Temporal.io — Orchestration durable de workflows</h2>
+    <p class="section-subtitle">Temporal est la plateforme d'orchestration de workflows la plus robuste. Un workflow Temporal survit aux pannes, aux redémarrages, aux timeouts. C'est la colonne vertébrale du cycle de vie d'un audit.</p>
+
+    <div class="concept-box" style="background:rgba(74,222,128,0.06);border-color:var(--green-border)">
+      <div class="box-title" style="color:var(--green)">⚡ Pourquoi Temporal est révolutionnaire</div>
+      <p>Sans Temporal : un audit qui prend 3 jours (analyse IA + validation humaine + signature) peut planter à n'importe quelle étape. Tout recommence depuis zéro.</p>
+      <p style="margin-top:8px">Avec Temporal : chaque étape est enregistrée en durée indéfinie. Si le service IA plante après l'étape 2, Temporal reprend à l'étape 3 automatiquement. La validation humaine peut attendre <strong>30 jours</strong> sans perte d'état.</p>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">Java — Temporal.io</span>
+        <span class="code-file">AuditWorkflow.java — Cycle de vie complet</span>
+      </div>
+      <div class="code-body"><span class="code-comment">// Le workflow orchestre les étapes — chaque étape est durable</span>
+<span class="code-ann">@WorkflowInterface</span>
+<span class="code-keyword">public interface</span> <span class="code-type">AuditWorkflow</span> {
+    <span class="code-ann">@WorkflowMethod</span>
+    <span class="code-type">AuditResult</span>  <span class="code-fn">runAudit</span>(<span class="code-type">UUID</span> auditId);
+
+    <span class="code-comment">// Signal : l'auditeur valide depuis l'interface Next.js</span>
+    <span class="code-ann">@SignalMethod</span>
+    <span class="code-keyword">void</span> <span class="code-fn">humanValidate</span>(<span class="code-type">ValidationDecision</span> decision);
+}
+
+<span class="code-keyword">public class</span> <span class="code-type">AuditWorkflowImpl</span> <span class="code-keyword">implements</span> <span class="code-type">AuditWorkflow</span> {
+
+    <span class="code-keyword">private</span> <span class="code-type">ValidationDecision</span> validationDecision; <span class="code-comment">// persisté par Temporal</span>
+
+    <span class="code-ann">@Override</span>
+    <span class="code-keyword">public</span> <span class="code-type">AuditResult</span> <span class="code-fn">runAudit</span>(<span class="code-type">UUID</span> auditId) {
+
+        <span class="code-comment">// Étape 1 : Ingestion des documents</span>
+        activities.<span class="code-fn">ingestDocuments</span>(auditId);
+
+        <span class="code-comment">// Étape 2 : Analyse IA — retry 3x avec backoff si panne</span>
+        <span class="code-type">AnalysisResult</span> analysis = <span class="code-type">Workflow</span>.<span class="code-fn">newActivityStub</span>(
+            <span class="code-type">AIAnalysisActivity</span>.class,
+            <span class="code-type">ActivityOptions</span>.<span class="code-fn">newBuilder</span>()
+                .<span class="code-fn">setStartToCloseTimeout</span>(<span class="code-type">Duration</span>.<span class="code-fn">ofMinutes</span>(<span class="code-num">10</span>))
+                .<span class="code-fn">setRetryOptions</span>(<span class="code-type">RetryOptions</span>.<span class="code-fn">newBuilder</span>().<span class="code-fn">setMaximumAttempts</span>(<span class="code-num">3</span>).<span class="code-fn">build</span>())
+                .<span class="code-fn">build</span>()
+        ).<span class="code-fn">analyze</span>(auditId);
+
+        <span class="code-comment">// Étape 3 : Scoring ML</span>
+        activities.<span class="code-fn">scoreML</span>(auditId, analysis);
+
+        <span class="code-comment">// Étape 4 : Attente validation humaine (jusqu'à 30 jours!)</span>
+        <span class="code-type">Workflow</span>.<span class="code-fn">await</span>(
+            <span class="code-type">Duration</span>.<span class="code-fn">ofDays</span>(<span class="code-num">30</span>),
+            () -> validationDecision != <span class="code-keyword">null</span>
+        );
+
+        <span class="code-comment">// Étape 5 : Signature électronique</span>
+        activities.<span class="code-fn">signDocument</span>(auditId);
+
+        <span class="code-comment">// Étape 6 : Archivage</span>
+        <span class="code-keyword">return</span> activities.<span class="code-fn">archive</span>(auditId);
+    }
+
+    <span class="code-ann">@Override</span>
+    <span class="code-keyword">public void</span> <span class="code-fn">humanValidate</span>(<span class="code-type">ValidationDecision</span> decision) {
+        this.validationDecision = decision; <span class="code-comment">// Temporal persiste ce signal</span>
+    }
+}
+</div>
+    </div>
+  </div>
+
+  <!-- BEDROCK / RAG -->
+  <div class="section" id="bedrock">
+    <h2 class="section-title">AWS Bedrock + RAG — LLM privé et recherche sémantique</h2>
+    <p class="section-subtitle">AWS Bedrock donne accès à des LLMs (dont Claude 3.5) dans ton VPC AWS. Les données ne quittent jamais ton infrastructure. Le RAG (Retrieval-Augmented Generation) ancre les réponses du LLM dans des faits réels.</p>
+
+    <div class="concept-box" style="background:rgba(74,222,128,0.06);border-color:var(--green-border)">
+      <div class="box-title" style="color:var(--green)">🧠 Qu'est-ce que le RAG ?</div>
+      <p>Sans RAG : tu demandes au LLM "Que dit NIS2 Article 21 ?" → il hallucine ou donne une réponse générique non sourcée.</p>
+      <p style="margin-top:8px">Avec RAG : <strong>1)</strong> ta question est transformée en vecteur (embedding), <strong>2)</strong> on cherche les passages les plus similaires dans le corpus réglementaire, <strong>3)</strong> ces passages sont injectés dans le contexte du LLM, <strong>4)</strong> le LLM répond avec des sources exactes.</p>
+      <div class="flow" style="margin-top:12px;flex-wrap:wrap;gap:8px">
+        <div class="flow-step">Question utilisateur</div><div class="flow-arrow">→</div>
+        <div class="flow-step">Embedding (Titan v2)</div><div class="flow-arrow">→</div>
+        <div class="flow-step">Search pgvector + Qdrant</div><div class="flow-arrow">→</div>
+        <div class="flow-step">Top 5 passages</div><div class="flow-arrow">→</div>
+        <div class="flow-step">LLM Claude 3.5</div><div class="flow-arrow">→</div>
+        <div class="flow-step">Réponse sourcée</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QDRANT -->
+  <div class="section" id="qdrant">
+    <h2 class="section-title">Qdrant + pgvector — Base de données vectorielle</h2>
+    <p class="section-subtitle">Les vecteurs (embeddings) sont des représentations numériques de texte qui capturent le sens. Qdrant et pgvector permettent de chercher par similarité sémantique, pas par mots-clés.</p>
+
+    <div class="concept-box" style="background:rgba(74,222,128,0.06);border-color:var(--green-border)">
+      <div class="box-title" style="color:var(--green)">🔢 Comment fonctionne la recherche vectorielle</div>
+      <p><strong>"Mesures de sécurité réseau"</strong> et <strong>"protection des infrastructures informatiques"</strong> : même sens, mots différents. La recherche par mots-clés rate. La recherche vectorielle trouve les deux car leurs vecteurs sont proches dans l'espace mathématique.</p>
+      <p style="margin-top:8px">ComplianceOS utilise la <strong>recherche hybride</strong> : dense (similarité cosine via pgvector) + sparse (BM25 via Qdrant) + reranking. Les 3 méthodes combinées donnent les meilleurs résultats.</p>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- ========================= PHASE 4 ========================= -->
+  <div class="section" id="eidas">
+    <div class="section-phase-tag" style="background:rgba(248,113,113,0.08);border:1px solid var(--red-border);color:var(--red)">
+      Phase 4 · Signature & Cryptographie · Mois 7–8
+    </div>
+    <h2 class="section-title">eIDAS 2.0 — Signature électronique qualifiée (QES)</h2>
+    <p class="section-subtitle">eIDAS 2.0 est le règlement européen sur l'identité numérique. Une signature QES (Qualified Electronic Signature) a la même valeur légale qu'une signature manuscrite dans toute l'Union Européenne.</p>
+
+    <div class="tech-grid">
+      <div class="tech-card" style="border-top:3px solid var(--red)">
+        <div class="tech-name">Types de signatures</div>
+        <div class="tech-desc" style="margin-top:10px">
+          <strong>SES</strong> (Simple) : email avec nom. Pas de valeur légale.<br/>
+          <strong>AES</strong> (Avancée) : identité vérifiée, clé liée à la personne.<br/>
+          <strong>QES</strong> (Qualifiée) : clé stockée en HSM certifié QSCD. Valeur légale maximale.
+        </div>
+        <div class="tech-why" style="border-color:var(--red)">ComplianceOS génère des <strong>QES (PAdES-LTA)</strong>. Les rapports d'audit signés sont valables devant un tribunal EU.</div>
+      </div>
+      <div class="tech-card" style="border-top:3px solid var(--red)">
+        <div class="tech-name">PAdES-LTA</div>
+        <div class="tech-desc" style="margin-top:10px">PDF Advanced Electronic Signature - Long Term Availability. La signature inclut un horodatage RFC 3161 et toutes les informations nécessaires pour la vérifier dans 50 ans, sans dépendre de services externes.</div>
+        <div class="tech-why" style="border-color:var(--red)">Les rapports d'audit doivent être conservés 7 ans (DORA/NIS2). La signature doit rester valide pendant tout ce temps.</div>
+      </div>
+    </div>
+
+    <div class="concept-box" style="background:rgba(248,113,113,0.06);border-color:var(--red)">
+      <div class="box-title" style="color:var(--red)">🔐 Chaîne de confiance PKI — Comment ça marche</div>
+      <div class="step-row"><div class="step-num" style="background:rgba(248,113,113,0.15);color:var(--red)">1</div><div class="step-content"><strong>CA Racine (Root CA)</strong> : autorité de certification de confiance. Certifie l'autorité intermédiaire.</div></div>
+      <div class="step-row"><div class="step-num" style="background:rgba(248,113,113,0.15);color:var(--red)">2</div><div class="step-content"><strong>CA Intermédiaire</strong> : émet les certificats utilisateurs. Si compromise, seule l'intermédiaire est révoquée.</div></div>
+      <div class="step-row"><div class="step-num" style="background:rgba(248,113,113,0.15);color:var(--red)">3</div><div class="step-content"><strong>Certificat utilisateur</strong> : lié à l'identité de l'auditeur. Sa clé privée est dans le HSM.</div></div>
+      <div class="step-row"><div class="step-num" style="background:rgba(248,113,113,0.15);color:var(--red)">4</div><div class="step-content"><strong>HSM (Hardware Security Module)</strong> : boîtier physique certifié FIPS 140-2 où la clé privée est générée et ne quitte jamais le matériel.</div></div>
+      <div class="step-row"><div class="step-num" style="background:rgba(248,113,113,0.15);color:var(--red)">5</div><div class="step-content"><strong>TSA (Time Stamp Authority)</strong> : horodatage qualifié signé par une autorité reconnue. Prouve que le document existait à ce moment précis.</div></div>
+    </div>
+  </div>
+
+  <!-- BOUNCY CASTLE -->
+  <div class="section" id="bouncy">
+    <h2 class="section-title">BouncyCastle 1.80 — Cryptographie en Java</h2>
+    <p class="section-subtitle">BouncyCastle est la bibliothèque cryptographique de référence en Java. Elle implémente tous les algorithmes : RSA, ECDSA, EdDSA, AES-GCM, SHA-256, et les standards de signature PDF (PAdES).</p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">Java — BouncyCastle</span>
+        <span class="code-file">PdfSigner.java — Signature PAdES via HSM PKCS#11</span>
+      </div>
+      <div class="code-body"><span class="code-keyword">import</span> org.bouncycastle.cms.*;
+<span class="code-keyword">import</span> org.bouncycastle.tsp.*;
+
+<span class="code-ann">@Service</span>
+<span class="code-keyword">public class</span> <span class="code-type">PdfSigner</span> {
+
+    <span class="code-comment">// PKCS#11 : interface standard pour accéder au HSM</span>
+    <span class="code-keyword">private final</span> <span class="code-type">Provider</span> pkcs11Provider;  <span class="code-comment">// SoftHSM (dev) / CloudHSM (prod)</span>
+
+    <span class="code-keyword">public byte</span>[] <span class="code-fn">signPdfPAdES</span>(<span class="code-type">UUID</span> auditId, <span class="code-type">UUID</span> userId) <span class="code-keyword">throws</span> <span class="code-type">Exception</span> {
+        <span class="code-comment">// 1. Récupérer le PDF à signer</span>
+        <span class="code-keyword">byte</span>[] pdfBytes = documentService.<span class="code-fn">getPdf</span>(auditId);
+
+        <span class="code-comment">// 2. Récupérer le certificat et la clé privée depuis le HSM via PKCS#11</span>
+        <span class="code-type">KeyStore</span> ks = <span class="code-type">KeyStore</span>.<span class="code-fn">getInstance</span>(<span class="code-string">"PKCS11"</span>, pkcs11Provider);
+        ks.<span class="code-fn">load</span>(<span class="code-keyword">null</span>, pin);
+
+        <span class="code-type">PrivateKey</span>    privateKey = (<span class="code-type">PrivateKey</span>) ks.<span class="code-fn">getKey</span>(userId.toString(), pin);
+        <span class="code-type">Certificate</span>[] chain      = ks.<span class="code-fn">getCertificateChain</span>(userId.toString());
+
+        <span class="code-comment">// 3. Créer la signature CMS (format sous-jacent du PAdES)</span>
+        <span class="code-type">CMSSignedDataGenerator</span> gen = <span class="code-keyword">new</span> <span class="code-type">CMSSignedDataGenerator</span>();
+        gen.<span class="code-fn">addSignerInfoGenerator</span>(
+            <span class="code-keyword">new</span> <span class="code-type">JcaSignerInfoGeneratorBuilder</span>(...)
+                .<span class="code-fn">build</span>(<span class="code-keyword">new</span> <span class="code-type">JcaContentSignerBuilder</span>(<span class="code-string">"SHA256withECDSA"</span>)
+                              .<span class="code-fn">build</span>(privateKey), <span class="code-type">X509Certificate</span>)
+        );
+
+        <span class="code-comment">// 4. Horodatage RFC 3161 (TSA externe reconnue ETSI)</span>
+        <span class="code-type">TimeStampToken</span> tst = tsaClient.<span class="code-fn">getTimestamp</span>(signatureBytes);
+
+        <span class="code-comment">// 5. Embedder la signature dans le PDF (PAdES-LTA)</span>
+        <span class="code-keyword">return</span> padesBuilder.<span class="code-fn">embedSignature</span>(pdfBytes, signedData, tst);
+    }
+}
+</div>
+    </div>
+  </div>
+
+  <!-- VAULT -->
+  <div class="section" id="vault">
+    <h2 class="section-title">HashiCorp Vault 1.17 — PKI dynamique et secrets</h2>
+    <p class="section-subtitle">Vault est le gestionnaire de secrets de référence. Il génère des certificats TLS à courte durée de vie, tourne les credentials de base de données, et injecte les secrets dans Kubernetes automatiquement.</p>
+
+    <div class="concept-box" style="background:rgba(248,113,113,0.06);border-color:var(--red)">
+      <div class="box-title" style="color:var(--red)">🔑 Pourquoi "pas de secrets dans le code"</div>
+      <p>Le pattern classique dangereux : mot de passe PostgreSQL dans <code style="font-family:monospace">application.yml</code> → committé dans Git → exposé à toute l'équipe et potentiellement en ligne.</p>
+      <p style="margin-top:8px">Avec Vault : les services démarrent sans secrets. Vault injecte les credentials au runtime, via le sidecar Vault Agent dans Kubernetes. Les credentials expirent après 24h et sont renouvelés automatiquement.</p>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">YAML + HCL</span>
+        <span class="code-file">vault-config — PKI + Dynamic Credentials</span>
+      </div>
+      <div class="code-body"><span class="code-comment"># Vault PKI : génère des certificats TLS à la demande</span>
+vault secrets enable pki
+vault secrets tune -max-lease-ttl=8760h pki  <span class="code-comment"># max 1 an pour la CA</span>
+
+<span class="code-comment"># Créer un rôle : les services peuvent demander des certs valables 24h</span>
+vault write pki/roles/complianceos-services
+  allowed_domains="complianceos.svc.cluster.local"
+  allow_subdomains=true
+  max_ttl="24h"
+
+<span class="code-comment"># Un service demande son cert (chaque démarrage = nouveau cert)</span>
+vault write pki/issue/complianceos-services
+  common_name="audit-service.complianceos.svc.cluster.local"
+
+<span class="code-comment">---</span>
+<span class="code-comment"># Dynamic credentials PostgreSQL — Vault génère user/password temporaires</span>
+vault secrets enable database
+vault write database/config/postgres
+  plugin_name=postgresql-database-plugin
+  connection_url="postgres://vault-admin:{{password}}@postgres:5432/complianceos"
+
+vault write database/roles/audit-service
+  db_name=postgres
+  creation_statements="CREATE ROLE {{name}} WITH LOGIN PASSWORD '{{password}}' VALID UNTIL '{{expiration}}'"
+  max_ttl="24h"
+
+<span class="code-comment"># Kubernetes : Vault Agent injecte les secrets dans les pods automatiquement</span>
+<span class="code-comment"># Annotation dans le Deployment K8s :</span>
+annotations:
+  vault.hashicorp.com/agent-inject: <span class="code-string">"true"</span>
+  vault.hashicorp.com/role: <span class="code-string">"audit-service"</span>
+  vault.hashicorp.com/agent-inject-secret-db: <span class="code-string">"database/creds/audit-service"</span>
+</div>
+    </div>
+  </div>
+
+  <!-- ISTIO -->
+  <div class="section" id="istio">
+    <h2 class="section-title">Istio — Service Mesh et Zero-Trust</h2>
+    <p class="section-subtitle">Istio est un service mesh qui s'intercale entre chaque pod Kubernetes. Il chiffre automatiquement tout le trafic réseau entre services (mTLS) sans modifier le code applicatif.</p>
+
+    <div class="concept-box" style="background:rgba(248,113,113,0.06);border-color:var(--red)">
+      <div class="box-title" style="color:var(--red)">🛡️ Zero-Trust Network — le principe</div>
+      <p>"Ne fais confiance à personne, vérifie tout." Dans un cluster Kubernetes sans Istio, si un attaquant prend le contrôle d'un pod, il peut contacter tous les autres pods librement. Avec Istio en mode strict mTLS : chaque service doit présenter un certificat valide pour pouvoir communiquer. Un pod compromis est isolé.</p>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- ========================= PHASE 5 ========================= -->
+  <div class="section" id="kafka">
+    <div class="section-phase-tag" style="background:rgba(167,139,250,0.08);border:1px solid var(--purple-border);color:var(--purple)">
+      Phase 5 · Event-Driven & Scalabilité · Mois 9–10
+    </div>
+    <h2 class="section-title">Kafka 3.8 KRaft — Event Streaming</h2>
+    <p class="section-subtitle">Kafka est la plateforme de streaming de messages la plus utilisée en production. Dans ComplianceOS, chaque changement d'état d'un audit publie un événement Kafka que tous les services intéressés consomment.</p>
+
+    <div class="concept-box" style="background:rgba(167,139,250,0.06);border-color:var(--purple)">
+      <div class="box-title" style="color:var(--purple)">📡 Event-Driven Architecture — Le pattern de fond</div>
+      <p>Sans Kafka : le service Audit appelle directement le service Notification, le service ML, le service Archivage. Couplage fort. Si la Notification est down, l'Audit échoue aussi.</p>
+      <p style="margin-top:8px">Avec Kafka : le service Audit publie <code style="font-family:monospace">audit.completed</code> et oublie. La Notification, le ML, l'Archivage sont abonnés et réagissent indépendamment. Si la Notification est down, elle lit les messages manquants quand elle redémarre. <strong>Couplage zéro.</strong></p>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">Java — Spring Kafka</span>
+        <span class="code-file">AuditEventPublisher.java + NotificationConsumer.java</span>
+      </div>
+      <div class="code-body"><span class="code-comment">// PRODUCTEUR : publie un événement quand un audit est complété</span>
+<span class="code-ann">@Service</span>
+<span class="code-keyword">public class</span> <span class="code-type">AuditEventPublisher</span> {
+
+    <span class="code-keyword">private final</span> <span class="code-type">KafkaTemplate</span>&lt;<span class="code-type">String</span>, <span class="code-type">AuditCompletedEvent</span>&gt; kafka;
+
+    <span class="code-keyword">public void</span> <span class="code-fn">publishAuditCompleted</span>(<span class="code-type">Audit</span> audit) {
+        <span class="code-keyword">var</span> event = <span class="code-keyword">new</span> <span class="code-type">AuditCompletedEvent</span>(
+            audit.id(), audit.tenantId(), audit.score(), <span class="code-type">Instant</span>.<span class="code-fn">now</span>()
+        );
+        <span class="code-comment">// clé = tenant_id → même tenant = même partition → ordre garanti</span>
+        kafka.<span class="code-fn">send</span>(<span class="code-string">"audit.completed"</span>, audit.tenantId(), event);
+    }
+}
+
+<span class="code-comment">// CONSOMMATEUR (service Notification) : réagit à l'événement</span>
+<span class="code-ann">@Component</span>
+<span class="code-keyword">public class</span> <span class="code-type">NotificationConsumer</span> {
+
+    <span class="code-ann">@KafkaListener</span>(topics = <span class="code-string">"audit.completed"</span>, groupId = <span class="code-string">"notification-service"</span>)
+    <span class="code-keyword">public void</span> <span class="code-fn">onAuditCompleted</span>(<span class="code-type">AuditCompletedEvent</span> event) {
+        <span class="code-comment">// Envoie SSE + email à tous les utilisateurs du tenant</span>
+        sseService.<span class="code-fn">notify</span>(event.tenantId(), <span class="code-string">"Audit terminé - Score: "</span> + event.score());
+        emailService.<span class="code-fn">sendAuditReport</span>(event);
+    }
+}
+
+<span class="code-comment">// Configuration producteur : idempotence = pas de doublons même si retry</span>
+spring.kafka.producer:
+  acks: all           <span class="code-comment"># attend confirmation de tous les replicas</span>
+  retries: 3
+  enable-idempotence: true
+</div>
+    </div>
+  </div>
+
+  <!-- QUARKUS -->
+  <div class="section" id="quarkus">
+    <h2 class="section-title">Quarkus 3.15 + GraalVM — Native Image</h2>
+    <p class="section-subtitle">Quarkus compile Java en binaire natif via GraalVM. Résultat : démarrage en 50ms au lieu de 5s, consommation mémoire de 30Mo au lieu de 300Mo. Idéal pour le service de notification à fort volume.</p>
+
+    <div class="tech-grid">
+      <div class="tech-card" style="border-top:3px solid var(--purple)">
+        <div class="tech-name">Spring Boot vs Quarkus</div>
+        <div class="tech-desc" style="margin-top:10px">Spring Boot : JVM classique, démarrage ~3-5s, ~300Mo RAM. Parfait pour la logique métier complexe. Quarkus Native : démarrage &lt;50ms, ~30Mo RAM. Parfait pour les microservices stateless à haute fréquence.</div>
+        <div class="tech-why" style="border-color:var(--purple)">Le service de notification reçoit des milliers d'events Kafka/minute. Son cold start (KEDA scale-up) doit être imperceptible. → Quarkus native.</div>
+      </div>
+      <div class="tech-card" style="border-top:3px solid var(--purple)">
+        <div class="tech-name">GraalVM Native Image</div>
+        <div class="tech-desc" style="margin-top:10px">GraalVM analyse le bytecode Java à la compilation et génère un binaire natif pour la plateforme cible (Linux AMD64). Tout ce qui n'est pas utilisé est éliminé (dead code elimination).</div>
+        <div class="tech-why" style="border-color:var(--purple)">Le binaire natif inclut tout ce dont l'application a besoin. Pas de JVM à démarrer. Exécution directe comme un programme C.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KEDA -->
+  <div class="section" id="keda">
+    <h2 class="section-title">KEDA — Autoscaling sur métriques Kafka</h2>
+    <p class="section-subtitle">KEDA (Kubernetes Event-Driven Autoscaler) scale automatiquement tes pods en fonction du lag Kafka. Quand la queue grossit → plus de pods. Quand elle est vide → 1 seul pod. Économies AWS directes.</p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">YAML — Kubernetes</span>
+        <span class="code-file">keda-scaledobject.yaml — Scale sur lag Kafka</span>
+      </div>
+      <div class="code-body">apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: ai-analysis-scaler
+spec:
+  scaleTargetRef:
+    name: ai-analysis-deployment
+  minReplicaCount: <span class="code-num">1</span>   <span class="code-comment"># toujours au moins 1 pod</span>
+  maxReplicaCount: <span class="code-num">10</span>  <span class="code-comment"># max 10 pods</span>
+  cooldownPeriod:  <span class="code-num">300</span> <span class="code-comment"># 5 min avant scale-down (évite oscillations)</span>
+  triggers:
+    - type: kafka
+      metadata:
+        bootstrapServers: kafka:9092
+        consumerGroup: ai-analysis-service
+        topic: documents.to.analyze
+        lagThreshold: <span class="code-string">"100"</span>   <span class="code-comment"># scale-up si lag > 100 messages</span>
+        activationLagThreshold: <span class="code-string">"10"</span>
+</div>
+    </div>
+
+    <div class="concept-box" style="background:rgba(167,139,250,0.06);border-color:var(--purple)">
+      <div class="box-title" style="color:var(--purple)">💰 Impact financier concret</div>
+      <p>Sans KEDA : 5 pods AI-Analysis fixes = 5 × 4 CPU × 8 Go = ~600€/mois sur AWS même la nuit quand la queue est vide.</p>
+      <p style="margin-top:8px">Avec KEDA : la nuit = 1 pod = 120€/mois. En pic = 10 pods = quelques heures/mois. <strong>Économie estimée : 70% du coût de calcul.</strong></p>
+    </div>
+  </div>
+
+  <!-- TIMESCALEDB -->
+  <div class="section" id="timescaledb">
+    <h2 class="section-title">TimescaleDB — Audit Trail immuable</h2>
+    <p class="section-subtitle">TimescaleDB est PostgreSQL avec des super-pouvoirs pour les données temporelles. Dans ComplianceOS, il stocke toutes les actions utilisateur de façon immuable, avec une rétention de 7 ans (DORA/NIS2).</p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">SQL — TimescaleDB</span>
+        <span class="code-file">audit_trail.sql — Table immuable + Hypertable</span>
+      </div>
+      <div class="code-body"><span class="code-comment">-- Table d'audit trail — append-only</span>
+<span class="code-keyword">CREATE TABLE</span> audit_trail (
+    event_id      <span class="code-type">UUID</span>        <span class="code-keyword">NOT NULL DEFAULT</span> gen_random_uuid(),
+    tenant_id     <span class="code-type">TEXT</span>        <span class="code-keyword">NOT NULL</span>,
+    user_id       <span class="code-type">UUID</span>        <span class="code-keyword">NOT NULL</span>,
+    action        <span class="code-type">TEXT</span>        <span class="code-keyword">NOT NULL</span>,  <span class="code-comment">-- CREATE / READ / UPDATE / DELETE / LOGIN</span>
+    resource_type <span class="code-type">TEXT</span>        <span class="code-keyword">NOT NULL</span>,
+    resource_id   <span class="code-type">UUID</span>,
+    old_value     <span class="code-type">JSONB</span>,                     <span class="code-comment">-- valeur avant modification</span>
+    new_value     <span class="code-type">JSONB</span>,                     <span class="code-comment">-- valeur après modification</span>
+    ip_address    <span class="code-type">INET</span>,
+    timestamp     <span class="code-type">TIMESTAMPTZ</span> <span class="code-keyword">NOT NULL</span>
+);
+
+<span class="code-comment">-- TimescaleDB hypertable : partitionne automatiquement par time</span>
+<span class="code-keyword">SELECT</span> <span class="code-fn">create_hypertable</span>(<span class="code-string">'audit_trail'</span>, <span class="code-string">'timestamp'</span>, chunk_time_interval => <span class="code-keyword">INTERVAL</span> <span class="code-string">'1 month'</span>);
+
+<span class="code-comment">-- Politique de rétention : 7 ans (exigence DORA/NIS2)</span>
+<span class="code-keyword">SELECT</span> <span class="code-fn">add_retention_policy</span>(<span class="code-string">'audit_trail'</span>, <span class="code-keyword">INTERVAL</span> <span class="code-string">'7 years'</span>);
+
+<span class="code-comment">-- Rôle append-only : ne peut pas DELETE ou UPDATE</span>
+<span class="code-keyword">CREATE ROLE</span> audit_writer;
+<span class="code-keyword">GRANT INSERT ON</span> audit_trail <span class="code-keyword">TO</span> audit_writer;
+<span class="code-comment">-- Pas de GRANT UPDATE, pas de GRANT DELETE</span>
+
+<span class="code-comment">-- Requête rapide sur 1 an (index hypertable)</span>
+<span class="code-keyword">SELECT</span> * <span class="code-keyword">FROM</span> audit_trail
+<span class="code-keyword">WHERE</span>  user_id = <span class="code-string">'uuid-here'</span>
+  <span class="code-keyword">AND</span>  timestamp > NOW() - <span class="code-keyword">INTERVAL</span> <span class="code-string">'1 year'</span>
+<span class="code-keyword">ORDER BY</span> timestamp <span class="code-keyword">DESC</span>;
+<span class="code-comment">-- < 2s grâce au partitionnement TimescaleDB</span>
+</div>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- ========================= PHASE 6 ========================= -->
+  <div class="section" id="terraform">
+    <div class="section-phase-tag" style="background:rgba(251,191,36,0.08);border:1px solid var(--yellow-border);color:var(--yellow)">
+      Phase 6 · Cloud, Observabilité & SaaS · Mois 11–12
+    </div>
+    <h2 class="section-title">Terraform CDK TypeScript — Infrastructure as Code</h2>
+    <p class="section-subtitle">Terraform CDK (Cloud Development Kit) permet d'écrire l'infrastructure AWS en TypeScript typé, puis de la convertir en Terraform HCL. Tu as la puissance de Terraform avec l'expressivité de TypeScript.</p>
+
+    <div class="concept-box" style="background:rgba(251,191,36,0.06);border-color:var(--yellow)">
+      <div class="box-title" style="color:var(--yellow)">☁️ Ce que Terraform CDK provisionne pour ComplianceOS</div>
+      <table class="styled-table" style="margin-top:12px">
+        <tr><th>Ressource AWS</th><th>Rôle</th><th>Config</th></tr>
+        <tr><td>EKS 1.30</td><td>Cluster Kubernetes managé</td><td>Karpenter autoscaling, nodes Spot pour dev</td></tr>
+        <tr><td>RDS PostgreSQL 17</td><td>Base de données principale</td><td>Multi-AZ, 35j backup, chiffrement KMS</td></tr>
+        <tr><td>S3</td><td>Stockage documents + archives</td><td>Versioning, SSE-KMS, Glacier après 1 an</td></tr>
+        <tr><td>Bedrock</td><td>Claude 3.5 Sonnet + Titan Embeddings</td><td>Endpoint VPC, données privées</td></tr>
+        <tr><td>CloudHSM</td><td>HSM certifié pour clés QES prod</td><td>Cluster 2 HSM (HA), PKCS#11</td></tr>
+        <tr><td>VPC</td><td>Réseau isolé</td><td>Subnets privés services, publics LB seulement</td></tr>
+      </table>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">TypeScript — Terraform CDK</span>
+        <span class="code-file">main.ts — Stack EKS + RDS</span>
+      </div>
+      <div class="code-body"><span class="code-keyword">import</span> { <span class="code-type">App</span>, <span class="code-type">TerraformStack</span> } <span class="code-keyword">from</span> <span class="code-string">'cdktf'</span>;
+<span class="code-keyword">import</span> { <span class="code-type">EksCluster</span>, <span class="code-type">DbInstance</span>, <span class="code-type">Vpc</span> } <span class="code-keyword">from</span> <span class="code-string">'@cdktf/provider-aws'</span>;
+
+<span class="code-keyword">class</span> <span class="code-type">ComplianceOSStack</span> <span class="code-keyword">extends</span> <span class="code-type">TerraformStack</span> {
+    <span class="code-keyword">constructor</span>(scope: App, env: <span class="code-string">'staging'</span> | <span class="code-string">'production'</span>) {
+        <span class="code-keyword">super</span>(scope, `complianceos-${env}`);
+
+        <span class="code-comment">// VPC isolé avec subnets privés et publics</span>
+        <span class="code-keyword">const</span> vpc = <span class="code-keyword">new</span> <span class="code-type">Vpc</span>(<span class="code-keyword">this</span>, <span class="code-string">'MainVpc'</span>, {
+            cidr: <span class="code-string">'10.0.0.0/16'</span>,
+            enableDnsSupport: <span class="code-keyword">true</span>,
+        });
+
+        <span class="code-comment">// EKS — mêmes paramètres staging et prod, valeurs différentes</span>
+        <span class="code-keyword">const</span> eks = <span class="code-keyword">new</span> <span class="code-type">EksCluster</span>(<span class="code-keyword">this</span>, <span class="code-string">'Cluster'</span>, {
+            name:    `complianceos-${env}`,
+            version: <span class="code-string">'1.30'</span>,
+            vpcConfig: { subnetIds: vpc.privateSubnetIds },
+        });
+
+        <span class="code-comment">// RDS PostgreSQL Multi-AZ (production uniquement)</span>
+        <span class="code-keyword">const</span> rds = <span class="code-keyword">new</span> <span class="code-type">DbInstance</span>(<span class="code-keyword">this</span>, <span class="code-string">'Postgres'</span>, {
+            engine:               <span class="code-string">'postgres'</span>,
+            engineVersion:        <span class="code-string">'17.0'</span>,
+            instanceClass:        env === <span class="code-string">'production'</span> ? <span class="code-string">'db.r6g.xlarge'</span> : <span class="code-string">'db.t3.medium'</span>,
+            multiAz:              env === <span class="code-string">'production'</span>,
+            backupRetentionPeriod: env === <span class="code-string">'production'</span> ? <span class="code-num">35</span> : <span class="code-num">7</span>,
+            storageEncrypted:     <span class="code-keyword">true</span>,
+        });
+    }
+}
+
+<span class="code-keyword">const</span> app = <span class="code-keyword">new</span> <span class="code-type">App</span>();
+<span class="code-keyword">new</span> <span class="code-type">ComplianceOSStack</span>(app, <span class="code-string">'staging'</span>);
+<span class="code-keyword">new</span> <span class="code-type">ComplianceOSStack</span>(app, <span class="code-string">'production'</span>);
+</div>
+    </div>
+  </div>
+
+  <!-- OTEL -->
+  <div class="section" id="otel">
+    <h2 class="section-title">OpenTelemetry + Grafana Stack — Observabilité bout en bout</h2>
+    <p class="section-subtitle">L'observabilité répond à "que se passe-t-il dans mon système ?" via 3 piliers : Traces (chemin d'une requête), Logs (événements horodatés), Metrics (mesures quantitatives).</p>
+
+    <div class="concept-box" style="background:rgba(251,191,36,0.06);border-color:var(--yellow)">
+      <div class="box-title" style="color:var(--yellow)">🔭 Les 3 piliers de l'observabilité</div>
+      <div class="def-list">
+        <div class="def-item">
+          <div class="def-term">Traces (Tempo)</div>
+          <div class="def-desc">Suivi d'une requête à travers tous les microservices. Un trace_id unique relie : Next.js → Spring Boot → Kafka → Python ML. Tu vois où les 3 secondes sont passées.</div>
+        </div>
+        <div class="def-item">
+          <div class="def-term">Logs (Loki)</div>
+          <div class="def-desc">Événements horodatés enrichis avec trace_id. Depuis une trace dans Tempo, tu cliques pour voir les logs associés. Plus de "chercher dans des logs sans contexte".</div>
+        </div>
+        <div class="def-item">
+          <div class="def-term">Metrics (Mimir)</div>
+          <div class="def-desc">Mesures quantitatives : latence p50/p95/p99, taux d'erreur, heap JVM, nombre d'audits créés. Alertes automatiques si error_rate &gt; 1%.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">Java — OpenTelemetry</span>
+        <span class="code-file">AuditService.java — Trace manuelle + métriques custom</span>
+      </div>
+      <div class="code-body"><span class="code-keyword">import</span> io.opentelemetry.api.trace.*;
+<span class="code-keyword">import</span> io.opentelemetry.api.metrics.*;
+
+<span class="code-ann">@Service</span>
+<span class="code-keyword">public class</span> <span class="code-type">AuditService</span> {
+
+    <span class="code-keyword">private final</span> <span class="code-type">Tracer</span>  tracer;
+    <span class="code-keyword">private final</span> <span class="code-type">Counter</span> auditCounter;  <span class="code-comment">// métrique Prometheus</span>
+
+    <span class="code-keyword">public</span> <span class="code-type">Audit</span> <span class="code-fn">createAudit</span>(<span class="code-type">CreateAuditRequest</span> req) {
+        <span class="code-comment">// Crée un span manuel avec attributs métier</span>
+        <span class="code-type">Span</span> span = tracer.<span class="code-fn">spanBuilder</span>(<span class="code-string">"audit.create"</span>)
+            .<span class="code-fn">setAttribute</span>(<span class="code-string">"tenant.id"</span>, req.tenantId())
+            .<span class="code-fn">setAttribute</span>(<span class="code-string">"audit.regulation"</span>, req.regulation())
+            .<span class="code-fn">startSpan</span>();
+
+        <span class="code-keyword">try</span> (<span class="code-keyword">var</span> scope = span.<span class="code-fn">makeCurrent</span>()) {
+            <span class="code-type">Audit</span> audit = auditRepo.<span class="code-fn">save</span>(req);
+
+            <span class="code-comment">// Incrémente le compteur — visible dans Grafana/Mimir</span>
+            auditCounter
+                .<span class="code-fn">withAttributes</span>(<span class="code-type">Attributes</span>.<span class="code-fn">of</span>(REGULATION_KEY, req.regulation()))
+                .<span class="code-fn">add</span>(<span class="code-num">1</span>);
+
+            <span class="code-keyword">return</span> audit;
+        } <span class="code-keyword">catch</span> (<span class="code-type">Exception</span> e) {
+            span.<span class="code-fn">recordException</span>(e);
+            span.<span class="code-fn">setStatus</span>(<span class="code-type">StatusCode</span>.ERROR);
+            <span class="code-keyword">throw</span> e;
+        } <span class="code-keyword">finally</span> {
+            span.<span class="code-fn">end</span>();  <span class="code-comment">// envoie automatiquement vers Grafana Tempo via OTLP</span>
+        }
+    }
+}
+</div>
+    </div>
+  </div>
+
+  <!-- CHAOS -->
+  <div class="section" id="chaos">
+    <h2 class="section-title">Chaos Engineering — Tester la résilience</h2>
+    <p class="section-subtitle">Le Chaos Engineering consiste à provoquer délibérément des pannes en production (ou staging) pour valider que le système s'en remet correctement. "Test before prod tests you."</p>
+
+    <div class="concept-box" style="background:rgba(251,191,36,0.06);border-color:var(--yellow)">
+      <div class="box-title" style="color:var(--yellow)">💥 Les 4 expériences Chaos Mesh dans ComplianceOS</div>
+      <div class="step-row"><div class="step-num" style="background:rgba(251,191,36,0.15);color:var(--yellow)">1</div><div class="step-content"><strong>PodChaos</strong> : tue un pod aléatoire du service Notification → Kubernetes doit le redémarrer et SSE doit se rétablir en &lt;2 min (cache Redis).</div></div>
+      <div class="step-row"><div class="step-num" style="background:rgba(251,191,36,0.15);color:var(--yellow)">2</div><div class="step-content"><strong>NetworkChaos</strong> : ajoute 200ms de latence réseau → le circuit breaker Resilience4j s'ouvre et le service répond avec un fallback en &lt;100ms.</div></div>
+      <div class="step-row"><div class="step-num" style="background:rgba(251,191,36,0.15);color:var(--yellow)">3</div><div class="step-content"><strong>IOChaos</strong> : simule un disque lent → les services avec retry exponentiels doivent absorber le problème.</div></div>
+      <div class="step-row"><div class="step-num" style="background:rgba(251,191,36,0.15);color:var(--yellow)">4</div><div class="step-content"><strong>DatabaseChaos</strong> : coupe la connexion à RDS → Temporal Workflow doit reprendre automatiquement à la reconnexion sans perte de données.</div></div>
+    </div>
+  </div>
+
+  <!-- NEXTJS -->
+  <div class="section" id="nextjs">
+    <h2 class="section-title">Next.js 15 — Dashboard Frontend</h2>
+    <p class="section-subtitle">Next.js 15 est le framework React full-stack de référence. L'App Router et les Server Components permettent un rendu initial rapide côté serveur et une interactivité totale côté client.</p>
+
+    <div class="concept-box" style="background:rgba(251,191,36,0.06);border-color:var(--yellow)">
+      <div class="box-title" style="color:var(--yellow)">⚡ Server Components vs Client Components</div>
+      <table class="styled-table" style="margin-top:12px">
+        <tr><th>Type</th><th>Où s'exécute ?</th><th>Accès à l'état ?</th><th>Quand l'utiliser ?</th></tr>
+        <tr><td>Server Component</td><td>Serveur Node.js</td><td>Non (useState, useEffect)</td><td>Fetch de données, rendu initial, SEO</td></tr>
+        <tr><td>Client Component</td><td>Navigateur</td><td>Oui</td><td>Interactions, formulaires, SSE temps réel</td></tr>
+      </table>
+      <p style="margin-top:10px">Dans ComplianceOS : le dashboard charge le score de risque en SSR (Server Component) → &lt;1.5s. Les notifications temps réel sont SSE dans un Client Component.</p>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">TypeScript — Next.js 15</span>
+        <span class="code-file">app/dashboard/page.tsx — Server + Client Components</span>
+      </div>
+      <div class="code-body"><span class="code-comment">// Server Component — s'exécute côté serveur, accès direct à l'API</span>
+<span class="code-keyword">export default async function</span> <span class="code-fn">DashboardPage</span>() {
+    <span class="code-comment">// Fetch côté serveur : pas de CORS, données fraîches</span>
+    <span class="code-keyword">const</span> [riskScore, audits] = <span class="code-keyword">await</span> <span class="code-type">Promise</span>.<span class="code-fn">all</span>([
+        <span class="code-fn">fetchRiskScore</span>(),
+        <span class="code-fn">fetchAudits</span>({ status: <span class="code-string">'IN_PROGRESS'</span> })
+    ]);
+
+    <span class="code-keyword">return</span> (
+        &lt;<span class="code-type">main</span>&gt;
+            &lt;<span class="code-type">RiskGauge</span> score={riskScore} /&gt;         <span class="code-comment">{/* Server Component */}</span>
+            &lt;<span class="code-type">AuditList</span> audits={audits} /&gt;           <span class="code-comment">{/* Server Component */}</span>
+            &lt;<span class="code-type">RealtimeNotifications</span> /&gt;               <span class="code-comment">{/* Client Component */}</span>
+        &lt;/<span class="code-type">main</span>&gt;
+    );
+}
+
+<span class="code-comment">---</span>
+<span class="code-comment">// Client Component — s'exécute dans le navigateur, abonné aux SSE</span>
+<span class="code-string">'use client'</span>;
+
+<span class="code-keyword">import</span> { useState, useEffect } <span class="code-keyword">from</span> <span class="code-string">'react'</span>;
+
+<span class="code-keyword">export function</span> <span class="code-fn">RealtimeNotifications</span>() {
+    <span class="code-keyword">const</span> [notifications, setNotifications] = <span class="code-fn">useState</span>([]);
+
+    <span class="code-fn">useEffect</span>(() => {
+        <span class="code-comment">// SSE : stream de notifications depuis le backend Quarkus</span>
+        <span class="code-keyword">const</span> es = <span class="code-keyword">new</span> <span class="code-type">EventSource</span>(<span class="code-string">'/api/notifications/stream'</span>);
+
+        es.<span class="code-fn">addEventListener</span>(<span class="code-string">'audit.completed'</span>, (e) => {
+            <span class="code-keyword">const</span> notif = <span class="code-type">JSON</span>.<span class="code-fn">parse</span>(e.data);
+            setNotifications(prev => [notif, ...prev.<span class="code-fn">slice</span>(<span class="code-num">0</span>, <span class="code-num">9</span>)]);
+        });
+
+        <span class="code-keyword">return</span> () => es.<span class="code-fn">close</span>();  <span class="code-comment">// cleanup</span>
+    }, []);
+
+    <span class="code-keyword">return</span> &lt;<span class="code-type">NotificationPanel</span> items={notifications} /&gt;;
+}
+</div>
+    </div>
+  </div>
+
+  <!-- STRIPE -->
+  <div class="section" id="stripe">
+    <h2 class="section-title">Stripe + Paddle — Monétisation SaaS</h2>
+    <p class="section-subtitle">Stripe gère les paiements, abonnements et facturation EU. Paddle gère les clients hors-EU (taxes locales automatiques). Ensemble, ils couvrent le monde entier.</p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">Java — Spring Boot + Stripe SDK</span>
+        <span class="code-file">StripeWebhookController.java — Activation automatique après paiement</span>
+      </div>
+      <div class="code-body"><span class="code-ann">@RestController</span>
+<span class="code-ann">@RequestMapping</span>(<span class="code-string">"/webhooks/stripe"</span>)
+<span class="code-keyword">public class</span> <span class="code-type">StripeWebhookController</span> {
+
+    <span class="code-ann">@PostMapping</span>
+    <span class="code-keyword">public</span> <span class="code-type">ResponseEntity</span>&lt;<span class="code-type">Void</span>&gt; <span class="code-fn">handleWebhook</span>(
+        <span class="code-ann">@RequestBody</span> <span class="code-type">String</span> payload,
+        <span class="code-ann">@RequestHeader</span>(<span class="code-string">"Stripe-Signature"</span>) <span class="code-type">String</span> sig
+    ) <span class="code-keyword">throws</span> <span class="code-type">Exception</span> {
+
+        <span class="code-comment">// Valider que le webhook vient bien de Stripe (HMAC SHA-256)</span>
+        <span class="code-type">Event</span> event = <span class="code-type">Webhook</span>.<span class="code-fn">constructEvent</span>(payload, sig, stripeSecret);
+
+        <span class="code-keyword">switch</span> (event.getType()) {
+
+            <span class="code-keyword">case</span> <span class="code-string">"checkout.session.completed"</span>:
+                <span class="code-comment">// Paiement réussi → activer l'abonnement immédiatement</span>
+                <span class="code-keyword">var</span> session = (Session) event.getDataObjectDeserializer().<span class="code-fn">getObject</span>().<span class="code-fn">get</span>();
+                subscriptionService.<span class="code-fn">activate</span>(session.getCustomerEmail(), session.getMetadata());
+                <span class="code-keyword">break</span>;
+
+            <span class="code-keyword">case</span> <span class="code-string">"invoice.payment_failed"</span>:
+                <span class="code-comment">// Paiement échoué → notifier + retry dans 3 jours</span>
+                billingService.<span class="code-fn">handlePaymentFailure</span>(event);
+                <span class="code-keyword">break</span>;
+
+            <span class="code-keyword">case</span> <span class="code-string">"customer.subscription.deleted"</span>:
+                <span class="code-comment">// Résiliation → passer en lecture seule 30 jours</span>
+                subscriptionService.<span class="code-fn">downgrade</span>(event);
+                <span class="code-keyword">break</span>;
+        }
+
+        <span class="code-keyword">return</span> <span class="code-type">ResponseEntity</span>.<span class="code-fn">ok</span>().<span class="code-fn">build</span>();
+    }
+}
+</div>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- RECAP -->
+  <div class="section" id="recap">
+    <div class="section-phase-tag" style="background:rgba(45,212,191,0.08);border:1px solid var(--teal-border);color:var(--teal)">
+      ⬡ Synthèse
+    </div>
+    <h2 class="section-title">Récapitulatif — Ce que tu maîtriseras dans 12 mois</h2>
+    <p class="section-subtitle">Vue condensée de ce que chaque phase t'apporte concrètement.</p>
+
+    <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:40px">
+      <div style="background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--blue);border-radius:8px;padding:18px 22px">
+        <div style="font-weight:700;font-size:13px;color:var(--blue);margin-bottom:8px">Phase 1 — Core Platform & Auth</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.7">Tu peux concevoir et déployer un backend Java enterprise multi-tenant avec authentification SSO FIDO2, API GraphQL paginée, gRPC inter-services, et un pipeline CI/CD GitOps. <span style="color:var(--text)">Résultat TJM : +200€/j</span></div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--orange);border-radius:8px;padding:18px 22px">
+        <div style="font-weight:700;font-size:13px;color:var(--orange);margin-bottom:8px">Phase 2 — Python ML & Intelligence</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.7">Tu intègres Python dans une architecture Java (gRPC). Tu entraînes et deploies un modèle XGBoost avec SHAP. Tu construis un agent LangChain qui analyse des documents réglementaires. <span style="color:var(--text)">Profil : Senior Java + ML = rare et bankable.</span></div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--green);border-radius:8px;padding:18px 22px">
+        <div style="font-weight:700;font-size:13px;color:var(--green);margin-bottom:8px">Phase 3 — AI Agents & Orchestration</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.7">Tu construis des agents Java robustes avec LangChain4j et Temporal.io. Tu maîtrises le RAG hybride sur corpus réglementaire. <span style="color:var(--text)">LangChain4j + Temporal = compétence ultra-rare en 2026.</span></div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--red);border-radius:8px;padding:18px 22px">
+        <div style="font-weight:700;font-size:13px;color:var(--red);margin-bottom:8px">Phase 4 — Signature & Cryptographie</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.7">Tu génères des signatures électroniques qualifiées eIDAS 2.0 (QES). Tu déploies une PKI dynamique avec Vault. Tu sécurises un cluster Kubernetes avec Istio mTLS. <span style="color:var(--text)">eIDAS 2.0 + HSM = expertise qui vaut 1200€/j.</span></div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--purple);border-radius:8px;padding:18px 22px">
+        <div style="font-weight:700;font-size:13px;color:var(--purple);margin-bottom:8px">Phase 5 — Event-Driven & Scalabilité</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.7">Tu conçois une architecture event-driven avec Kafka. Tu déploies des microservices Quarkus natifs. Tu configures KEDA pour l'autoscaling économique. Tu construis un audit trail TimescaleDB immuable. <span style="color:var(--text)">Scalabilité + économie cloud = valeur business mesurable.</span></div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--yellow);border-radius:8px;padding:18px 22px">
+        <div style="font-weight:700;font-size:13px;color:var(--yellow);margin-bottom:8px">Phase 6 — Cloud, Observabilité & SaaS</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.7">Tu provisions toute l'infra AWS avec Terraform CDK TypeScript. Tu instrumentes tes services avec OpenTelemetry. Tu valides la résilience avec Chaos Mesh. Tu livres un SaaS complet avec Next.js 15 + Stripe. <span style="color:var(--text)">Tu as un produit vendable.</span></div>
+      </div>
+    </div>
+
+    <div class="highlight-quote" style="background:rgba(74,222,128,0.04);border-color:var(--green);color:var(--muted)">
+      "Dans 12 mois, tu n'auras pas seulement appris 55 technologies. Tu auras construit un produit SaaS réel, de A à Z, sur un marché en croissance. Ce projet est ta preuve de compétence, ta carte de visite, et potentiellement ta première source de revenus passifs."
+    </div>
+
+    <div style="margin-top:32px;padding:24px;background:var(--surface);border:1px solid var(--border);border-radius:10px">
+      <div style="font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--faint);margin-bottom:16px">Progression TJM estimée</div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="color:var(--muted)">Avant le projet (Java solide)</span><span style="color:var(--faint);font-family:'JetBrains Mono',monospace">500–600€/j</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:42%;background:var(--faint)"></div></div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="color:var(--muted)">Après Phase 3 (IA + gRPC + AWS)</span><span style="color:var(--blue);font-family:'JetBrains Mono',monospace">800–950€/j</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:70%;background:var(--blue)"></div></div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="color:var(--muted)">Après Phase 6 (SaaS complet + eIDAS)</span><span style="color:var(--green);font-family:'JetBrains Mono',monospace">950–1200€/j</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:92%;background:var(--green)"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  </div><!-- END CONTENT -->
+</div><!-- END MAIN -->
+
+<script>
+// Sidebar active link on scroll
+const sections = document.querySelectorAll('.section[id]');
+const navLinks = document.querySelectorAll('.nav-item');
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === '#' + entry.target.id) {
+          link.classList.add('active');
+          // Scroll the sidebar to keep the active link visible
+          link.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        }
+      });
+    }
+  });
+}, { threshold: 0.3 });
+
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

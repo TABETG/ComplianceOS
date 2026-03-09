@@ -1,0 +1,90 @@
+version: "3.9"
+
+# ComplianceOS -- Stack de developpement local
+# Demarrer : docker compose up -d
+# Arreter  : docker compose down
+
+services:
+
+  postgres:
+    image: postgres:17-alpine
+    container_name: complianceos-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: complianceos
+      POSTGRES_USER: complianceos_app
+      POSTGRES_PASSWORD: dev_password_change_in_prod
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U complianceos_app -d complianceos"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - complianceos-net
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:25.0
+    container_name: complianceos-keycloak
+    restart: unless-stopped
+    command: start-dev --import-realm
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+      KC_DB_USERNAME: complianceos_app
+      KC_DB_PASSWORD: dev_password_change_in_prod
+      KC_HOSTNAME: localhost
+      KC_HOSTNAME_PORT: 8180
+      KC_HOSTNAME_STRICT: "false"
+      KC_HOSTNAME_STRICT_HTTPS: "false"
+      KC_HTTP_ENABLED: "true"
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    ports:
+      - "8180:8080"
+    volumes:
+      - ./keycloak/complianceos-realm.json:/opt/keycloak/data/import/complianceos-realm.json:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - complianceos-net
+
+  mailhog:
+    image: mailhog/mailhog:v1.0.1
+    container_name: complianceos-mailhog
+    restart: unless-stopped
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - complianceos-net
+
+  redis:
+    image: redis/redis-stack:7.4.0-v0
+    container_name: complianceos-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+      - "8001:8001"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - complianceos-net
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  complianceos-net:
+    driver: bridge
