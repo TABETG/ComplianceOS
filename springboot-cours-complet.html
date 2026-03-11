@@ -1,0 +1,2857 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spring Boot 3.4 — Cours Complet · ComplianceOS</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=JetBrains+Mono:wght@300;400;500;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap');
+
+  :root {
+    --bg: #0D0F12;
+    --bg2: #12151A;
+    --bg3: #181C23;
+    --bg4: #1E2330;
+    --border: #262C38;
+    --border2: #2E3545;
+    --text: #E8E3D8;
+    --muted: #7A8394;
+    --faint: #4A5160;
+    --green: #3DD68C;
+    --green-dark: #1A4A33;
+    --green-mid: #2A7A52;
+    --blue: #4A9EFF;
+    --blue-dark: #152A4A;
+    --orange: #FF8C42;
+    --orange-dark: #3A2010;
+    --purple: #A78BFA;
+    --purple-dark: #2A1A4A;
+    --red: #FF6B6B;
+    --red-dark: #3A1010;
+    --yellow: #FFD166;
+    --yellow-dark: #3A2A00;
+    --cyan: #06D6A0;
+    --serif: 'Playfair Display', Georgia, serif;
+    --mono: 'JetBrains Mono', 'Fira Code', monospace;
+    --sans: 'DM Sans', system-ui, sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    line-height: 1.7;
+    font-size: 15px;
+  }
+
+  /* ===== SIDEBAR ===== */
+  #sidebar {
+    position: fixed;
+    left: 0; top: 0; bottom: 0;
+    width: 260px;
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    z-index: 100;
+    padding: 0 0 40px;
+    transition: transform 0.3s;
+  }
+
+  #sidebar::-webkit-scrollbar { width: 4px; }
+  #sidebar::-webkit-scrollbar-track { background: transparent; }
+  #sidebar::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+  .sidebar-header {
+    padding: 24px 20px 16px;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: var(--bg2);
+    z-index: 1;
+  }
+
+  .sidebar-logo {
+    font-family: var(--serif);
+    font-size: 18px;
+    color: var(--text);
+    letter-spacing: -0.5px;
+  }
+
+  .sidebar-logo span { color: var(--green); }
+
+  .sidebar-sub {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 4px;
+    font-family: var(--mono);
+  }
+
+  .nav-section {
+    padding: 16px 0 4px;
+  }
+
+  .nav-section-title {
+    padding: 0 20px 8px;
+    font-size: 9px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--faint);
+    font-family: var(--mono);
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 20px;
+    cursor: pointer;
+    text-decoration: none;
+    color: var(--muted);
+    font-size: 12.5px;
+    transition: all 0.15s;
+    border-left: 2px solid transparent;
+  }
+
+  .nav-item:hover {
+    color: var(--text);
+    background: rgba(255,255,255,0.03);
+  }
+
+  .nav-item.active {
+    color: var(--green);
+    border-left-color: var(--green);
+    background: rgba(61, 214, 140, 0.05);
+  }
+
+  .nav-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .nav-badge {
+    margin-left: auto;
+    font-size: 9px;
+    padding: 1px 6px;
+    border-radius: 10px;
+    font-family: var(--mono);
+    font-weight: 500;
+  }
+
+  .badge-junior { background: rgba(61,214,140,0.15); color: var(--green); }
+  .badge-mid { background: rgba(74,158,255,0.15); color: var(--blue); }
+  .badge-advanced { background: rgba(167,139,250,0.15); color: var(--purple); }
+
+  /* ===== MAIN ===== */
+  #main {
+    margin-left: 260px;
+    min-height: 100vh;
+  }
+
+  /* ===== HERO ===== */
+  #hero {
+    background: linear-gradient(135deg, #0D0F12 0%, #12182A 40%, #0D1A18 100%);
+    padding: 80px 64px 72px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  #hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(61,214,140,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  #hero::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 100px;
+    width: 300px; height: 200px;
+    background: radial-gradient(circle, rgba(74,158,255,0.05) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(61,214,140,0.08);
+    border: 1px solid rgba(61,214,140,0.2);
+    border-radius: 4px;
+    padding: 4px 14px;
+    font-size: 10px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--green);
+    font-family: var(--mono);
+    margin-bottom: 24px;
+  }
+
+  .hero-title {
+    font-family: var(--serif);
+    font-size: clamp(40px, 5vw, 68px);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -2px;
+    color: var(--text);
+    margin-bottom: 16px;
+  }
+
+  .hero-title .accent { color: var(--green); }
+  .hero-title .dim { color: var(--muted); font-weight: 400; font-style: italic; }
+
+  .hero-desc {
+    font-size: 16px;
+    color: var(--muted);
+    max-width: 640px;
+    line-height: 1.8;
+    margin-bottom: 36px;
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 36px;
+    flex-wrap: wrap;
+  }
+
+  .hero-stat-v {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--green);
+    font-family: var(--serif);
+  }
+
+  .hero-stat-l {
+    font-size: 10px;
+    color: var(--faint);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-family: var(--mono);
+    margin-top: 2px;
+  }
+
+  /* ===== PROGRESS BAR ===== */
+  .progress-bar {
+    position: fixed;
+    top: 0; left: 260px; right: 0;
+    height: 2px;
+    background: var(--border);
+    z-index: 200;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--green), var(--blue));
+    width: 0%;
+    transition: width 0.1s;
+  }
+
+  /* ===== CONTENT ===== */
+  .content-section {
+    padding: 72px 64px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .content-section:last-child { border-bottom: none; }
+
+  /* ===== CHAPTER HEADER ===== */
+  .chapter-header {
+    margin-bottom: 48px;
+  }
+
+  .chapter-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--faint);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .chapter-title {
+    font-family: var(--serif);
+    font-size: clamp(32px, 4vw, 50px);
+    font-weight: 700;
+    letter-spacing: -1.5px;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+
+  .chapter-desc {
+    font-size: 15px;
+    color: var(--muted);
+    max-width: 680px;
+    line-height: 1.8;
+  }
+
+  .chapter-tags {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+
+  .chapter-tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 3px;
+    border: 1px solid;
+  }
+
+  /* ===== LEVEL SECTIONS ===== */
+  .level-block {
+    margin-bottom: 48px;
+  }
+
+  .level-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .level-pill {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 4px 14px;
+    border-radius: 20px;
+  }
+
+  .level-junior .level-pill { background: rgba(61,214,140,0.12); color: var(--green); border: 1px solid rgba(61,214,140,0.25); }
+  .level-mid .level-pill { background: rgba(74,158,255,0.12); color: var(--blue); border: 1px solid rgba(74,158,255,0.25); }
+  .level-advanced .level-pill { background: rgba(167,139,250,0.12); color: var(--purple); border: 1px solid rgba(167,139,250,0.25); }
+
+  .level-title {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+
+  /* ===== CONCEPT CARD ===== */
+  .concept {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+
+  .concept-head {
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .concept-head:hover { background: rgba(255,255,255,0.02); }
+
+  .concept-icon {
+    width: 32px; height: 32px;
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .concept-name {
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  .concept-desc {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .concept-body {
+    padding: 0 20px 20px;
+    border-top: 1px solid var(--border);
+  }
+
+  .concept-explain {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.8;
+    margin: 16px 0 12px;
+    padding: 12px 16px;
+    background: rgba(255,255,255,0.02);
+    border-left: 3px solid var(--border2);
+    border-radius: 0 4px 4px 0;
+  }
+
+  /* ===== CODE BLOCKS ===== */
+  .code-wrap {
+    background: #0A0C0F;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 16px 0;
+  }
+
+  .code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: var(--bg3);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .code-lang {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+
+  .code-filename {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .code-copy {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--faint);
+    background: none;
+    border: 1px solid var(--border);
+    padding: 2px 8px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .code-copy:hover { color: var(--green); border-color: var(--green); }
+
+  pre {
+    padding: 20px;
+    overflow-x: auto;
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.7;
+  }
+
+  pre::-webkit-scrollbar { height: 4px; }
+  pre::-webkit-scrollbar-track { background: transparent; }
+  pre::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+  /* Syntax highlighting */
+  .kw { color: #C792EA; } /* keywords */
+  .an { color: #FFCB6B; } /* annotations */
+  .cl { color: #82AAFF; } /* classes */
+  .st { color: #C3E88D; } /* strings */
+  .cm { color: #546E7A; font-style: italic; } /* comments */
+  .nm { color: #F78C6C; } /* numbers */
+  .mt { color: var(--green); } /* methods */
+  .tp { color: #89DDFF; } /* types/symbols */
+  .pl { color: var(--muted); } /* plain */
+
+  /* ===== INFO BOXES ===== */
+  .info-box {
+    border-radius: 6px;
+    padding: 14px 18px;
+    margin: 16px 0;
+    font-size: 13.5px;
+    line-height: 1.7;
+    display: flex;
+    gap: 12px;
+  }
+
+  .info-box-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+  .box-tip { background: rgba(61,214,140,0.06); border: 1px solid rgba(61,214,140,0.2); }
+  .box-tip .info-box-icon { color: var(--green); }
+  .box-warn { background: rgba(255,140,66,0.06); border: 1px solid rgba(255,140,66,0.2); }
+  .box-warn .info-box-icon { color: var(--orange); }
+  .box-danger { background: rgba(255,107,107,0.06); border: 1px solid rgba(255,107,107,0.2); }
+  .box-danger .info-box-icon { color: var(--red); }
+  .box-info { background: rgba(74,158,255,0.06); border: 1px solid rgba(74,158,255,0.2); }
+  .box-info .info-box-icon { color: var(--blue); }
+
+  /* ===== COMPARISON TABLE ===== */
+  .table-wrap {
+    overflow-x: auto;
+    margin: 20px 0;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  th {
+    background: var(--bg3);
+    padding: 10px 14px;
+    text-align: left;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+
+  td {
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    vertical-align: top;
+    line-height: 1.6;
+  }
+
+  tr:nth-child(even) td { background: rgba(255,255,255,0.01); }
+  tr:hover td { background: rgba(255,255,255,0.025); }
+
+  td code, th code {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--cyan);
+  }
+
+  td strong { color: var(--text); }
+
+  /* ===== DIAGRAM ===== */
+  .diagram {
+    background: #0A0C0F;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 28px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 2;
+    margin: 16px 0;
+    overflow-x: auto;
+  }
+
+  .diagram .d-green { color: var(--green); }
+  .diagram .d-blue { color: var(--blue); }
+  .diagram .d-orange { color: var(--orange); }
+  .diagram .d-purple { color: var(--purple); }
+  .diagram .d-yellow { color: var(--yellow); }
+  .diagram .d-arrow { color: var(--faint); }
+
+  /* ===== CHECKLIST ===== */
+  .checklist {
+    list-style: none;
+    margin: 12px 0;
+  }
+
+  .checklist li {
+    display: flex;
+    gap: 10px;
+    padding: 6px 0;
+    font-size: 13.5px;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .checklist li:last-child { border-bottom: none; }
+
+  .checklist li::before {
+    content: '✓';
+    color: var(--green);
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* ===== TABS ===== */
+  .tabs { margin: 16px 0; }
+
+  .tab-header {
+    display: flex;
+    gap: 2px;
+    background: var(--bg3);
+    padding: 4px;
+    border-radius: 6px;
+    margin-bottom: 0;
+    flex-wrap: wrap;
+  }
+
+  .tab-btn {
+    background: none;
+    border: none;
+    padding: 7px 16px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.15s;
+  }
+
+  .tab-btn.active {
+    background: var(--bg);
+    color: var(--text);
+  }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* ===== GRID CARDS ===== */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 16px 0; }
+
+  @media (max-width: 900px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  }
+
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px;
+  }
+
+  .card-title {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .card-body {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  /* ===== COMPLIANCE OS CALLOUT ===== */
+  .compliance-callout {
+    background: linear-gradient(135deg, rgba(61,214,140,0.05) 0%, rgba(74,158,255,0.05) 100%);
+    border: 1px solid rgba(61,214,140,0.2);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin: 24px 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .compliance-callout::before {
+    content: '⚡ ComplianceOS';
+    position: absolute;
+    top: 12px; right: 16px;
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--green);
+    opacity: 0.6;
+  }
+
+  .compliance-callout p {
+    font-size: 13.5px;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+
+  .compliance-callout strong { color: var(--green); }
+
+  /* ===== PITFALL ===== */
+  .pitfall {
+    background: rgba(255,107,107,0.04);
+    border: 1px solid rgba(255,107,107,0.2);
+    border-radius: 8px;
+    padding: 18px 20px;
+    margin: 16px 0;
+  }
+
+  .pitfall-title {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    color: var(--red);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .pitfall p { font-size: 13.5px; color: var(--muted); line-height: 1.7; }
+
+  /* ===== SCROLLING ===== */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 1024px) {
+    #sidebar { transform: translateX(-100%); }
+    #sidebar.open { transform: translateX(0); }
+    #main { margin-left: 0; }
+    .progress-bar { left: 0; }
+    .content-section { padding: 48px 28px; }
+    #hero { padding: 48px 28px; }
+  }
+
+  /* ===== MOBILE TOGGLE ===== */
+  #menu-toggle {
+    display: none;
+    position: fixed;
+    bottom: 24px; right: 24px;
+    z-index: 300;
+    background: var(--green);
+    color: var(--bg);
+    border: none;
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(61,214,140,0.3);
+  }
+
+  @media (max-width: 1024px) {
+    #menu-toggle { display: flex; align-items: center; justify-content: center; }
+  }
+
+  /* ===== DIVIDER ===== */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border2), transparent);
+    margin: 32px 0;
+  }
+
+  /* ===== INLINE CODE ===== */
+  code {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    background: rgba(255,255,255,0.05);
+    padding: 1px 6px;
+    border-radius: 3px;
+    color: var(--cyan);
+  }
+
+  h3 {
+    font-family: var(--serif);
+    font-size: 20px;
+    margin: 24px 0 12px;
+    letter-spacing: -0.3px;
+  }
+
+  h4 {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin: 20px 0 10px;
+  }
+
+  p { margin-bottom: 12px; color: var(--muted); font-size: 14px; }
+
+  strong { color: var(--text); }
+
+  a { color: var(--green); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">Compliance<span>OS</span></div>
+    <div class="sidebar-sub">Spring Boot 3.4 · Cours</div>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-title">Introduction</div>
+    <a href="#hero" class="nav-item active">
+      <div class="nav-dot" style="background:#3DD68C"></div>
+      Vue d'ensemble
+    </a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-title">Chapitre 01</div>
+    <a href="#ioc" class="nav-item">
+      <div class="nav-dot" style="background:#4A9EFF"></div>
+      IoC & DI
+    </a>
+    <a href="#ioc-junior" class="nav-item" style="padding-left:36px;font-size:11.5px">
+      <span style="color:var(--green);font-size:9px">●</span> Junior
+    </a>
+    <a href="#ioc-mid" class="nav-item" style="padding-left:36px;font-size:11.5px">
+      <span style="color:var(--blue);font-size:9px">●</span> Intermédiaire
+    </a>
+    <a href="#ioc-advanced" class="nav-item" style="padding-left:36px;font-size:11.5px">
+      <span style="color:var(--purple);font-size:9px">●</span> Avancé
+    </a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-title">Chapitre 02</div>
+    <a href="#aop" class="nav-item">
+      <div class="nav-dot" style="background:#FF8C42"></div>
+      AOP
+    </a>
+    <a href="#aop-junior" class="nav-item" style="padding-left:36px;font-size:11.5px">
+      <span style="color:var(--green);font-size:9px">●</span> Junior
+    </a>
+    <a href="#aop-mid" class="nav-item" style="padding-left:36px;font-size:11.5px">
+      <span style="color:var(--blue);font-size:9px">●</span> Intermédiaire
+    </a>
+    <a href="#aop-advanced" class="nav-item" style="padding-left:36px;font-size:11.5px">
+      <span style="color:var(--purple);font-size:9px">●</span> Avancé
+    </a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-title">Chapitre 03</div>
+    <a href="#transactional" class="nav-item">
+      <div class="nav-dot" style="background:#FF6B6B"></div>
+      @Transactional
+    </a>
+    <a href="#tx-junior" class="nav-item" style="padding-left:36px;font-size:11.5px">
+      <span style="color:var(--green);font-size:9px">●</span> Junior
+    </a>
+    <a href="#tx-mid" class="nav-item" style="padding-left:36px;font-size:11.5px">
+      <span style="color:var(--blue);font-size:9px">●</span> Intermédiaire
+    </a>
+    <a href="#tx-advanced" class="nav-item" style="padding-left:36px;font-size:11.5px">
+      <span style="color:var(--purple);font-size:9px">●</span> Avancé
+    </a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-title">Chapitre 04</div>
+    <a href="#jpa" class="nav-item">
+      <div class="nav-dot" style="background:#A78BFA"></div>
+      JPA / Hibernate
+    </a>
+    <a href="#jpa-junior" class="nav-item" style="padding-left:36px;font-size:11.5px">
+      <span style="color:var(--green);font-size:9px">●</span> Junior
+    </a>
+    <a href="#jpa-mid" class="nav-item" style="padding-left:36px;font-size:11.5px">
+      <span style="color:var(--blue);font-size:9px">●</span> Intermédiaire
+    </a>
+    <a href="#jpa-advanced" class="nav-item" style="padding-left:36px;font-size:11.5px">
+      <span style="color:var(--purple);font-size:9px">●</span> Avancé
+    </a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-title">Chapitre 05</div>
+    <a href="#graphql" class="nav-item">
+      <div class="nav-dot" style="background:#FFD166"></div>
+      GraphQL DGS
+    </a>
+    <a href="#gql-junior" class="nav-item" style="padding-left:36px;font-size:11.5px">
+      <span style="color:var(--green);font-size:9px">●</span> Junior
+    </a>
+    <a href="#gql-mid" class="nav-item" style="padding-left:36px;font-size:11.5px">
+      <span style="color:var(--blue);font-size:9px">●</span> Intermédiaire
+    </a>
+    <a href="#gql-advanced" class="nav-item" style="padding-left:36px;font-size:11.5px">
+      <span style="color:var(--purple);font-size:9px">●</span> Avancé
+    </a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-title">Référence</div>
+    <a href="#cheatsheet" class="nav-item">
+      <div class="nav-dot" style="background:#06D6A0"></div>
+      Cheat Sheet
+    </a>
+  </div>
+</nav>
+
+<!-- MOBILE TOGGLE -->
+<button id="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+
+<!-- MAIN -->
+<main id="main">
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-eyebrow">
+      <span style="width:6px;height:6px;border-radius:50%;background:var(--green)"></span>
+      ComplianceOS · Formation technique
+    </div>
+    <h1 class="hero-title">
+      Spring Boot <span class="accent">3.4</span><br>
+      <span class="dim">De Junior à Avancé</span>
+    </h1>
+    <p class="hero-desc">
+      Maîtrisez les 5 piliers de Spring Boot utilisés dans ComplianceOS : 
+      IoC/DI, AOP, @Transactional, JPA et GraphQL DGS Netflix.
+      Chaque concept est présenté avec exemples concrets tirés du projet réel.
+    </p>
+    <div class="hero-stats">
+      <div>
+        <div class="hero-stat-v">5</div>
+        <div class="hero-stat-l">chapitres</div>
+      </div>
+      <div>
+        <div class="hero-stat-v">3</div>
+        <div class="hero-stat-l">niveaux / chapitre</div>
+      </div>
+      <div>
+        <div class="hero-stat-v">40+</div>
+        <div class="hero-stat-l">exemples de code</div>
+      </div>
+      <div>
+        <div class="hero-stat-v">Java 24</div>
+        <div class="hero-stat-l">+ Spring Boot 3.4</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================ -->
+  <!--  CHAPITRE 01 : IoC & DI                                          -->
+  <!-- ================================================================ -->
+  <section id="ioc" class="content-section">
+    <div class="chapter-header">
+      <div class="chapter-num">Chapitre 01 / 05</div>
+      <h2 class="chapter-title" style="color:#4A9EFF">IoC &amp; Dependency Injection</h2>
+      <p class="chapter-desc">
+        L'Inversion of Control (IoC) est le cœur de Spring. Au lieu de créer vos objets avec <code>new</code>, 
+        vous déclarez vos dépendances et le container Spring les injecte. C'est ce qui rend le code testable, 
+        modulaire et maintenable.
+      </p>
+      <div class="chapter-tags">
+        <span class="chapter-tag" style="color:#4A9EFF;border-color:rgba(74,158,255,0.3)">@Component</span>
+        <span class="chapter-tag" style="color:#4A9EFF;border-color:rgba(74,158,255,0.3)">@Service</span>
+        <span class="chapter-tag" style="color:#4A9EFF;border-color:rgba(74,158,255,0.3)">@Repository</span>
+        <span class="chapter-tag" style="color:#4A9EFF;border-color:rgba(74,158,255,0.3)">@Configuration</span>
+        <span class="chapter-tag" style="color:#4A9EFF;border-color:rgba(74,158,255,0.3)">ApplicationContext</span>
+      </div>
+    </div>
+
+    <!-- JUNIOR -->
+    <div id="ioc-junior" class="level-block">
+      <div class="level-header level-junior">
+        <div class="level-pill">Junior</div>
+        <div class="level-title">Les bases — Beans et injection constructeur</div>
+      </div>
+
+      <p>Spring gère un <strong>container</strong> (ApplicationContext) qui contient tous vos objets (<strong>beans</strong>). 
+      Pour déclarer qu'un objet est un bean Spring, on utilise des annotations stéréotypes.</p>
+
+      <div class="diagram">
+        <div><span class="d-green">@Component</span> ──▶ Bean générique</div>
+        <div><span class="d-blue">@Service</span>    ──▶ Logique métier (alias sémantique)</div>
+        <div><span class="d-orange">@Repository</span> ──▶ Accès données (+ exception translation)</div>
+        <div><span class="d-purple">@Controller</span> ──▶ Couche HTTP REST/MVC</div>
+        <div><span class="d-yellow">@Configuration</span> ──▶ Classe de config + @Bean factory methods</div>
+      </div>
+
+      <div class="concept">
+        <div class="concept-head">
+          <div class="concept-icon" style="background:rgba(74,158,255,0.12)">🏗️</div>
+          <div>
+            <div class="concept-name">Injection par constructeur (recommandée)</div>
+            <div class="concept-desc">La façon moderne et testable d'injecter des dépendances</div>
+          </div>
+        </div>
+        <div class="concept-body">
+          <div class="concept-explain">
+            L'injection par constructeur est la <strong>méthode recommandée</strong> depuis Spring 4.3. 
+            Elle rend les dépendances explicites, permet l'immutabilité (<code>final</code>) et facilite les tests unitaires sans Spring.
+          </div>
+          <div class="code-wrap">
+            <div class="code-header">
+              <span class="code-lang">Java</span>
+              <span class="code-filename">AuditService.java</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+<pre><span class="an">@Service</span>
+<span class="kw">public class</span> <span class="cl">AuditService</span> {
+
+    <span class="cm">// final = immutable = thread-safe</span>
+    <span class="kw">private final</span> <span class="cl">AuditRepository</span> auditRepository;
+    <span class="kw">private final</span> <span class="cl">RiskScoringService</span> riskScoringService;
+    <span class="kw">private final</span> <span class="cl">NotificationService</span> notificationService;
+
+    <span class="cm">// Spring 3.4 : @Autowired implicite si 1 seul constructeur</span>
+    <span class="kw">public</span> <span class="mt">AuditService</span>(
+            <span class="cl">AuditRepository</span> auditRepository,
+            <span class="cl">RiskScoringService</span> riskScoringService,
+            <span class="cl">NotificationService</span> notificationService) {
+        <span class="kw">this</span>.auditRepository = auditRepository;
+        <span class="kw">this</span>.riskScoringService = riskScoringService;
+        <span class="kw">this</span>.notificationService = notificationService;
+    }
+
+    <span class="kw">public</span> <span class="cl">Audit</span> <span class="mt">createAudit</span>(<span class="cl">CreateAuditRequest</span> request) {
+        <span class="cl">Audit</span> audit = <span class="cl">Audit</span>.<span class="mt">builder</span>()
+                .<span class="mt">company</span>(request.<span class="mt">getCompany</span>())
+                .<span class="mt">regulation</span>(request.<span class="mt">getRegulation</span>())
+                .<span class="mt">status</span>(<span class="cl">AuditStatus</span>.DRAFT)
+                .<span class="mt">build</span>();
+        <span class="kw">return</span> auditRepository.<span class="mt">save</span>(audit);
+    }
+}</pre>
+          </div>
+
+          <div class="info-box box-tip">
+            <div class="info-box-icon">💡</div>
+            <div>Avec <strong>Lombok</strong>, vous pouvez remplacer ce constructeur par <code>@RequiredArgsConstructor</code> sur la classe. Spring Boot 3.4 + Lombok = 0 boilerplate.</div>
+          </div>
+
+          <div class="code-wrap">
+            <div class="code-header">
+              <span class="code-lang">Java</span>
+              <span class="code-filename">AuditService.java (avec Lombok)</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+<pre><span class="an">@Service</span>
+<span class="an">@RequiredArgsConstructor</span> <span class="cm">// Lombok génère le constructeur</span>
+<span class="an">@Slf4j</span>
+<span class="kw">public class</span> <span class="cl">AuditService</span> {
+
+    <span class="kw">private final</span> <span class="cl">AuditRepository</span> auditRepository;
+    <span class="kw">private final</span> <span class="cl">RiskScoringService</span> riskScoringService;
+
+    <span class="kw">public</span> <span class="cl">List</span>&lt;<span class="cl">Audit</span>&gt; <span class="mt">findByTenantId</span>(<span class="cl">UUID</span> tenantId) {
+        log.<span class="mt">info</span>(<span class="st">"Fetching audits for tenant: {}"</span>, tenantId);
+        <span class="kw">return</span> auditRepository.<span class="mt">findByTenantId</span>(tenantId);
+    }
+}</pre>
+          </div>
+
+          <div class="pitfall">
+            <div class="pitfall-title">⚠️ À éviter — Injection par champ (@Autowired sur field)</div>
+            <p>Ne faites PAS <code>@Autowired private AuditRepository repo;</code> sur un champ. C'est plus difficile à tester (pas de moyen de l'injecter sans Spring), crée des dépendances cachées, et ne permet pas l'immutabilité.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="concept">
+        <div class="concept-head">
+          <div class="concept-icon" style="background:rgba(74,158,255,0.12)">⚙️</div>
+          <div>
+            <div class="concept-name">@Configuration + @Bean</div>
+            <div class="concept-desc">Déclarer des beans manuellement pour les classes tierces</div>
+          </div>
+        </div>
+        <div class="concept-body">
+          <div class="concept-explain">
+            Quand vous ne pouvez pas annoter une classe (librairie tierce, config complexe), 
+            vous créez une <code>@Configuration</code> avec des méthodes <code>@Bean</code>.
+          </div>
+          <div class="code-wrap">
+            <div class="code-header">
+              <span class="code-lang">Java</span>
+              <span class="code-filename">SecurityConfig.java</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+<pre><span class="an">@Configuration</span>
+<span class="kw">public class</span> <span class="cl">SecurityConfig</span> {
+
+    <span class="an">@Bean</span>
+    <span class="kw">public</span> <span class="cl">PasswordEncoder</span> <span class="mt">passwordEncoder</span>() {
+        <span class="kw">return new</span> <span class="cl">BCryptPasswordEncoder</span>(<span class="nm">12</span>);
+    }
+
+    <span class="an">@Bean</span>
+    <span class="kw">public</span> <span class="cl">ObjectMapper</span> <span class="mt">objectMapper</span>() {
+        <span class="kw">return new</span> <span class="cl">ObjectMapper</span>()
+                .<span class="mt">registerModule</span>(<span class="kw">new</span> <span class="cl">JavaTimeModule</span>())
+                .<span class="mt">disable</span>(<span class="cl">SerializationFeature</span>.WRITE_DATES_AS_TIMESTAMPS);
+    }
+}</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INTERMEDIAIRE -->
+    <div id="ioc-mid" class="level-block">
+      <div class="level-header level-mid">
+        <div class="level-pill">Intermédiaire</div>
+        <div class="level-title">@Qualifier, @Primary, @Profile, @Conditional</div>
+      </div>
+
+      <div class="concept">
+        <div class="concept-head">
+          <div class="concept-icon" style="background:rgba(74,158,255,0.12)">🎯</div>
+          <div>
+            <div class="concept-name">@Primary & @Qualifier — Résoudre l'ambiguïté</div>
+            <div class="concept-desc">Quand plusieurs beans implémentent la même interface</div>
+          </div>
+        </div>
+        <div class="concept-body">
+          <div class="concept-explain">
+            Si Spring trouve plusieurs beans du même type, il lève une <code>NoUniqueBeanDefinitionException</code>. 
+            <code>@Primary</code> désigne le bean par défaut. <code>@Qualifier</code> spécifie lequel injecter.
+          </div>
+          <div class="code-wrap">
+            <div class="code-header">
+              <span class="code-lang">Java</span>
+              <span class="code-filename">StorageConfig.java — ComplianceOS</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+<pre><span class="cm">// Interface commune</span>
+<span class="kw">public interface</span> <span class="cl">DocumentStorage</span> {
+    <span class="cl">String</span> <span class="mt">store</span>(<span class="cl">byte</span>[] content, <span class="cl">String</span> filename);
+}
+
+<span class="cm">// Implémentation S3 (défaut en prod)</span>
+<span class="an">@Service</span>
+<span class="an">@Primary</span>
+<span class="kw">public class</span> <span class="cl">S3DocumentStorage</span> <span class="kw">implements</span> <span class="cl">DocumentStorage</span> { ... }
+
+<span class="cm">// Implémentation locale (dev/test)</span>
+<span class="an">@Service</span>
+<span class="an">@Qualifier</span>(<span class="st">"local"</span>)
+<span class="kw">public class</span> <span class="cl">LocalDocumentStorage</span> <span class="kw">implements</span> <span class="cl">DocumentStorage</span> { ... }
+
+<span class="cm">// Utilisation — inject S3 par défaut</span>
+<span class="an">@Service</span>
+<span class="an">@RequiredArgsConstructor</span>
+<span class="kw">public class</span> <span class="cl">ReportService</span> {
+    <span class="kw">private final</span> <span class="cl">DocumentStorage</span> storage; <span class="cm">// S3 injecté (@Primary)</span>
+}
+
+<span class="cm">// Inject explicitement le stockage local</span>
+<span class="an">@Service</span>
+<span class="kw">public class</span> <span class="cl">AuditPreviewService</span> {
+    <span class="kw">private final</span> <span class="cl">DocumentStorage</span> storage;
+
+    <span class="kw">public</span> <span class="mt">AuditPreviewService</span>(<span class="an">@Qualifier</span>(<span class="st">"local"</span>) <span class="cl">DocumentStorage</span> storage) {
+        <span class="kw">this</span>.storage = storage;
+    }
+}</pre>
+          </div>
+
+          <h4>@Profile — beans selon l'environnement</h4>
+          <div class="code-wrap">
+            <div class="code-header">
+              <span class="code-lang">Java</span>
+              <span class="code-filename">HSMConfig.java</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+<pre><span class="an">@Configuration</span>
+<span class="kw">public class</span> <span class="cl">HSMConfig</span> {
+
+    <span class="an">@Bean</span>
+    <span class="an">@Profile</span>(<span class="st">"!prod"</span>) <span class="cm">// SoftHSM pour dev/staging</span>
+    <span class="kw">public</span> <span class="cl">SignatureProvider</span> <span class="mt">softHSMProvider</span>() {
+        <span class="kw">return new</span> <span class="cl">SoftHSMSignatureProvider</span>();
+    }
+
+    <span class="an">@Bean</span>
+    <span class="an">@Profile</span>(<span class="st">"prod"</span>) <span class="cm">// AWS CloudHSM en production</span>
+    <span class="kw">public</span> <span class="cl">SignatureProvider</span> <span class="mt">cloudHSMProvider</span>() {
+        <span class="kw">return new</span> <span class="cl">CloudHSMSignatureProvider</span>();
+    }
+}
+
+<span class="cm">// application-prod.yml → spring.profiles.active=prod</span>
+<span class="cm">// application-dev.yml  → spring.profiles.active=dev</span></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="concept">
+        <div class="concept-head">
+          <div class="concept-icon" style="background:rgba(74,158,255,0.12)">🔧</div>
+          <div>
+            <div class="concept-name">@ConditionalOnProperty — Config conditionnelle</div>
+            <div class="concept-desc">Activer un bean uniquement si une propriété est définie</div>
+          </div>
+        </div>
+        <div class="concept-body">
+          <div class="code-wrap">
+            <div class="code-header">
+              <span class="code-lang">Java</span>
+              <span class="code-filename">FeatureFlagConfig.java</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+<pre><span class="an">@Configuration</span>
+<span class="kw">public class</span> <span class="cl">FeatureFlagConfig</span> {
+
+    <span class="cm">// Bean actif seulement si complianceos.ai.enabled=true</span>
+    <span class="an">@Bean</span>
+    <span class="an">@ConditionalOnProperty</span>(name = <span class="st">"complianceos.ai.enabled"</span>, havingValue = <span class="st">"true"</span>)
+    <span class="kw">public</span> <span class="cl">AIAnalysisService</span> <span class="mt">aiAnalysisService</span>(<span class="cl">BedrockClient</span> bedrockClient) {
+        <span class="kw">return new</span> <span class="cl">BedrockAIAnalysisService</span>(bedrockClient);
+    }
+
+    <span class="cm">// Fallback : analyse basique sans IA</span>
+    <span class="an">@Bean</span>
+    <span class="an">@ConditionalOnMissingBean</span>(<span class="cl">AIAnalysisService</span>.<span class="kw">class</span>)
+    <span class="kw">public</span> <span class="cl">AIAnalysisService</span> <span class="mt">basicAnalysisService</span>() {
+        <span class="kw">return new</span> <span class="cl">RuleBasedAnalysisService</span>();
+    }
+}</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADVANCED -->
+    <div id="ioc-advanced" class="level-block">
+      <div class="level-header level-advanced">
+        <div class="level-pill">Avancé</div>
+        <div class="level-title">BeanPostProcessor, BeanFactoryPostProcessor, Scopes</div>
+      </div>
+
+      <div class="concept">
+        <div class="concept-head">
+          <div class="concept-icon" style="background:rgba(167,139,250,0.12)">🔬</div>
+          <div>
+            <div class="concept-name">BeanPostProcessor — Intercepter la création des beans</div>
+            <div class="concept-desc">Hook sur le cycle de vie des beans avant/après initialisation</div>
+          </div>
+        </div>
+        <div class="concept-body">
+          <div class="concept-explain">
+            Un <code>BeanPostProcessor</code> s'exécute <strong>pour chaque bean</strong> après que Spring l'a instancié. 
+            C'est ainsi que Spring implémente <code>@Autowired</code>, AOP, <code>@Transactional</code> etc. en interne.
+          </div>
+          <div class="code-wrap">
+            <div class="code-header">
+              <span class="code-lang">Java</span>
+              <span class="code-filename">TenantValidationPostProcessor.java</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+<pre><span class="an">@Component</span>
+<span class="kw">public class</span> <span class="cl">TenantValidationPostProcessor</span> <span class="kw">implements</span> <span class="cl">BeanPostProcessor</span> {
+
+    <span class="cm">/**
+     * Appelé AVANT l'initialisation (@PostConstruct, afterPropertiesSet)
+     * Retourne le bean (modifié ou proxy) ou null = skip
+     */</span>
+    <span class="an">@Override</span>
+    <span class="kw">public</span> <span class="cl">Object</span> <span class="mt">postProcessBeforeInitialization</span>(<span class="cl">Object</span> bean, <span class="cl">String</span> beanName) {
+        <span class="kw">if</span> (bean <span class="kw">instanceof</span> <span class="cl">TenantAware</span> tenantAware) {
+            tenantAware.<span class="mt">validateTenantConfig</span>();
+        }
+        <span class="kw">return</span> bean; <span class="cm">// toujours retourner le bean !</span>
+    }
+
+    <span class="cm">/**
+     * Appelé APRÈS l'initialisation — idéal pour créer des proxies
+     */</span>
+    <span class="an">@Override</span>
+    <span class="kw">public</span> <span class="cl">Object</span> <span class="mt">postProcessAfterInitialization</span>(<span class="cl">Object</span> bean, <span class="cl">String</span> beanName) {
+        <span class="cm">// Wrapper dans un proxy de monitoring</span>
+        <span class="kw">if</span> (bean.<span class="mt">getClass</span>().<span class="mt">isAnnotationPresent</span>(<span class="cl">Monitored</span>.<span class="kw">class</span>)) {
+            <span class="kw">return</span> <span class="cl">MonitoringProxy</span>.<span class="mt">wrap</span>(bean);
+        }
+        <span class="kw">return</span> bean;
+    }
+}</pre>
+          </div>
+
+          <h4>Cycle de vie complet d'un Bean</h4>
+          <div class="diagram">
+            <div><span class="d-arrow">1.</span> <span class="d-green">Instanciation</span>  ──▶ Spring appelle le constructeur</div>
+            <div><span class="d-arrow">2.</span> <span class="d-blue">Injection DI</span>     ──▶ Constructeur / Setter / Field injection</div>
+            <div><span class="d-arrow">3.</span> <span class="d-orange">BeanPostProcessor</span> ──▶ postProcessBeforeInitialization()</div>
+            <div><span class="d-arrow">4.</span> <span class="d-yellow">@PostConstruct</span>   ──▶ Méthode d'init (vérifications, warmup)</div>
+            <div><span class="d-arrow">5.</span> <span class="d-purple">afterPropertiesSet()</span> ──▶ InitializingBean (optionnel)</div>
+            <div><span class="d-arrow">6.</span> <span class="d-orange">BeanPostProcessor</span> ──▶ postProcessAfterInitialization()</div>
+            <div><span class="d-arrow">7.</span> <span class="d-green">Bean prêt</span>        ──▶ Utilisable dans l'application</div>
+            <div><span class="d-arrow">8.</span> <span class="d-blue">@PreDestroy</span>      ──▶ Nettoyage à la fermeture</div>
+          </div>
+
+          <div class="code-wrap">
+            <div class="code-header">
+              <span class="code-lang">Java</span>
+              <span class="code-filename">KafkaProducerService.java — @PostConstruct / @PreDestroy</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+<pre><span class="an">@Service</span>
+<span class="an">@RequiredArgsConstructor</span>
+<span class="an">@Slf4j</span>
+<span class="kw">public class</span> <span class="cl">KafkaProducerService</span> {
+
+    <span class="kw">private final</span> <span class="cl">KafkaTemplate</span>&lt;<span class="cl">String</span>, <span class="cl">AuditEvent</span>&gt; kafkaTemplate;
+    <span class="kw">private final</span> <span class="cl">SchemaRegistryClient</span> schemaRegistry;
+
+    <span class="an">@PostConstruct</span>
+    <span class="kw">public void</span> <span class="mt">init</span>() {
+        <span class="cm">// Warmup : vérifier la connexion Kafka au démarrage</span>
+        log.<span class="mt">info</span>(<span class="st">"KafkaProducerService initialized — verifying connectivity..."</span>);
+        schemaRegistry.<span class="mt">verifyConnection</span>();
+    }
+
+    <span class="an">@PreDestroy</span>
+    <span class="kw">public void</span> <span class="mt">cleanup</span>() {
+        <span class="cm">// Flush les messages en attente avant shutdown</span>
+        kafkaTemplate.<span class="mt">flush</span>();
+        log.<span class="mt">info</span>(<span class="st">"KafkaProducerService : all messages flushed"</span>);
+    }
+}</pre>
+          </div>
+
+          <h4>Scopes des beans</h4>
+          <div class="table-wrap">
+            <table>
+              <tr>
+                <th>Scope</th>
+                <th>Comportement</th>
+                <th>Usage ComplianceOS</th>
+              </tr>
+              <tr>
+                <td><code>singleton</code></td>
+                <td><strong>Par défaut.</strong> Une seule instance partagée dans tout le contexte</td>
+                <td>AuditService, RiskScoringService, tous les services</td>
+              </tr>
+              <tr>
+                <td><code>prototype</code></td>
+                <td>Nouvelle instance à chaque injection / getBean()</td>
+                <td>LangChain4j Agent (mémoire isolée par requête)</td>
+              </tr>
+              <tr>
+                <td><code>request</code></td>
+                <td>Une instance par requête HTTP (web only)</td>
+                <td>TenantContext (tenant courant de la requête)</td>
+              </tr>
+              <tr>
+                <td><code>session</code></td>
+                <td>Une instance par session HTTP</td>
+                <td>UserPreferenceHolder</td>
+              </tr>
+            </table>
+          </div>
+
+          <div class="compliance-callout">
+            <p>Dans ComplianceOS, le <strong>TenantContext</strong> est un bean <code>@RequestScope</code> qui stocke le <code>tenantId</code> extrait du JWT pour chaque requête. Il est injecté dans tous les services qui font des requêtes PostgreSQL avec Row Level Security.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================ -->
+  <!--  CHAPITRE 02 : AOP                                               -->
+  <!-- ================================================================ -->
+  <section id="aop" class="content-section">
+    <div class="chapter-header">
+      <div class="chapter-num">Chapitre 02 / 05</div>
+      <h2 class="chapter-title" style="color:#FF8C42">AOP — Aspect-Oriented Programming</h2>
+      <p class="chapter-desc">
+        L'AOP permet de centraliser des comportements transverses (logging, sécurité, performance, audit) 
+        sans polluer votre logique métier. Spring AOP utilise des <strong>proxies dynamiques</strong> pour intercepter les appels.
+      </p>
+      <div class="chapter-tags">
+        <span class="chapter-tag" style="color:#FF8C42;border-color:rgba(255,140,66,0.3)">@Aspect</span>
+        <span class="chapter-tag" style="color:#FF8C42;border-color:rgba(255,140,66,0.3)">@Before / @After</span>
+        <span class="chapter-tag" style="color:#FF8C42;border-color:rgba(255,140,66,0.3)">@Around</span>
+        <span class="chapter-tag" style="color:#FF8C42;border-color:rgba(255,140,66,0.3)">Pointcut expressions</span>
+        <span class="chapter-tag" style="color:#FF8C42;border-color:rgba(255,140,66,0.3)">Custom annotations</span>
+      </div>
+    </div>
+
+    <!-- JUNIOR -->
+    <div id="aop-junior" class="level-block">
+      <div class="level-header level-junior">
+        <div class="level-pill">Junior</div>
+        <div class="level-title">Concepts AOP — Aspect, Advice, Pointcut, JoinPoint</div>
+      </div>
+
+      <div class="diagram">
+        <div><span class="d-green">Aspect</span>   ──▶ La classe qui contient les comportements transverses</div>
+        <div><span class="d-blue">Advice</span>   ──▶ Le code qui s'exécute (@Before, @After, @Around...)</div>
+        <div><span class="d-orange">Pointcut</span> ──▶ L'expression qui sélectionne où appliquer l'aspect</div>
+        <div><span class="d-yellow">JoinPoint</span> ──▶ Le point d'exécution (appel de méthode + args + target)</div>
+        <div><span class="d-purple">Weaving</span>  ──▶ Comment Spring applique l'aspect (proxy à l'exécution)</div>
+      </div>
+
+      <div class="concept">
+        <div class="concept-head">
+          <div class="concept-icon" style="background:rgba(255,140,66,0.12)">📝</div>
+          <div>
+            <div class="concept-name">Premier Aspect — Logging automatique</div>
+            <div class="concept-desc">Loguer l'entrée et la sortie de toutes les méthodes de service</div>
+          </div>
+        </div>
+        <div class="concept-body">
+          <div class="code-wrap">
+            <div class="code-header">
+              <span class="code-lang">Java</span>
+              <span class="code-filename">LoggingAspect.java</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+<pre><span class="an">@Aspect</span>
+<span class="an">@Component</span>
+<span class="an">@Slf4j</span>
+<span class="kw">public class</span> <span class="cl">LoggingAspect</span> {
+
+    <span class="cm">/**
+     * Pointcut : toutes les méthodes publiques des classes @Service
+     * execution([modificateur] [type-retour] [classe].[méthode]([args]))
+     */</span>
+    <span class="an">@Pointcut</span>(<span class="st">"within(@org.springframework.stereotype.Service *)"</span>)
+    <span class="kw">public void</span> <span class="mt">serviceLayer</span>() {}
+
+    <span class="an">@Before</span>(<span class="st">"serviceLayer()"</span>)
+    <span class="kw">public void</span> <span class="mt">logBefore</span>(<span class="cl">JoinPoint</span> joinPoint) {
+        log.<span class="mt">debug</span>(<span class="st">"→ {}.{}({})"</span>,
+                joinPoint.<span class="mt">getTarget</span>().<span class="mt">getClass</span>().<span class="mt">getSimpleName</span>(),
+                joinPoint.<span class="mt">getSignature</span>().<span class="mt">getName</span>(),
+                <span class="cl">Arrays</span>.<span class="mt">toString</span>(joinPoint.<span class="mt">getArgs</span>()));
+    }
+
+    <span class="an">@AfterReturning</span>(pointcut = <span class="st">"serviceLayer()"</span>, returning = <span class="st">"result"</span>)
+    <span class="kw">public void</span> <span class="mt">logAfter</span>(<span class="cl">JoinPoint</span> joinPoint, <span class="cl">Object</span> result) {
+        log.<span class="mt">debug</span>(<span class="st">"← {}.{} returned: {}"</span>,
+                joinPoint.<span class="mt">getTarget</span>().<span class="mt">getClass</span>().<span class="mt">getSimpleName</span>(),
+                joinPoint.<span class="mt">getSignature</span>().<span class="mt">getName</span>(),
+                result);
+    }
+
+    <span class="an">@AfterThrowing</span>(pointcut = <span class="st">"serviceLayer()"</span>, throwing = <span class="st">"ex"</span>)
+    <span class="kw">public void</span> <span class="mt">logException</span>(<span class="cl">JoinPoint</span> joinPoint, <span class="cl">Exception</span> ex) {
+        log.<span class="mt">error</span>(<span class="st">"✗ {}.{} threw: {}"</span>,
+                joinPoint.<span class="mt">getTarget</span>().<span class="mt">getClass</span>().<span class="mt">getSimpleName</span>(),
+                joinPoint.<span class="mt">getSignature</span>().<span class="mt">getName</span>(),
+                ex.<span class="mt">getMessage</span>());
+    }
+}</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INTERMEDIAIRE -->
+    <div id="aop-mid" class="level-block">
+      <div class="level-header level-mid">
+        <div class="level-pill">Intermédiaire</div>
+        <div class="level-title">@Around — Mesure de performance avec OpenTelemetry</div>
+      </div>
+
+      <div class="concept">
+        <div class="concept-head">
+          <div class="concept-icon" style="background:rgba(255,140,66,0.12)">⏱️</div>
+          <div>
+            <div class="concept-name">@Around — Contrôle total du flux d'exécution</div>
+            <div class="concept-desc">L'advice le plus puissant : peut modifier les args, le résultat, ou bloquer l'appel</div>
+          </div>
+        </div>
+        <div class="concept-body">
+          <div class="concept-explain">
+            <code>@Around</code> enveloppe complètement la méthode. Vous devez appeler <code>proceedingJoinPoint.proceed()</code> 
+            pour exécuter la méthode originale. C'est la base de <code>@Transactional</code> et <code>@Cacheable</code>.
+          </div>
+          <div class="code-wrap">
+            <div class="code-header">
+              <span class="code-lang">Java</span>
+              <span class="code-filename">PerformanceAspect.java — ComplianceOS</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+<pre><span class="an">@Aspect</span>
+<span class="an">@Component</span>
+<span class="an">@RequiredArgsConstructor</span>
+<span class="kw">public class</span> <span class="cl">PerformanceAspect</span> {
+
+    <span class="kw">private final</span> <span class="cl">MeterRegistry</span> meterRegistry; <span class="cm">// Micrometer → Grafana Mimir</span>
+
+    <span class="an">@Around</span>(<span class="st">"@annotation(com.complianceos.annotation.Monitored)"</span>)
+    <span class="kw">public</span> <span class="cl">Object</span> <span class="mt">measurePerformance</span>(<span class="cl">ProceedingJoinPoint</span> pjp) <span class="kw">throws</span> <span class="cl">Throwable</span> {
+        <span class="cl">String</span> className  = pjp.<span class="mt">getTarget</span>().<span class="mt">getClass</span>().<span class="mt">getSimpleName</span>();
+        <span class="cl">String</span> methodName = pjp.<span class="mt">getSignature</span>().<span class="mt">getName</span>();
+
+        <span class="cl">Timer.Sample</span> sample = <span class="cl">Timer</span>.<span class="mt">start</span>(meterRegistry);
+
+        <span class="kw">try</span> {
+            <span class="cl">Object</span> result = pjp.<span class="mt">proceed</span>(); <span class="cm">// ← appel de la vraie méthode</span>
+
+            sample.<span class="mt">stop</span>(<span class="cl">Timer</span>.<span class="mt">builder</span>(<span class="st">"method.execution"</span>)
+                    .<span class="mt">tag</span>(<span class="st">"class"</span>, className)
+                    .<span class="mt">tag</span>(<span class="st">"method"</span>, methodName)
+                    .<span class="mt">tag</span>(<span class="st">"outcome"</span>, <span class="st">"success"</span>)
+                    .<span class="mt">register</span>(meterRegistry));
+
+            <span class="kw">return</span> result;
+
+        } <span class="kw">catch</span> (<span class="cl">Throwable</span> ex) {
+            sample.<span class="mt">stop</span>(<span class="cl">Timer</span>.<span class="mt">builder</span>(<span class="st">"method.execution"</span>)
+                    .<span class="mt">tag</span>(<span class="st">"class"</span>, className)
+                    .<span class="mt">tag</span>(<span class="st">"method"</span>, methodName)
+                    .<span class="mt">tag</span>(<span class="st">"outcome"</span>, <span class="st">"error"</span>)
+                    .<span class="mt">register</span>(meterRegistry));
+            <span class="kw">throw</span> ex; <span class="cm">// toujours re-lancer !</span>
+        }
+    }
+}</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="concept">
+        <div class="concept-head">
+          <div class="concept-icon" style="background:rgba(255,140,66,0.12)">🔐</div>
+          <div>
+            <div class="concept-name">Aspect de sécurité tenant — Multi-tenancy</div>
+            <div class="concept-desc">Vérifier automatiquement l'isolation tenant sur chaque appel de repository</div>
+          </div>
+        </div>
+        <div class="concept-body">
+          <div class="code-wrap">
+            <div class="code-header">
+              <span class="code-lang">Java</span>
+              <span class="code-filename">TenantSecurityAspect.java — ComplianceOS</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+<pre><span class="an">@Aspect</span>
+<span class="an">@Component</span>
+<span class="an">@RequiredArgsConstructor</span>
+<span class="kw">public class</span> <span class="cl">TenantSecurityAspect</span> {
+
+    <span class="kw">private final</span> <span class="cl">TenantContext</span> tenantContext;
+
+    <span class="cm">/**
+     * Avant chaque méthode de Repository, vérifie que le tenantId
+     * est bien initialisé (JWT valide requis).
+     */</span>
+    <span class="an">@Before</span>(<span class="st">"within(@org.springframework.stereotype.Repository *)"</span>
+          <span class="st">+ " &amp;&amp; execution(public * *(..))"</span>)
+    <span class="kw">public void</span> <span class="mt">enforceTenantIsolation</span>(<span class="cl">JoinPoint</span> jp) {
+        <span class="kw">if</span> (tenantContext.<span class="mt">getTenantId</span>() == <span class="kw">null</span>) {
+            <span class="kw">throw new</span> <span class="cl">TenantContextMissingException</span>(
+                <span class="st">"Repository called without tenant context: "</span> + jp.<span class="mt">getSignature</span>());
+        }
+    }
+}</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADVANCED -->
+    <div id="aop-advanced" class="level-block">
+      <div class="level-header level-advanced">
+        <div class="level-pill">Avancé</div>
+        <div class="level-title">Annotations custom + Audit Trail automatique</div>
+      </div>
+
+      <div class="concept">
+        <div class="concept-head">
+          <div class="concept-icon" style="background:rgba(167,139,250,0.12)">🏷️</div>
+          <div>
+            <div class="concept-name">@AuditLog — Annotation custom pour l'audit trail DORA</div>
+            <div class="concept-desc">Créer une annotation + aspect pour logger automatiquement dans TimescaleDB</div>
+          </div>
+        </div>
+        <div class="concept-body">
+          <div class="concept-explain">
+            DORA et NIS2 exigent un audit trail complet de toutes les actions. Plutôt que d'appeler manuellement 
+            <code>auditTrailService.log(...)</code> partout, on crée une annotation <code>@AuditLog</code> qui déclenche 
+            automatiquement l'enregistrement via AOP.
+          </div>
+          <div class="code-wrap">
+            <div class="code-header">
+              <span class="code-lang">Java</span>
+              <span class="code-filename">AuditLog.java — annotation custom</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+<pre><span class="an">@Target</span>(<span class="cl">ElementType</span>.METHOD)
+<span class="an">@Retention</span>(<span class="cl">RetentionPolicy</span>.RUNTIME)
+<span class="kw">public @interface</span> <span class="cl">AuditLog</span> {
+    <span class="cl">AuditAction</span> action();
+    <span class="cl">String</span> resource();
+    <span class="kw">boolean</span> logResult() <span class="kw">default false</span>;
+}
+
+<span class="kw">public enum</span> <span class="cl">AuditAction</span> {
+    CREATE, READ, UPDATE, DELETE, EXPORT, SIGN, LOGIN
+}
+
+<span class="cm">// Utilisation sur les méthodes de service</span>
+<span class="an">@Service</span>
+<span class="kw">public class</span> <span class="cl">AuditService</span> {
+
+    <span class="an">@AuditLog</span>(action = <span class="cl">AuditAction</span>.CREATE, resource = <span class="st">"AUDIT"</span>)
+    <span class="kw">public</span> <span class="cl">Audit</span> <span class="mt">createAudit</span>(<span class="cl">CreateAuditRequest</span> request) { ... }
+
+    <span class="an">@AuditLog</span>(action = <span class="cl">AuditAction</span>.EXPORT, resource = <span class="st">"REPORT"</span>, logResult = <span class="kw">true</span>)
+    <span class="kw">public</span> <span class="cl">byte</span>[] <span class="mt">exportReport</span>(<span class="cl">UUID</span> auditId) { ... }
+}</pre>
+          </div>
+
+          <div class="code-wrap">
+            <div class="code-header">
+              <span class="code-lang">Java</span>
+              <span class="code-filename">AuditTrailAspect.java — TimescaleDB logging</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+<pre><span class="an">@Aspect</span>
+<span class="an">@Component</span>
+<span class="an">@RequiredArgsConstructor</span>
+<span class="an">@Slf4j</span>
+<span class="kw">public class</span> <span class="cl">AuditTrailAspect</span> {
+
+    <span class="kw">private final</span> <span class="cl">AuditTrailRepository</span> trailRepository;
+    <span class="kw">private final</span> <span class="cl">TenantContext</span> tenantContext;
+    <span class="kw">private final</span> <span class="cl">SecurityContextHolder</span> securityContext;
+
+    <span class="an">@Around</span>(<span class="st">"@annotation(auditLog)"</span>)
+    <span class="kw">public</span> <span class="cl">Object</span> <span class="mt">trailAction</span>(<span class="cl">ProceedingJoinPoint</span> pjp, <span class="cl">AuditLog</span> auditLog)
+            <span class="kw">throws</span> <span class="cl">Throwable</span> {
+
+        <span class="cl">UUID</span> eventId = <span class="cl">UUID</span>.<span class="mt">randomUUID</span>();
+        <span class="cl">Instant</span> start = <span class="cl">Instant</span>.<span class="mt">now</span>();
+
+        <span class="kw">try</span> {
+            <span class="cl">Object</span> result = pjp.<span class="mt">proceed</span>();
+
+            <span class="cm">// Enregistrement asynchrone dans TimescaleDB</span>
+            trailRepository.<span class="mt">saveAsync</span>(<span class="cl">AuditTrailEntry</span>.<span class="mt">builder</span>()
+                    .<span class="mt">eventId</span>(eventId)
+                    .<span class="mt">tenantId</span>(tenantContext.<span class="mt">getTenantId</span>())
+                    .<span class="mt">userId</span>(<span class="mt">getCurrentUserId</span>())
+                    .<span class="mt">action</span>(auditLog.<span class="mt">action</span>().<span class="mt">name</span>())
+                    .<span class="mt">resourceType</span>(auditLog.<span class="mt">resource</span>())
+                    .<span class="mt">newValue</span>(auditLog.<span class="mt">logResult</span>() ? <span class="mt">toJson</span>(result) : <span class="kw">null</span>)
+                    .<span class="mt">timestamp</span>(start)
+                    .<span class="mt">ipAddress</span>(<span class="mt">getCurrentIp</span>())
+                    .<span class="mt">build</span>());
+
+            <span class="kw">return</span> result;
+
+        } <span class="kw">catch</span> (<span class="cl">Throwable</span> ex) {
+            <span class="cm">// Logger aussi les erreurs dans l'audit trail</span>
+            trailRepository.<span class="mt">saveFailureAsync</span>(eventId, ex.<span class="mt">getMessage</span>());
+            <span class="kw">throw</span> ex;
+        }
+    }
+}</pre>
+          </div>
+
+          <div class="info-box box-warn">
+            <div class="info-box-icon">⚠️</div>
+            <div><strong>Limitation Spring AOP :</strong> Spring AOP ne fonctionne que sur des appels <em>inter-beans</em> (bean A appelle bean B). 
+            Si une méthode d'un bean s'appelle elle-même (<code>this.autreMethode()</code>), l'aspect <strong>ne s'applique pas</strong>. 
+            Solution : injecter le bean lui-même via <code>@Lazy</code>, ou utiliser AspectJ weaving (compile-time).</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================ -->
+  <!--  CHAPITRE 03 : @Transactional                                    -->
+  <!-- ================================================================ -->
+  <section id="transactional" class="content-section">
+    <div class="chapter-header">
+      <div class="chapter-num">Chapitre 03 / 05</div>
+      <h2 class="chapter-title" style="color:#FF6B6B">@Transactional</h2>
+      <p class="chapter-desc">
+        <code>@Transactional</code> est implémenté via AOP. Maîtriser ses pièges — self-invocation, 
+        propagation, isolation — est essentiel pour éviter les bugs de données en production.
+      </p>
+      <div class="chapter-tags">
+        <span class="chapter-tag" style="color:#FF6B6B;border-color:rgba(255,107,107,0.3)">Propagation</span>
+        <span class="chapter-tag" style="color:#FF6B6B;border-color:rgba(255,107,107,0.3)">Isolation</span>
+        <span class="chapter-tag" style="color:#FF6B6B;border-color:rgba(255,107,107,0.3)">rollbackFor</span>
+        <span class="chapter-tag" style="color:#FF6B6B;border-color:rgba(255,107,107,0.3)">Transactions imbriquées</span>
+      </div>
+    </div>
+
+    <!-- JUNIOR -->
+    <div id="tx-junior" class="level-block">
+      <div class="level-header level-junior">
+        <div class="level-pill">Junior</div>
+        <div class="level-title">Usage de base — ACID et rollback automatique</div>
+      </div>
+
+      <div class="concept">
+        <div class="concept-head">
+          <div class="concept-icon" style="background:rgba(255,107,107,0.12)">🔄</div>
+          <div>
+            <div class="concept-name">@Transactional — Comportement par défaut</div>
+            <div class="concept-desc">Ce que Spring fait automatiquement pour vous</div>
+          </div>
+        </div>
+        <div class="concept-body">
+          <div class="concept-explain">
+            <code>@Transactional</code> sans paramètres utilise : propagation <code>REQUIRED</code>, isolation <code>DEFAULT</code> (celle de la BDD), 
+            rollback sur <code>RuntimeException</code> uniquement, timeout = -1 (infini), readOnly = false.
+          </div>
+          <div class="code-wrap">
+            <div class="code-header">
+              <span class="code-lang">Java</span>
+              <span class="code-filename">AuditService.java</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+<pre><span class="an">@Service</span>
+<span class="an">@RequiredArgsConstructor</span>
+<span class="an">@Transactional</span> <span class="cm">// Toutes les méthodes publiques sont transactionnelles par défaut</span>
+<span class="kw">public class</span> <span class="cl">AuditService</span> {
+
+    <span class="kw">private final</span> <span class="cl">AuditRepository</span> auditRepo;
+    <span class="kw">private final</span> <span class="cl">EvidenceRepository</span> evidenceRepo;
+    <span class="kw">private final</span> <span class="cl">KafkaProducerService</span> kafkaProducer;
+
+    <span class="cm">/**
+     * Si une exception survient n'importe où → tout est rollbacké.
+     * Audit + Evidence = atomique.
+     */</span>
+    <span class="kw">public</span> <span class="cl">Audit</span> <span class="mt">submitAuditWithEvidence</span>(<span class="cl">SubmitAuditRequest</span> req) {
+        <span class="cl">Audit</span> audit = auditRepo.<span class="mt">save</span>(<span class="mt">buildAudit</span>(req)); <span class="cm">// INSERT audit</span>
+
+        req.<span class="mt">getEvidences</span>().<span class="mt">forEach</span>(e ->
+            evidenceRepo.<span class="mt">save</span>(<span class="mt">buildEvidence</span>(e, audit)) <span class="cm">// INSERT evidence</span>
+        );
+
+        <span class="cm">// Si Kafka échoue → le save audit ET evidence sont rollbackés</span>
+        kafkaProducer.<span class="mt">publishAuditStarted</span>(audit);
+
+        <span class="kw">return</span> audit;
+    }
+
+    <span class="cm">// READ-ONLY → pas de dirty checking Hibernate → +30% perf</span>
+    <span class="an">@Transactional</span>(readOnly = <span class="kw">true</span>)
+    <span class="kw">public</span> <span class="cl">List</span>&lt;<span class="cl">Audit</span>&gt; <span class="mt">findByTenant</span>(<span class="cl">UUID</span> tenantId) {
+        <span class="kw">return</span> auditRepo.<span class="mt">findByTenantId</span>(tenantId);
+    }
+}</pre>
+          </div>
+
+          <div class="info-box box-tip">
+            <div class="info-box-icon">💡</div>
+            <div>Mettez <code>@Transactional(readOnly = true)</code> sur toutes vos méthodes de lecture. Hibernate désactive le dirty checking (pas de tracking des modifications), ce qui améliore significativement les performances.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INTERMEDIAIRE -->
+    <div id="tx-mid" class="level-block">
+      <div class="level-header level-mid">
+        <div class="level-pill">Intermédiaire</div>
+        <div class="level-title">Propagation & Isolation — Les 7 niveaux expliqués</div>
+      </div>
+
+      <h4>Niveaux de Propagation</h4>
+      <div class="table-wrap">
+        <table>
+          <tr>
+            <th>Propagation</th>
+            <th>Comportement si TX existante</th>
+            <th>Comportement si aucune TX</th>
+            <th>Usage</th>
+          </tr>
+          <tr>
+            <td><code>REQUIRED</code> ★</td>
+            <td>Réutilise la TX existante</td>
+            <td>Crée une nouvelle TX</td>
+            <td>Par défaut — 95% des cas</td>
+          </tr>
+          <tr>
+            <td><code>REQUIRES_NEW</code></td>
+            <td>Suspend la TX, crée une nouvelle</td>
+            <td>Crée une nouvelle TX</td>
+            <td>Audit trail (doit persister même si TX parent rollback)</td>
+          </tr>
+          <tr>
+            <td><code>NESTED</code></td>
+            <td>Crée un savepoint dans la TX</td>
+            <td>Comme REQUIRED</td>
+            <td>Import batch : rollback partiel sans annuler tout</td>
+          </tr>
+          <tr>
+            <td><code>SUPPORTS</code></td>
+            <td>Réutilise la TX</td>
+            <td>S'exécute sans TX</td>
+            <td>Méthodes qui marchent avec ou sans TX</td>
+          </tr>
+          <tr>
+            <td><code>NOT_SUPPORTED</code></td>
+            <td>Suspend la TX</td>
+            <td>S'exécute sans TX</td>
+            <td>Opérations non-transactionnelles (appels HTTP externes)</td>
+          </tr>
+          <tr>
+            <td><code>MANDATORY</code></td>
+            <td>Réutilise la TX</td>
+            <td><span style="color:var(--red)">Exception !</span></td>
+            <td>Méthodes qui DOIVENT être dans une TX</td>
+          </tr>
+          <tr>
+            <td><code>NEVER</code></td>
+            <td><span style="color:var(--red)">Exception !</span></td>
+            <td>S'exécute sans TX</td>
+            <td>Méthodes qui ne doivent JAMAIS être dans une TX</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="concept">
+        <div class="concept-head">
+          <div class="concept-icon" style="background:rgba(255,107,107,0.12)">💾</div>
+          <div>
+            <div class="concept-name">REQUIRES_NEW — Audit Trail dans ComplianceOS</div>
+            <div class="concept-desc">L'audit trail doit être sauvegardé même si la transaction principale échoue</div>
+          </div>
+        </div>
+        <div class="concept-body">
+          <div class="code-wrap">
+            <div class="code-header">
+              <span class="code-lang">Java</span>
+              <span class="code-filename">AuditTrailService.java</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+<pre><span class="an">@Service</span>
+<span class="an">@RequiredArgsConstructor</span>
+<span class="kw">public class</span> <span class="cl">AuditTrailService</span> {
+
+    <span class="kw">private final</span> <span class="cl">AuditTrailRepository</span> trailRepo;
+
+    <span class="cm">/**
+     * REQUIRES_NEW : S'exécute dans sa PROPRE transaction.
+     * Même si AuditService.createAudit() fait un rollback,
+     * cette entrée est TOUJOURS committée en base (DORA compliance).
+     */</span>
+    <span class="an">@Transactional</span>(propagation = <span class="cl">Propagation</span>.REQUIRES_NEW)
+    <span class="kw">public void</span> <span class="mt">logAction</span>(<span class="cl">AuditTrailEntry</span> entry) {
+        trailRepo.<span class="mt">save</span>(entry);
+    }
+}
+
+<span class="cm">// Dans AuditService — le trail persiste même en cas d'erreur</span>
+<span class="an">@Service</span>
+<span class="kw">public class</span> <span class="cl">AuditService</span> {
+    <span class="kw">private final</span> <span class="cl">AuditTrailService</span> trailService; <span class="cm">// bean séparé !</span>
+
+    <span class="an">@Transactional</span>
+    <span class="kw">public</span> <span class="cl">Audit</span> <span class="mt">processAudit</span>(<span class="cl">UUID</span> auditId) {
+        trailService.<span class="mt">logAction</span>(<span class="mt">buildEntry</span>()); <span class="cm">// REQUIRES_NEW = TX séparée</span>
+
+        <span class="kw">if</span> (someCondition) {
+            <span class="kw">throw new</span> <span class="cl">BusinessException</span>(<span class="st">"..."</span>); <span class="cm">// TX principale rollback</span>
+            <span class="cm">// Mais le trail est déjà committé dans TimescaleDB !</span>
+        }
+        <span class="kw">return</span> audit;
+    }
+}</pre>
+          </div>
+
+          <h4>Niveaux d'Isolation</h4>
+          <div class="table-wrap">
+            <table>
+              <tr>
+                <th>Isolation</th>
+                <th>Problèmes évités</th>
+                <th>Performance</th>
+                <th>Usage</th>
+              </tr>
+              <tr>
+                <td><code>READ_UNCOMMITTED</code></td>
+                <td>Aucun</td>
+                <td>⚡⚡⚡</td>
+                <td>Jamais en prod (dirty reads)</td>
+              </tr>
+              <tr>
+                <td><code>READ_COMMITTED</code></td>
+                <td>Dirty reads</td>
+                <td>⚡⚡⚡</td>
+                <td>PostgreSQL par défaut</td>
+              </tr>
+              <tr>
+                <td><code>REPEATABLE_READ</code></td>
+                <td>Dirty + non-repeatable reads</td>
+                <td>⚡⚡</td>
+                <td>Scoring ML (données stables pendant calcul)</td>
+              </tr>
+              <tr>
+                <td><code>SERIALIZABLE</code></td>
+                <td>Tous (phantom reads inclus)</td>
+                <td>⚡</td>
+                <td>Transactions financières (Stripe webhooks)</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADVANCED -->
+    <div id="tx-advanced" class="level-block">
+      <div class="level-header level-advanced">
+        <div class="level-pill">Avancé</div>
+        <div class="level-title">Pièges critiques & TransactionTemplate</div>
+      </div>
+
+      <div class="pitfall">
+        <div class="pitfall-title">🔴 Piège 1 — Self-invocation (le bug le plus courant)</div>
+        <p>Spring AOP crée un <strong>proxy</strong> autour de votre bean. Si une méthode du bean appelle une autre méthode du même bean via <code>this</code>, elle bypass le proxy → <code>@Transactional</code> est ignoré !</p>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-header">
+          <span class="code-lang">Java</span>
+          <span class="code-filename">❌ Self-invocation — Bug silencieux</span>
+        </div>
+<pre><span class="an">@Service</span>
+<span class="kw">public class</span> <span class="cl">AuditService</span> {
+
+    <span class="kw">public void</span> <span class="mt">processAll</span>() {
+        <span class="kw">this</span>.<span class="mt">processOne</span>(); <span class="cm">// ← bypasse le proxy ! @Transactional ignoré !</span>
+    }
+
+    <span class="an">@Transactional</span>
+    <span class="kw">public void</span> <span class="mt">processOne</span>() {
+        <span class="cm">// Cette TX ne démarre PAS si appelée via this</span>
+    }
+}</pre>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-header">
+          <span class="code-lang">Java</span>
+          <span class="code-filename">✅ Solution — Séparer en deux beans ou ApplicationContext</span>
+        </div>
+<pre><span class="cm">// Solution 1 : Séparer en deux services</span>
+<span class="an">@Service</span>
+<span class="kw">public class</span> <span class="cl">AuditBatchService</span> {
+    <span class="kw">private final</span> <span class="cl">AuditService</span> auditService; <span class="cm">// bean séparé = proxy actif</span>
+
+    <span class="kw">public void</span> <span class="mt">processAll</span>() {
+        auditService.<span class="mt">processOne</span>(); <span class="cm">// ← passe par le proxy ✓</span>
+    }
+}
+
+<span class="cm">// Solution 2 : @Lazy self-injection</span>
+<span class="an">@Service</span>
+<span class="kw">public class</span> <span class="cl">AuditService</span> {
+
+    <span class="an">@Autowired</span> <span class="an">@Lazy</span>
+    <span class="kw">private</span> <span class="cl">AuditService</span> self; <span class="cm">// le proxy de soi-même</span>
+
+    <span class="kw">public void</span> <span class="mt">processAll</span>() {
+        self.<span class="mt">processOne</span>(); <span class="cm">// ← passe par le proxy ✓</span>
+    }
+
+    <span class="an">@Transactional</span>
+    <span class="kw">public void</span> <span class="mt">processOne</span>() { ... }
+}</pre>
+      </div>
+
+      <div class="pitfall">
+        <div class="pitfall-title">🔴 Piège 2 — @Transactional sur méthodes private/protected</div>
+        <p>Spring AOP ne peut pas proxier les méthodes non-publiques. <code>@Transactional</code> sur une méthode <code>private</code> est silencieusement ignoré. Toujours mettre <code>@Transactional</code> sur des méthodes <code>public</code>.</p>
+      </div>
+
+      <div class="concept">
+        <div class="concept-head">
+          <div class="concept-icon" style="background:rgba(167,139,250,0.12)">🛠️</div>
+          <div>
+            <div class="concept-name">TransactionTemplate — Transactions programmatiques</div>
+            <div class="concept-desc">Contrôle fin sur les limites de transaction dans du code complexe</div>
+          </div>
+        </div>
+        <div class="concept-body">
+          <div class="code-wrap">
+            <div class="code-header">
+              <span class="code-lang">Java</span>
+              <span class="code-filename">ImportBatchService.java — Transactions imbriquées</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+<pre><span class="an">@Service</span>
+<span class="an">@RequiredArgsConstructor</span>
+<span class="kw">public class</span> <span class="cl">ImportBatchService</span> {
+
+    <span class="kw">private final</span> <span class="cl">TransactionTemplate</span> txTemplate;
+    <span class="kw">private final</span> <span class="cl">ComplianceDataRepository</span> dataRepo;
+
+    <span class="cm">/**
+     * Import de 100 000 lignes CSV.
+     * Chaque batch de 1000 lignes dans sa propre TX.
+     * Si une TX échoue, les autres sont committées (NESTED behavior).
+     */</span>
+    <span class="kw">public</span> <span class="cl">ImportResult</span> <span class="mt">importComplianceData</span>(<span class="cl">List</span>&lt;<span class="cl">ComplianceRow</span>&gt; rows) {
+        <span class="kw">var</span> result = <span class="kw">new</span> <span class="cl">ImportResult</span>();
+
+        <span class="cl">Lists</span>.<span class="mt">partition</span>(rows, <span class="nm">1000</span>).<span class="mt">forEach</span>(batch -> {
+            <span class="kw">try</span> {
+                txTemplate.<span class="mt">executeWithoutResult</span>(status -> {
+                    <span class="kw">var</span> valid = batch.<span class="mt">stream</span>()
+                            .<span class="mt">filter</span>(<span class="kw">this</span>::<span class="mt">isValid</span>)
+                            .<span class="mt">toList</span>();
+
+                    dataRepo.<span class="mt">saveAll</span>(valid);
+                    result.<span class="mt">addProcessed</span>(valid.<span class="mt">size</span>());
+
+                    <span class="kw">if</span> (valid.<span class="mt">size</span>() &lt; batch.<span class="mt">size</span>() * <span class="nm">0.5</span>) {
+                        <span class="cm">// Rollback ce batch si plus de 50% invalide</span>
+                        status.<span class="mt">setRollbackOnly</span>();
+                        result.<span class="mt">addFailedBatch</span>();
+                    }
+                });
+            } <span class="kw">catch</span> (<span class="cl">Exception</span> e) {
+                result.<span class="mt">addError</span>(e.<span class="mt">getMessage</span>());
+                <span class="cm">// continue les autres batches</span>
+            }
+        });
+
+        <span class="kw">return</span> result;
+    }
+}</pre>
+          </div>
+          <div class="compliance-callout">
+            <p>Dans ComplianceOS, <code>CO-09</code> (Pipeline ETL Polars) utilise ce pattern : chaque batch de 1000 lignes CSV est importé dans sa propre transaction, avec rapport d'erreurs détaillé sur les lignes invalides.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================ -->
+  <!--  CHAPITRE 04 : JPA                                               -->
+  <!-- ================================================================ -->
+  <section id="jpa" class="content-section">
+    <div class="chapter-header">
+      <div class="chapter-num">Chapitre 04 / 05</div>
+      <h2 class="chapter-title" style="color:#A78BFA">JPA / Hibernate</h2>
+      <p class="chapter-desc">
+        JPA avec Spring Data simplifie l'accès aux données, mais Hibernate a des comportements subtils 
+        (N+1, lazy loading, dirty checking) qu'il faut maîtriser pour éviter les catastrophes de performance.
+      </p>
+      <div class="chapter-tags">
+        <span class="chapter-tag" style="color:#A78BFA;border-color:rgba(167,139,250,0.3)">@Entity</span>
+        <span class="chapter-tag" style="color:#A78BFA;border-color:rgba(167,139,250,0.3)">Relations JPA</span>
+        <span class="chapter-tag" style="color:#A78BFA;border-color:rgba(167,139,250,0.3)">JPQL / Criteria</span>
+        <span class="chapter-tag" style="color:#A78BFA;border-color:rgba(167,139,250,0.3)">N+1 Problem</span>
+        <span class="chapter-tag" style="color:#A78BFA;border-color:rgba(167,139,250,0.3)">Locking</span>
+      </div>
+    </div>
+
+    <!-- JUNIOR -->
+    <div id="jpa-junior" class="level-block">
+      <div class="level-header level-junior">
+        <div class="level-pill">Junior</div>
+        <div class="level-title">Entités, Repository, Spring Data JPA</div>
+      </div>
+
+      <div class="concept">
+        <div class="concept-head">
+          <div class="concept-icon" style="background:rgba(167,139,250,0.12)">📦</div>
+          <div>
+            <div class="concept-name">Entité JPA — Audit dans ComplianceOS</div>
+            <div class="concept-desc">Mapping objet-relationnel avec les bonnes pratiques</div>
+          </div>
+        </div>
+        <div class="concept-body">
+          <div class="code-wrap">
+            <div class="code-header">
+              <span class="code-lang">Java</span>
+              <span class="code-filename">Audit.java</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+<pre><span class="an">@Entity</span>
+<span class="an">@Table</span>(name = <span class="st">"audits"</span>, indexes = {
+    <span class="an">@Index</span>(name = <span class="st">"idx_audit_tenant"</span>, columnList = <span class="st">"tenant_id"</span>),
+    <span class="an">@Index</span>(name = <span class="st">"idx_audit_status"</span>, columnList = <span class="st">"status, tenant_id"</span>)
+})
+<span class="an">@Getter</span> <span class="an">@Setter</span> <span class="an">@Builder</span> <span class="an">@NoArgsConstructor</span> <span class="an">@AllArgsConstructor</span>
+<span class="an">@EntityListeners</span>(<span class="cl">AuditingEntityListener</span>.<span class="kw">class</span>) <span class="cm">// @CreatedDate, @LastModifiedDate</span>
+<span class="kw">public class</span> <span class="cl">Audit</span> {
+
+    <span class="an">@Id</span>
+    <span class="an">@GeneratedValue</span>(strategy = <span class="cl">GenerationType</span>.UUID)
+    <span class="kw">private</span> <span class="cl">UUID</span> id;
+
+    <span class="an">@Column</span>(name = <span class="st">"tenant_id"</span>, nullable = <span class="kw">false</span>)
+    <span class="kw">private</span> <span class="cl">UUID</span> tenantId;
+
+    <span class="an">@Column</span>(nullable = <span class="kw">false</span>)
+    <span class="an">@Enumerated</span>(<span class="cl">EnumType</span>.STRING)
+    <span class="kw">private</span> <span class="cl">AuditStatus</span> status;
+
+    <span class="an">@Column</span>(nullable = <span class="kw">false</span>)
+    <span class="an">@Enumerated</span>(<span class="cl">EnumType</span>.STRING)
+    <span class="kw">private</span> <span class="cl">Regulation</span> regulation; <span class="cm">// NIS2, DORA, RGPD</span>
+
+    <span class="an">@Column</span>(name = <span class="st">"risk_score"</span>)
+    <span class="kw">private</span> <span class="cl">BigDecimal</span> riskScore;
+
+    <span class="cm">// Relations (voir section intermédiaire)</span>
+    <span class="an">@OneToMany</span>(mappedBy = <span class="st">"audit"</span>, cascade = <span class="cl">CascadeType</span>.ALL, orphanRemoval = <span class="kw">true</span>)
+    <span class="kw">private</span> <span class="cl">List</span>&lt;<span class="cl">Evidence</span>&gt; evidences = <span class="kw">new</span> <span class="cl">ArrayList</span>&lt;&gt;();
+
+    <span class="an">@CreatedDate</span>
+    <span class="an">@Column</span>(name = <span class="st">"created_at"</span>, updatable = <span class="kw">false</span>)
+    <span class="kw">private</span> <span class="cl">Instant</span> createdAt;
+
+    <span class="an">@LastModifiedDate</span>
+    <span class="an">@Column</span>(name = <span class="st">"updated_at"</span>)
+    <span class="kw">private</span> <span class="cl">Instant</span> updatedAt;
+
+    <span class="an">@Version</span> <span class="cm">// Optimistic locking</span>
+    <span class="kw">private</span> <span class="cl">Long</span> version;
+
+    <span class="cm">// Helper method pour les relations bidirectionnelles</span>
+    <span class="kw">public void</span> <span class="mt">addEvidence</span>(<span class="cl">Evidence</span> evidence) {
+        evidences.<span class="mt">add</span>(evidence);
+        evidence.<span class="mt">setAudit</span>(<span class="kw">this</span>);
+    }
+}</pre>
+          </div>
+
+          <div class="code-wrap">
+            <div class="code-header">
+              <span class="code-lang">Java</span>
+              <span class="code-filename">AuditRepository.java</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+<pre><span class="an">@Repository</span>
+<span class="kw">public interface</span> <span class="cl">AuditRepository</span> <span class="kw">extends</span> <span class="cl">JpaRepository</span>&lt;<span class="cl">Audit</span>, <span class="cl">UUID</span>&gt; {
+
+    <span class="cm">// Spring Data génère le SQL automatiquement depuis le nom</span>
+    <span class="cl">List</span>&lt;<span class="cl">Audit</span>&gt; <span class="mt">findByTenantId</span>(<span class="cl">UUID</span> tenantId);
+
+    <span class="cl">List</span>&lt;<span class="cl">Audit</span>&gt; <span class="mt">findByTenantIdAndStatus</span>(<span class="cl">UUID</span> tenantId, <span class="cl">AuditStatus</span> status);
+
+    <span class="cm">// JPQL explicite pour contrôle total</span>
+    <span class="an">@Query</span>(<span class="st">"""
+        SELECT a FROM Audit a
+        WHERE a.tenantId = :tenantId
+          AND a.regulation = :regulation
+          AND a.createdAt BETWEEN :from AND :to
+        ORDER BY a.createdAt DESC
+        """</span>)
+    <span class="cl">Page</span>&lt;<span class="cl">Audit</span>&gt; <span class="mt">findByFilters</span>(
+            <span class="an">@Param</span>(<span class="st">"tenantId"</span>) <span class="cl">UUID</span> tenantId,
+            <span class="an">@Param</span>(<span class="st">"regulation"</span>) <span class="cl">Regulation</span> regulation,
+            <span class="an">@Param</span>(<span class="st">"from"</span>) <span class="cl">Instant</span> from,
+            <span class="an">@Param</span>(<span class="st">"to"</span>) <span class="cl">Instant</span> to,
+            <span class="cl">Pageable</span> pageable);
+
+    <span class="cm">// Modifying query (UPDATE/DELETE)</span>
+    <span class="an">@Modifying</span>
+    <span class="an">@Query</span>(<span class="st">"UPDATE Audit a SET a.status = :status WHERE a.id = :id"</span>)
+    <span class="kw">int</span> <span class="mt">updateStatus</span>(<span class="an">@Param</span>(<span class="st">"id"</span>) <span class="cl">UUID</span> id, <span class="an">@Param</span>(<span class="st">"status"</span>) <span class="cl">AuditStatus</span> status);
+}</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INTERMEDIAIRE -->
+    <div id="jpa-mid" class="level-block">
+      <div class="level-header level-mid">
+        <div class="level-pill">Intermédiaire</div>
+        <div class="level-title">Relations JPA & Problème N+1</div>
+      </div>
+
+      <div class="concept">
+        <div class="concept-head">
+          <div class="concept-icon" style="background:rgba(167,139,250,0.12)">🔗</div>
+          <div>
+            <div class="concept-name">Le problème N+1 — La bête noire des devs JPA</div>
+            <div class="concept-desc">Comprendre et résoudre le problème de performance le plus courant avec Hibernate</div>
+          </div>
+        </div>
+        <div class="concept-body">
+          <div class="concept-explain">
+            Le problème N+1 : vous chargez N entités, et pour chacune Hibernate exécute 1 requête supplémentaire 
+            pour charger une relation. Résultat : 1 + N requêtes au lieu de 1 seule avec un JOIN.
+          </div>
+          <div class="code-wrap">
+            <div class="code-header">
+              <span class="code-lang">Java</span>
+              <span class="code-filename">❌ N+1 Problem — 1 + N requêtes SQL</span>
+            </div>
+<pre><span class="cm">// Audit.java — relation LAZY par défaut</span>
+<span class="an">@OneToMany</span>(mappedBy = <span class="st">"audit"</span>, fetch = <span class="cl">FetchType</span>.LAZY)
+<span class="kw">private</span> <span class="cl">List</span>&lt;<span class="cl">Evidence</span>&gt; evidences; <span class="cm">// chargé à la demande</span>
+
+<span class="cm">// Service — PROBLÈME !</span>
+<span class="kw">public</span> <span class="cl">List</span>&lt;<span class="cl">AuditDTO</span>&gt; <span class="mt">getAuditsWithEvidences</span>(<span class="cl">UUID</span> tenantId) {
+    <span class="kw">var</span> audits = auditRepo.<span class="mt">findByTenantId</span>(tenantId); <span class="cm">// Requête 1 : SELECT * FROM audits</span>
+
+    <span class="kw">return</span> audits.<span class="mt">stream</span>().<span class="mt">map</span>(audit -> {
+        <span class="cm">// Requête 2,3,4...N : SELECT * FROM evidences WHERE audit_id = ?</span>
+        <span class="cm">// Exécutée pour CHAQUE audit !</span>
+        <span class="kw">int</span> count = audit.<span class="mt">getEvidences</span>().<span class="mt">size</span>();
+        <span class="kw">return new</span> <span class="cl">AuditDTO</span>(audit, count);
+    }).<span class="mt">toList</span>();
+}
+<span class="cm">// Si 100 audits → 1 + 100 = 101 requêtes SQL !</span></pre>
+          </div>
+
+          <div class="code-wrap">
+            <div class="code-header">
+              <span class="code-lang">Java</span>
+              <span class="code-filename">✅ Solution 1 — @EntityGraph (JOIN FETCH)</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+<pre><span class="cm">// Dans le Repository</span>
+<span class="an">@EntityGraph</span>(attributePaths = {<span class="st">"evidences"</span>, <span class="st">"evidences.documents"</span>})
+<span class="cl">List</span>&lt;<span class="cl">Audit</span>&gt; <span class="mt">findByTenantId</span>(<span class="cl">UUID</span> tenantId);
+
+<span class="cm">// Génère : SELECT a.*, e.*, d.*
+//          FROM audits a
+//          LEFT JOIN evidences e ON e.audit_id = a.id
+//          LEFT JOIN documents d ON d.evidence_id = e.id
+//          WHERE a.tenant_id = ?
+// → 1 seule requête SQL !</span></pre>
+          </div>
+
+          <div class="code-wrap">
+            <div class="code-header">
+              <span class="code-lang">Java</span>
+              <span class="code-filename">✅ Solution 2 — @Query avec JOIN FETCH explicite</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+<pre><span class="an">@Query</span>(<span class="st">"""
+    SELECT DISTINCT a FROM Audit a
+    LEFT JOIN FETCH a.evidences e
+    LEFT JOIN FETCH e.documents
+    WHERE a.tenantId = :tenantId
+      AND a.status = :status
+    """</span>)
+<span class="cl">List</span>&lt;<span class="cl">Audit</span>&gt; <span class="mt">findWithEvidences</span>(
+    <span class="an">@Param</span>(<span class="st">"tenantId"</span>) <span class="cl">UUID</span> tenantId,
+    <span class="an">@Param</span>(<span class="st">"status"</span>) <span class="cl">AuditStatus</span> status
+);</pre>
+          </div>
+
+          <div class="code-wrap">
+            <div class="code-header">
+              <span class="code-lang">Java</span>
+              <span class="code-filename">✅ Solution 3 — DTO Projections (plus performant)</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+<pre><span class="cm">// Ne charger que les colonnes nécessaires</span>
+<span class="kw">public interface</span> <span class="cl">AuditSummary</span> {
+    <span class="cl">UUID</span> <span class="mt">getId</span>();
+    <span class="cl">AuditStatus</span> <span class="mt">getStatus</span>();
+    <span class="cl">Regulation</span> <span class="mt">getRegulation</span>();
+    <span class="cl">BigDecimal</span> <span class="mt">getRiskScore</span>();
+    <span class="cl">Instant</span> <span class="mt">getCreatedAt</span>();
+    <span class="cm">// Pas d'evidences → pas de join, pas de N+1</span>
+}
+
+<span class="cm">// Dans le repository</span>
+<span class="cl">List</span>&lt;<span class="cl">AuditSummary</span>&gt; <span class="mt">findSummaryByTenantId</span>(<span class="cl">UUID</span> tenantId);
+<span class="cm">// Génère : SELECT id, status, regulation, risk_score, created_at FROM audits WHERE tenant_id = ?</span></pre>
+          </div>
+
+          <div class="info-box box-info">
+            <div class="info-box-icon">🔍</div>
+            <div>Pour détecter les N+1, activez dans <code>application.yml</code> :
+            <br><code>spring.jpa.show-sql: true</code> et <code>logging.level.org.hibernate.SQL: DEBUG</code>
+            <br>Ou utilisez <strong>Hibernate Statistics</strong> / <strong>Datasource Proxy</strong> pour compter les requêtes en test.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADVANCED -->
+    <div id="jpa-advanced" class="level-block">
+      <div class="level-header level-advanced">
+        <div class="level-pill">Avancé</div>
+        <div class="level-title">Locking optimiste/pessimiste & Specifications dynamiques</div>
+      </div>
+
+      <div class="concept">
+        <div class="concept-head">
+          <div class="concept-icon" style="background:rgba(167,139,250,0.12)">🔒</div>
+          <div>
+            <div class="concept-name">Locking — Gérer la concurrence</div>
+            <div class="concept-desc">Optimistic (@Version) vs Pessimistic (SELECT FOR UPDATE)</div>
+          </div>
+        </div>
+        <div class="concept-body">
+          <div class="code-wrap">
+            <div class="code-header">
+              <span class="code-lang">Java</span>
+              <span class="code-filename">Optimistic Locking — Double soumission d'audit</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+<pre><span class="cm">// @Version dans l'entité (déjà dans Audit.java)</span>
+<span class="an">@Version</span>
+<span class="kw">private</span> <span class="cl">Long</span> version; <span class="cm">// Incrémenté à chaque UPDATE</span>
+
+<span class="cm">// Service — gestion du conflit</span>
+<span class="an">@Transactional</span>
+<span class="kw">public</span> <span class="cl">Audit</span> <span class="mt">approveAudit</span>(<span class="cl">UUID</span> auditId) {
+    <span class="kw">try</span> {
+        <span class="cl">Audit</span> audit = auditRepo.<span class="mt">findById</span>(auditId).<span class="mt">orElseThrow</span>();
+        audit.<span class="mt">setStatus</span>(<span class="cl">AuditStatus</span>.APPROVED);
+        <span class="kw">return</span> auditRepo.<span class="mt">save</span>(audit);
+        <span class="cm">// Si un autre thread a modifié l'audit pendant ce temps →</span>
+        <span class="cm">// OptimisticLockingFailureException lancée automatiquement</span>
+    } <span class="kw">catch</span> (<span class="cl">OptimisticLockingFailureException</span> e) {
+        <span class="kw">throw new</span> <span class="cl">ConcurrentModificationException</span>(
+            <span class="st">"Audit modifié par un autre utilisateur. Rafraîchissez et réessayez."</span>);
+    }
+}
+
+<span class="cm">// Pessimistic Locking — Reserve la ligne jusqu'à fin de TX</span>
+<span class="an">@Lock</span>(<span class="cl">LockModeType</span>.PESSIMISTIC_WRITE)
+<span class="an">@Query</span>(<span class="st">"SELECT a FROM Audit a WHERE a.id = :id"</span>)
+<span class="cl">Optional</span>&lt;<span class="cl">Audit</span>&gt; <span class="mt">findByIdForUpdate</span>(<span class="an">@Param</span>(<span class="st">"id"</span>) <span class="cl">UUID</span> id);
+<span class="cm">// Génère : SELECT ... FROM audits WHERE id=? FOR UPDATE</span></pre>
+          </div>
+
+          <h4>JPA Specifications — Filtres dynamiques</h4>
+          <div class="code-wrap">
+            <div class="code-header">
+              <span class="code-lang">Java</span>
+              <span class="code-filename">AuditSpecifications.java — Filtres GraphQL dynamiques</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+<pre><span class="kw">public class</span> <span class="cl">AuditSpecifications</span> {
+
+    <span class="kw">public static</span> <span class="cl">Specification</span>&lt;<span class="cl">Audit</span>&gt; <span class="mt">forTenant</span>(<span class="cl">UUID</span> tenantId) {
+        <span class="kw">return</span> (root, query, cb) ->
+                cb.<span class="mt">equal</span>(root.<span class="mt">get</span>(<span class="st">"tenantId"</span>), tenantId);
+    }
+
+    <span class="kw">public static</span> <span class="cl">Specification</span>&lt;<span class="cl">Audit</span>&gt; <span class="mt">hasStatus</span>(<span class="cl">AuditStatus</span> status) {
+        <span class="kw">return</span> (root, query, cb) ->
+                status == <span class="kw">null</span> ? cb.<span class="mt">conjunction</span>() <span class="cm">// no filter</span>
+                        : cb.<span class="mt">equal</span>(root.<span class="mt">get</span>(<span class="st">"status"</span>), status);
+    }
+
+    <span class="kw">public static</span> <span class="cl">Specification</span>&lt;<span class="cl">Audit</span>&gt; <span class="mt">forRegulation</span>(<span class="cl">Regulation</span> reg) {
+        <span class="kw">return</span> (root, query, cb) ->
+                reg == <span class="kw">null</span> ? cb.<span class="mt">conjunction</span>()
+                        : cb.<span class="mt">equal</span>(root.<span class="mt">get</span>(<span class="st">"regulation"</span>), reg);
+    }
+
+    <span class="kw">public static</span> <span class="cl">Specification</span>&lt;<span class="cl">Audit</span>&gt; <span class="mt">createdAfter</span>(<span class="cl">Instant</span> date) {
+        <span class="kw">return</span> (root, query, cb) ->
+                date == <span class="kw">null</span> ? cb.<span class="mt">conjunction</span>()
+                        : cb.<span class="mt">greaterThanOrEqualTo</span>(root.<span class="mt">get</span>(<span class="st">"createdAt"</span>), date);
+    }
+}
+
+<span class="cm">// Utilisation — composition dynamique avec JpaSpecificationExecutor</span>
+<span class="kw">public</span> <span class="cl">Page</span>&lt;<span class="cl">Audit</span>&gt; <span class="mt">searchAudits</span>(<span class="cl">AuditFilter</span> filter, <span class="cl">Pageable</span> pageable) {
+    <span class="cl">Specification</span>&lt;<span class="cl">Audit</span>&gt; spec = <span class="cl">Specification</span>
+            .<span class="mt">where</span>(<span class="mt">forTenant</span>(tenantContext.<span class="mt">getTenantId</span>()))
+            .<span class="mt">and</span>(<span class="mt">hasStatus</span>(filter.<span class="mt">getStatus</span>()))
+            .<span class="mt">and</span>(<span class="mt">forRegulation</span>(filter.<span class="mt">getRegulation</span>()))
+            .<span class="mt">and</span>(<span class="mt">createdAfter</span>(filter.<span class="mt">getFrom</span>()));
+
+    <span class="kw">return</span> auditRepo.<span class="mt">findAll</span>(spec, pageable);
+}</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================ -->
+  <!--  CHAPITRE 05 : GraphQL DGS                                       -->
+  <!-- ================================================================ -->
+  <section id="graphql" class="content-section">
+    <div class="chapter-header">
+      <div class="chapter-num">Chapitre 05 / 05</div>
+      <h2 class="chapter-title" style="color:#FFD166">GraphQL — Netflix DGS</h2>
+      <p class="chapter-desc">
+        Netflix DGS (Domain Graph Service) est le framework GraphQL utilisé dans ComplianceOS (CO-04). 
+        Il s'intègre nativement à Spring Boot 3.4 avec annotations, type-safety et support complet des DataLoaders.
+      </p>
+      <div class="chapter-tags">
+        <span class="chapter-tag" style="color:#FFD166;border-color:rgba(255,209,102,0.3)">Schema-first</span>
+        <span class="chapter-tag" style="color:#FFD166;border-color:rgba(255,209,102,0.3)">@DgsComponent</span>
+        <span class="chapter-tag" style="color:#FFD166;border-color:rgba(255,209,102,0.3)">@DgsQuery</span>
+        <span class="chapter-tag" style="color:#FFD166;border-color:rgba(255,209,102,0.3)">DataLoader</span>
+        <span class="chapter-tag" style="color:#FFD166;border-color:rgba(255,209,102,0.3)">Subscriptions</span>
+      </div>
+    </div>
+
+    <!-- JUNIOR -->
+    <div id="gql-junior" class="level-block">
+      <div class="level-header level-junior">
+        <div class="level-pill">Junior</div>
+        <div class="level-title">Schema GraphQL & premiers resolvers DGS</div>
+      </div>
+
+      <div class="concept">
+        <div class="concept-head">
+          <div class="concept-icon" style="background:rgba(255,209,102,0.12)">📋</div>
+          <div>
+            <div class="concept-name">Schema GraphQL — Types et Queries</div>
+            <div class="concept-desc">Le contrat de votre API — défini en SDL (Schema Definition Language)</div>
+          </div>
+        </div>
+        <div class="concept-body">
+          <div class="code-wrap">
+            <div class="code-header">
+              <span class="code-lang">GraphQL SDL</span>
+              <span class="code-filename">resources/schema/audit.graphqls</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+<pre><span class="kw">type</span> <span class="cl">Query</span> {
+    <span class="cm"># Liste paginée avec filtres</span>
+    <span class="mt">audits</span>(
+        filter: <span class="cl">AuditFilter</span>
+        page: <span class="cl">Int</span> = <span class="nm">0</span>
+        size: <span class="cl">Int</span> = <span class="nm">20</span>
+    ): <span class="cl">AuditPage</span>!
+
+    <span class="mt">audit</span>(id: <span class="cl">ID</span>!): <span class="cl">Audit</span>
+    <span class="mt">riskScore</span>(companyId: <span class="cl">ID</span>!): <span class="cl">RiskScore</span>!
+}
+
+<span class="kw">type</span> <span class="cl">Mutation</span> {
+    <span class="mt">createAudit</span>(input: <span class="cl">CreateAuditInput</span>!): <span class="cl">Audit</span>!
+    <span class="mt">submitAudit</span>(id: <span class="cl">ID</span>!): <span class="cl">Audit</span>!
+    <span class="mt">uploadEvidence</span>(auditId: <span class="cl">ID</span>!, file: <span class="cl">Upload</span>!): <span class="cl">Evidence</span>!
+}
+
+<span class="kw">type</span> <span class="cl">Subscription</span> {
+    <span class="mt">auditStatusChanged</span>(auditId: <span class="cl">ID</span>!): <span class="cl">Audit</span>!
+}
+
+<span class="kw">type</span> <span class="cl">Audit</span> {
+    id: <span class="cl">ID</span>!
+    status: <span class="cl">AuditStatus</span>!
+    regulation: <span class="cl">Regulation</span>!
+    riskScore: <span class="cl">Float</span>
+    evidences: [<span class="cl">Evidence</span>!]!  <span class="cm"># relation → DataLoader</span>
+    createdAt: <span class="cl">DateTime</span>!
+    company: <span class="cl">Company</span>!
+}
+
+<span class="kw">type</span> <span class="cl">AuditPage</span> {
+    content: [<span class="cl">Audit</span>!]!
+    totalElements: <span class="cl">Int</span>!
+    totalPages: <span class="cl">Int</span>!
+    hasNext: <span class="cl">Boolean</span>!
+}
+
+<span class="kw">input</span> <span class="cl">AuditFilter</span> {
+    status: <span class="cl">AuditStatus</span>
+    regulation: <span class="cl">Regulation</span>
+    dateFrom: <span class="cl">DateTime</span>
+    dateTo: <span class="cl">DateTime</span>
+}
+
+<span class="kw">enum</span> <span class="cl">AuditStatus</span> { DRAFT IN_PROGRESS COMPLETED ARCHIVED }
+<span class="kw">enum</span> <span class="cl">Regulation</span> { NIS2 DORA RGPD ISO27001 }</pre>
+          </div>
+
+          <div class="code-wrap">
+            <div class="code-header">
+              <span class="code-lang">Java</span>
+              <span class="code-filename">AuditDataFetcher.java</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+<pre><span class="an">@DgsComponent</span> <span class="cm">// Équivalent @Component spécialisé DGS</span>
+<span class="an">@RequiredArgsConstructor</span>
+<span class="kw">public class</span> <span class="cl">AuditDataFetcher</span> {
+
+    <span class="kw">private final</span> <span class="cl">AuditService</span> auditService;
+
+    <span class="an">@DgsQuery</span> <span class="cm">// Résout Query.audits</span>
+    <span class="kw">public</span> <span class="cl">AuditPage</span> <span class="mt">audits</span>(
+            <span class="an">@InputArgument</span> <span class="cl">AuditFilter</span> filter,
+            <span class="an">@InputArgument</span> <span class="cl">Integer</span> page,
+            <span class="an">@InputArgument</span> <span class="cl">Integer</span> size,
+            <span class="cl">DgsDataFetchingEnvironment</span> env) {
+
+        <span class="cm">// TenantId extrait du contexte JWT (SecurityContext)</span>
+        <span class="kw">var</span> pageable = <span class="cl">PageRequest</span>.<span class="mt">of</span>(page, size);
+        <span class="kw">return</span> auditService.<span class="mt">findAudits</span>(filter, pageable);
+    }
+
+    <span class="an">@DgsQuery</span> <span class="cm">// Résout Query.audit</span>
+    <span class="kw">public</span> <span class="cl">Optional</span>&lt;<span class="cl">Audit</span>&gt; <span class="mt">audit</span>(<span class="an">@InputArgument</span> <span class="cl">UUID</span> id) {
+        <span class="kw">return</span> auditService.<span class="mt">findById</span>(id);
+    }
+
+    <span class="an">@DgsMutation</span> <span class="cm">// Résout Mutation.createAudit</span>
+    <span class="kw">public</span> <span class="cl">Audit</span> <span class="mt">createAudit</span>(<span class="an">@InputArgument</span> <span class="cl">CreateAuditInput</span> input) {
+        <span class="kw">return</span> auditService.<span class="mt">create</span>(input);
+    }
+
+    <span class="an">@DgsMutation</span>
+    <span class="kw">public</span> <span class="cl">Audit</span> <span class="mt">submitAudit</span>(<span class="an">@InputArgument</span> <span class="cl">UUID</span> id) {
+        <span class="kw">return</span> auditService.<span class="mt">submit</span>(id);
+    }
+}</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INTERMEDIAIRE -->
+    <div id="gql-mid" class="level-block">
+      <div class="level-header level-mid">
+        <div class="level-pill">Intermédiaire</div>
+        <div class="level-title">DataLoader — Résoudre le N+1 GraphQL</div>
+      </div>
+
+      <div class="concept">
+        <div class="concept-head">
+          <div class="concept-icon" style="background:rgba(255,209,102,0.12)">🚀</div>
+          <div>
+            <div class="concept-name">DataLoader — Batching et caching automatiques</div>
+            <div class="concept-desc">La solution GraphQL au problème N+1 : grouper les requêtes en un seul batch</div>
+          </div>
+        </div>
+        <div class="concept-body">
+          <div class="concept-explain">
+            Sans DataLoader : si on charge 10 audits, GraphQL appellera le resolver <code>evidences</code> 10 fois = 10 requêtes SQL.
+            Avec DataLoader : les 10 appels sont <strong>batchés</strong> en 1 seule requête SQL <code>WHERE audit_id IN (...)</code>.
+          </div>
+          <div class="code-wrap">
+            <div class="code-header">
+              <span class="code-lang">Java</span>
+              <span class="code-filename">EvidenceDataLoader.java</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+<pre><span class="an">@DgsDataLoader</span>(name = <span class="st">"evidencesByAuditId"</span>, caching = <span class="kw">true</span>)
+<span class="kw">public class</span> <span class="cl">EvidenceDataLoader</span>
+        <span class="kw">implements</span> <span class="cl">BatchLoader</span>&lt;<span class="cl">UUID</span>, <span class="cl">List</span>&lt;<span class="cl">Evidence</span>&gt;&gt; {
+
+    <span class="kw">private final</span> <span class="cl">EvidenceRepository</span> evidenceRepo;
+
+    <span class="cm">/**
+     * DGS appelle cette méthode UNE FOIS avec TOUTES les clés.
+     * Au lieu de N requêtes "WHERE audit_id = ?" →
+     * 1 seule requête "WHERE audit_id IN (?, ?, ?, ...)"
+     */</span>
+    <span class="an">@Override</span>
+    <span class="kw">public</span> <span class="cl">CompletionStage</span>&lt;<span class="cl">List</span>&lt;<span class="cl">List</span>&lt;<span class="cl">Evidence</span>&gt;&gt;&gt; <span class="mt">load</span>(<span class="cl">List</span>&lt;<span class="cl">UUID</span>&gt; auditIds) {
+        <span class="kw">return</span> <span class="cl">CompletableFuture</span>.<span class="mt">supplyAsync</span>(() -> {
+            <span class="cm">// 1 requête pour TOUS les auditIds</span>
+            <span class="kw">var</span> allEvidences = evidenceRepo.<span class="mt">findByAuditIdIn</span>(auditIds);
+
+            <span class="cm">// Grouper par auditId pour renvoyer dans le bon ordre</span>
+            <span class="kw">var</span> byAuditId = allEvidences.<span class="mt">stream</span>()
+                    .<span class="mt">collect</span>(<span class="cl">Collectors</span>.<span class="mt">groupingBy</span>(e -> e.<span class="mt">getAudit</span>().<span class="mt">getId</span>()));
+
+            <span class="cm">// Retourner dans le même ordre que auditIds (requis par DataLoader)</span>
+            <span class="kw">return</span> auditIds.<span class="mt">stream</span>()
+                    .<span class="mt">map</span>(id -> byAuditId.<span class="mt">getOrDefault</span>(id, <span class="cl">List</span>.<span class="mt">of</span>()))
+                    .<span class="mt">toList</span>();
+        });
+    }
+}
+
+<span class="cm">// Dans AuditDataFetcher — utilisation du DataLoader</span>
+<span class="an">@DgsData</span>(parentType = <span class="st">"Audit"</span>, field = <span class="st">"evidences"</span>)
+<span class="kw">public</span> <span class="cl">CompletableFuture</span>&lt;<span class="cl">List</span>&lt;<span class="cl">Evidence</span>&gt;&gt; <span class="mt">evidences</span>(
+        <span class="cl">DgsDataFetchingEnvironment</span> env) {
+
+    <span class="cl">Audit</span> audit = env.<span class="mt">getSource</span>();
+    <span class="cl">DataLoader</span>&lt;<span class="cl">UUID</span>, <span class="cl">List</span>&lt;<span class="cl">Evidence</span>&gt;&gt; loader =
+            env.<span class="mt">getDataLoader</span>(<span class="st">"evidencesByAuditId"</span>);
+
+    <span class="kw">return</span> loader.<span class="mt">load</span>(audit.<span class="mt">getId</span>()); <span class="cm">// batché automatiquement</span>
+}</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADVANCED -->
+    <div id="gql-advanced" class="level-block">
+      <div class="level-header level-advanced">
+        <div class="level-pill">Avancé</div>
+        <div class="level-title">Subscriptions SSE, Instrumentation & Sécurité</div>
+      </div>
+
+      <div class="concept">
+        <div class="concept-head">
+          <div class="concept-icon" style="background:rgba(255,209,102,0.12)">📡</div>
+          <div>
+            <div class="concept-name">Subscriptions GraphQL — Temps réel avec Reactor</div>
+            <div class="concept-desc">CO-29 : mise à jour temps réel du statut des audits</div>
+          </div>
+        </div>
+        <div class="concept-body">
+          <div class="code-wrap">
+            <div class="code-header">
+              <span class="code-lang">Java</span>
+              <span class="code-filename">AuditSubscriptionFetcher.java</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+<pre><span class="an">@DgsComponent</span>
+<span class="an">@RequiredArgsConstructor</span>
+<span class="kw">public class</span> <span class="cl">AuditSubscriptionFetcher</span> {
+
+    <span class="kw">private final</span> <span class="cl">AuditEventPublisher</span> eventPublisher;
+
+    <span class="an">@DgsSubscription</span>
+    <span class="kw">public</span> <span class="cl">Publisher</span>&lt;<span class="cl">Audit</span>&gt; <span class="mt">auditStatusChanged</span>(<span class="an">@InputArgument</span> <span class="cl">UUID</span> auditId) {
+        <span class="kw">return</span> eventPublisher
+                .<span class="mt">getAuditStatusStream</span>() <span class="cm">// Flux&lt;AuditStatusEvent&gt;</span>
+                .<span class="mt">filter</span>(event -> event.<span class="mt">getAuditId</span>().<span class="mt">equals</span>(auditId))
+                .<span class="mt">map</span>(<span class="cl">AuditStatusEvent</span>::<span class="mt">getAudit</span>);
+    }
+}
+
+<span class="cm">// Publisher alimenté depuis Kafka consumer</span>
+<span class="an">@Service</span>
+<span class="kw">public class</span> <span class="cl">AuditEventPublisher</span> {
+
+    <span class="kw">private final</span> <span class="cl">Sinks.Many</span>&lt;<span class="cl">AuditStatusEvent</span>&gt; sink =
+            <span class="cl">Sinks</span>.<span class="mt">many</span>().<span class="mt">multicast</span>().<span class="mt">onBackpressureBuffer</span>();
+
+    <span class="cm">// Appelé par le Kafka consumer</span>
+    <span class="kw">public void</span> <span class="mt">publishStatusChange</span>(<span class="cl">AuditStatusEvent</span> event) {
+        sink.<span class="mt">tryEmitNext</span>(event);
+    }
+
+    <span class="kw">public</span> <span class="cl">Flux</span>&lt;<span class="cl">AuditStatusEvent</span>&gt; <span class="mt">getAuditStatusStream</span>() {
+        <span class="kw">return</span> sink.<span class="mt">asFlux</span>();
+    }
+}</pre>
+          </div>
+
+          <div class="concept">
+            <div class="concept-head" style="cursor:default">
+              <div class="concept-icon" style="background:rgba(255,209,102,0.12)">🛡️</div>
+              <div>
+                <div class="concept-name">Sécurité GraphQL DGS — AuthDirective + @PreAuthorize</div>
+              </div>
+            </div>
+            <div class="concept-body">
+              <div class="code-wrap">
+                <div class="code-header">
+                  <span class="code-lang">Java</span>
+                  <span class="code-filename">GraphQL Security — Spring Security intégration</span>
+                  <button class="code-copy" onclick="copyCode(this)">Copier</button>
+                </div>
+<pre><span class="cm">// Schema avec directives de sécurité</span>
+<span class="cm">// audit.graphqls</span>
+<span class="kw">directive</span> <span class="an">@auth</span>(roles: [<span class="cl">String</span>!]!) <span class="kw">on</span> FIELD_DEFINITION
+
+<span class="kw">type</span> <span class="cl">Mutation</span> {
+    <span class="mt">deleteAudit</span>(id: <span class="cl">ID</span>!): <span class="cl">Boolean</span>! <span class="an">@auth</span>(roles: [<span class="st">"ADMIN"</span>])
+    <span class="mt">signReport</span>(id: <span class="cl">ID</span>!): <span class="cl">SignedReport</span>! <span class="an">@auth</span>(roles: [<span class="st">"ADMIN"</span>, <span class="st">"AUDITOR"</span>])
+}
+
+<span class="cm">// Java — @PreAuthorize sur les resolvers</span>
+<span class="an">@DgsMutation</span>
+<span class="an">@PreAuthorize</span>(<span class="st">"hasRole('ADMIN')"</span>)
+<span class="kw">public</span> <span class="cl">Boolean</span> <span class="mt">deleteAudit</span>(<span class="an">@InputArgument</span> <span class="cl">UUID</span> id) {
+    auditService.<span class="mt">delete</span>(id);
+    <span class="kw">return true</span>;
+}
+
+<span class="an">@DgsMutation</span>
+<span class="an">@PreAuthorize</span>(<span class="st">"hasAnyRole('ADMIN', 'AUDITOR')"</span>)
+<span class="kw">public</span> <span class="cl">SignedReport</span> <span class="mt">signReport</span>(<span class="an">@InputArgument</span> <span class="cl">UUID</span> id) {
+    <span class="kw">return</span> signatureService.<span class="mt">signReport</span>(id);
+}
+
+<span class="cm">// DGS Instrumentation — Logging + Tracing OTel</span>
+<span class="an">@Component</span>
+<span class="kw">public class</span> <span class="cl">TracingInstrumentation</span> <span class="kw">extends</span> <span class="cl">SimpleInstrumentation</span> {
+
+    <span class="an">@Override</span>
+    <span class="kw">public</span> <span class="cl">InstrumentationContext</span>&lt;<span class="cl">ExecutionResult</span>&gt; <span class="mt">beginExecution</span>(
+            <span class="cl">InstrumentationExecutionParameters</span> params,
+            <span class="cl">InstrumentationState</span> state) {
+
+        <span class="kw">var</span> operationName = params.<span class="mt">getOperation</span>();
+        <span class="kw">var</span> span = <span class="cl">Span</span>.<span class="mt">current</span>();
+        span.<span class="mt">setAttribute</span>(<span class="st">"graphql.operation"</span>, operationName);
+
+        <span class="kw">return</span> <span class="cl">SimpleInstrumentationContext</span>.<span class="mt">whenCompleted</span>((result, ex) -> {
+            <span class="kw">if</span> (result.<span class="mt">getErrors</span>().<span class="mt">isEmpty</span>()) {
+                span.<span class="mt">setAttribute</span>(<span class="st">"graphql.status"</span>, <span class="st">"success"</span>);
+            } <span class="kw">else</span> {
+                span.<span class="mt">setAttribute</span>(<span class="st">"graphql.errors"</span>, result.<span class="mt">getErrors</span>().<span class="mt">size</span>());
+                span.<span class="mt">setStatus</span>(<span class="cl">StatusCode</span>.ERROR);
+            }
+        });
+    }
+}</pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================ -->
+  <!--  CHEAT SHEET                                                     -->
+  <!-- ================================================================ -->
+  <section id="cheatsheet" class="content-section">
+    <div class="chapter-header">
+      <div class="chapter-num">Référence rapide</div>
+      <h2 class="chapter-title" style="color:var(--cyan)">Cheat Sheet — Spring Boot 3.4</h2>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title" style="color:var(--blue)">
+          <span style="font-size:16px">🏗️</span> IoC / DI — Résumé
+        </div>
+        <div class="card-body">
+          <ul class="checklist">
+            <li>Toujours injection par <strong>constructeur</strong> (pas @Autowired sur field)</li>
+            <li><code>@RequiredArgsConstructor</code> Lombok = 0 boilerplate</li>
+            <li>Utiliser <code>@Primary</code> + <code>@Qualifier</code> si plusieurs implémentations</li>
+            <li><code>@Profile</code> pour beans env-spécifiques (dev/prod/test)</li>
+            <li><code>@ConditionalOnProperty</code> pour feature flags</li>
+            <li><code>@PostConstruct</code> pour warmup, <code>@PreDestroy</code> pour cleanup</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title" style="color:var(--orange)">
+          <span style="font-size:16px">🎯</span> AOP — Résumé
+        </div>
+        <div class="card-body">
+          <ul class="checklist">
+            <li><code>@Before</code> = avant l'appel, <code>@After</code> = toujours après</li>
+            <li><code>@Around</code> = contrôle total, doit appeler <code>proceed()</code></li>
+            <li><code>@AfterReturning</code> = succès, <code>@AfterThrowing</code> = exception</li>
+            <li>Spring AOP = proxies = méthodes <strong>publiques inter-beans</strong> seulement</li>
+            <li>Self-invocation bypass le proxy → séparer en 2 beans</li>
+            <li>Annotations custom + <code>@Around("@annotation(ann)")</code> = pattern puissant</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title" style="color:var(--red)">
+          <span style="font-size:16px">🔄</span> @Transactional — Résumé
+        </div>
+        <div class="card-body">
+          <ul class="checklist">
+            <li><code>readOnly = true</code> sur toutes les lectures</li>
+            <li><code>REQUIRES_NEW</code> pour audit trail (indépendant du rollback)</li>
+            <li>Rollback automatique sur <code>RuntimeException</code> uniquement</li>
+            <li>Marquer <code>rollbackFor = Exception.class</code> si checked exceptions</li>
+            <li>Self-invocation = même piège qu'AOP</li>
+            <li><code>TransactionTemplate</code> pour contrôle programmatique fin</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title" style="color:var(--purple)">
+          <span style="font-size:16px">📦</span> JPA — Résumé
+        </div>
+        <div class="card-body">
+          <ul class="checklist">
+            <li><code>@Version</code> sur toutes les entités = optimistic locking</li>
+            <li>Relations LAZY par défaut = pas de chargement non voulu</li>
+            <li>N+1 → <code>@EntityGraph</code> ou <code>JOIN FETCH</code> explicite</li>
+            <li>DTO projections pour les vues en lecture (plus performant)</li>
+            <li><code>Specification&lt;T&gt;</code> pour filtres dynamiques (GraphQL, REST)</li>
+            <li><code>@Modifying</code> obligatoire pour UPDATE/DELETE en JPQL</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title" style="color:var(--yellow)">
+          <span style="font-size:16px">📡</span> GraphQL DGS — Résumé
+        </div>
+        <div class="card-body">
+          <ul class="checklist">
+            <li>Schema-first : .graphqls dans resources/schema/</li>
+            <li><code>@DgsComponent</code> + <code>@DgsQuery</code>/<code>@DgsMutation</code></li>
+            <li><code>@DgsData(parentType, field)</code> pour résoudre les relations</li>
+            <li><code>@DgsDataLoader</code> obligatoire dès qu'on résout une relation</li>
+            <li><code>@PreAuthorize</code> sur mutations sensibles</li>
+            <li>Introspection désactivée en production (sécurité)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card" style="border-color:rgba(61,214,140,0.2)">
+        <div class="card-title" style="color:var(--green)">
+          <span style="font-size:16px">⚡</span> ComplianceOS — User Stories mappées
+        </div>
+        <div class="card-body" style="font-size:12px;color:var(--muted)">
+          <div style="margin-bottom:6px"><strong style="color:var(--green)">CO-01/02/03</strong> — IoC, @Configuration, @Profile (Keycloak/HSM)</div>
+          <div style="margin-bottom:6px"><strong style="color:var(--green)">CO-04</strong> — GraphQL DGS (liste paginée audits)</div>
+          <div style="margin-bottom:6px"><strong style="color:var(--green)">CO-06</strong> — AOP (audit trail, monitoring CI)</div>
+          <div style="margin-bottom:6px"><strong style="color:var(--green)">CO-07/08</strong> — @Transactional, JPA (pipeline ETL, scoring)</div>
+          <div style="margin-bottom:6px"><strong style="color:var(--green)">CO-13</strong> — Temporal.io (workflow = @Transactional avancé)</div>
+          <div style="margin-bottom:6px"><strong style="color:var(--green)">CO-24</strong> — AOP + REQUIRES_NEW (TimescaleDB audit trail)</div>
+          <div><strong style="color:var(--green)">CO-29</strong> — GraphQL Subscriptions (dashboard temps réel)</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:48px;text-align:center;padding:32px 0;border-top:1px solid var(--border)">
+      <div style="font-family:var(--serif);font-size:28px;color:var(--muted);letter-spacing:-0.5px;margin-bottom:8px">
+        Compliance<span style="color:var(--green)">OS</span> · Formation Technique
+      </div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--faint);letter-spacing:2px">
+        Spring Boot 3.4 · Java 24 · 5 chapitres · Junior → Avancé
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  // Progress bar
+  window.addEventListener('scroll', () => {
+    const scrolled = window.scrollY;
+    const total = document.documentElement.scrollHeight - window.innerHeight;
+    document.getElementById('progress').style.width = (scrolled / total * 100) + '%';
+  });
+
+  // Active nav
+  const sections = document.querySelectorAll('[id]');
+  const navLinks = document.querySelectorAll('.nav-item');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(l => l.classList.remove('active'));
+        const active = document.querySelector(`.nav-item[href="#${entry.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+
+  // Copy code
+  function copyCode(btn) {
+    const pre = btn.closest('.code-wrap').querySelector('pre');
+    navigator.clipboard.writeText(pre.innerText).then(() => {
+      btn.textContent = '✓ Copié';
+      btn.style.color = 'var(--green)';
+      setTimeout(() => { btn.textContent = 'Copier'; btn.style.color = ''; }, 2000);
+    });
+  }
+
+  // Close sidebar on mobile when clicking a link
+  document.querySelectorAll('.nav-item').forEach(link => {
+    link.addEventListener('click', () => {
+      if (window.innerWidth <= 1024) {
+        document.getElementById('sidebar').classList.remove('open');
+      }
+    });
+  });
+</script>
+</body>
+</html>
