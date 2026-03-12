@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Performance, debugging et observabilité</title>
+  <meta name="description" content="Comment diagnostiquer un bug concurrent et observer un système multithread réel." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/styles.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-badge">MT</div>
+        <div>
+          <p class="eyebrow">Support de formation</p>
+          <h1>Multithreading</h1>
+        </div>
+      </div>
+      <nav class="nav">
+        <a class="nav-link" href="../index.html" data-label="Accueil">Accueil</a>
+<a class="nav-link" href="../pages/introduction.html" data-label="Introduction">Introduction</a>
+<a class="nav-link" href="../pages/concepts-fondamentaux.html" data-label="Concepts fondamentaux">Concepts fondamentaux</a>
+<a class="nav-link" href="../pages/java-threads-basics.html" data-label="Java — bases">Java — bases</a>
+<a class="nav-link" href="../pages/java-concurrency-advanced.html" data-label="Java — avancé">Java — avancé</a>
+<a class="nav-link" href="../pages/python-threads-basics.html" data-label="Python — bases">Python — bases</a>
+<a class="nav-link" href="../pages/python-concurrency-advanced.html" data-label="Python — avancé">Python — avancé</a>
+<a class="nav-link" href="../pages/synchronization.html" data-label="Synchronisation">Synchronisation</a>
+<a class="nav-link" href="../pages/race-condition-deadlock.html" data-label="Race / Deadlock">Race / Deadlock</a>
+<a class="nav-link" href="../pages/executors-thread-pools.html" data-label="Pools / Executors">Pools / Executors</a>
+<a class="nav-link" href="../pages/async-vs-threading.html" data-label="Async vs Threads">Async vs Threads</a>
+<a class="nav-link" href="../pages/performance-debugging.html" data-label="Performance / Debug">Performance / Debug</a>
+<a class="nav-link" href="../pages/best-practices.html" data-label="Bonnes pratiques">Bonnes pratiques</a>
+<a class="nav-link" href="../pages/exercises.html" data-label="Exercices">Exercices</a>
+<a class="nav-link" href="../pages/corrections.html" data-label="Corrigés">Corrigés</a>
+      </nav>
+    </aside>
+    <main class="content">
+      <header class="page-header">
+        <div>
+          <p class="eyebrow">Cours progressif • Java & Python</p>
+          <h1>Performance, debugging et observabilité</h1>
+          <p class="lead">Comment diagnostiquer un bug concurrent et observer un système multithread réel.</p>
+        </div>
+        <button id="toc-toggle" class="btn ghost mobile-only">Sommaire</button>
+      </header>
+
+      <div class="content-grid">
+        <article class="article">
+          
+<section>
+  <h2>1. Introduction</h2>
+  <p>Le debugging concurrent demande des outils et une méthode. Il faut savoir observer l’état des threads, les temps d’attente, les blocages et les symptômes de contention.</p>
+</section>
+<section>
+  <h2>2. Diagnostic pratique</h2>
+  <ul class="tight">
+    <li>Ajouter des logs avec le nom du thread.</li>
+    <li>Tracer les entrées/sorties de sections critiques.</li>
+    <li>Mesurer le temps d’attente et le temps de traitement.</li>
+    <li>Capturer des thread dumps quand ça bloque.</li>
+  </ul>
+</section>
+<div class="code-shell"><pre><code>// Java - log utile
+log.info("Thread={} traite la commande {}", Thread.currentThread().getName(), orderId);
+</code></pre></div>
+<section>
+  <h2>3. Outils Java</h2>
+  <ul class="tight">
+    <li><span class="inline-code">jstack</span> pour les thread dumps.</li>
+    <li><span class="inline-code">jcmd</span> et outils JDK pour l’inspection.</li>
+    <li>JFR / VisualVM / Mission Control selon l’environnement.</li>
+    <li>Métriques applicatives : taille des files, temps d’exécution, rejets, saturation.</li>
+  </ul>
+  <h3>Analyse de deadlock</h3>
+  <p>Les thread dumps montrent souvent les locks attendus et détenus. C’est une source très précieuse.</p>
+</section>
+<section>
+  <h2>4. Outils Python</h2>
+  <ul class="tight">
+    <li>Logs structurés avec nom du thread.</li>
+    <li><span class="inline-code">faulthandler</span> pour obtenir des traces utiles.</li>
+    <li>Profiling du temps passé et observation des files.</li>
+    <li>Métriques métier : backlog, latence, taux d’erreurs, temps d’attente.</li>
+  </ul>
+</section>
+<section>
+  <h2>5. Niveau avancé</h2>
+  <h3>Contention</h3>
+  <p>Un système peut être “correct” mais lent parce que tout le monde se bat pour les mêmes verrous. Le problème n’est alors plus la sûreté, mais le design.</p>
+  <h3>Recommandation de senior</h3>
+  <p>Ne débogue pas seulement le bug. Débogue aussi le modèle de concurrence choisi : file trop grande, pool mal dimensionné, état trop centralisé, lock trop grossier, absence de timeouts.</p>
+</section>
+<div class="callout remember"><div class="callout-title">À retenir</div>
+<ul class="tight">
+  <li>Loggue le nom du thread et les identifiants métier importants.</li>
+  <li>Sur Java, le thread dump est un réflexe majeur.</li>
+  <li>Observe aussi les métriques de saturation, pas seulement les exceptions.</li>
+</ul>
+</div>
+          <div class="pager">
+            <a class="btn ghost" href="async-vs-threading.html">← Précédent</a>
+            <a class="btn" href="best-practices.html">Suivant →</a>
+          </div>
+        </article>
+        <aside class="toc" id="toc">
+          <div class="toc-card">
+            <p class="toc-title">Sommaire du chapitre</p>
+            <div id="toc-container"></div>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+  <script src="../assets/js/script.js"></script>
+</body>
+</html>

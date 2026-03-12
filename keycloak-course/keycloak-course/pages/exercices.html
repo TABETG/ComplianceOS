@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Exercices et corrigés — Keycloak 25 Course</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <a class="brand" href="../index.html">Keycloak Course<small>Junior → Expert</small></a>
+      <div class="nav-group">
+        <a href="../index.html">Accueil</a>
+        <a href="../pages/introduction.html">Introduction générale</a>
+<a href="../pages/fondamentaux-identite-et-auth.html">Fondamentaux identité et authentification</a>
+<a href="../pages/keycloak-25-overview.html">Keycloak 25 overview</a>
+<a href="../pages/sso.html">SSO</a>
+<a href="../pages/oauth2.html">OAuth2</a>
+<a href="../pages/oidc.html">OpenID Connect</a>
+<a href="../pages/fido2-webauthn.html">FIDO2 / WebAuthn</a>
+<a href="../pages/rbac.html">RBAC</a>
+<a href="../pages/keycloak-realms-clients-users-roles.html">Realms, clients, users, roles</a>
+<a href="../pages/flows-et-authentication.html">Flows et authentication</a>
+<a href="../pages/integration-application.html">Intégration applicative</a>
+<a href="../pages/securite-bonnes-pratiques.html">Sécurité et bonnes pratiques</a>
+<a href="../pages/cas-pratiques.html">Cas pratiques</a>
+<a href="../pages/exercices.html">Exercices et corrigés</a>
+<a href="../pages/conclusion.html">Conclusion</a>
+      </div>
+    </aside>
+    <main class="content">
+      
+<section class="hero">
+  <h1>Exercices et corrigés</h1>
+  <p class="lead">Les exercices partent des bases et montent progressivement jusqu’aux arbitrages d’architecture.</p>
+</section>
+<section class="panel">
+  <h2>Exercices théoriques</h2>
+  <div class="callout exercise"><div class="label">Exercice 1</div><p>Explique la différence entre authentication et authorization avec un exemple métier.</p></div>
+  <div class="callout exercise"><div class="label">Exercice 2</div><p>Pourquoi OAuth2 seul n’est-il pas suffisant pour savoir quel utilisateur s’est connecté ?</p></div>
+  <div class="callout exercise"><div class="label">Exercice 3</div><p>Donne un cas où un realm role est préférable à un client role, puis l’inverse.</p></div>
+</section>
+<section class="panel">
+  <h2>QCM</h2>
+  <div class="callout exercise"><div class="label">QCM 1</div><p>Quel flow recommandes-tu pour une SPA moderne ?<br>A. Implicit<br>B. Authorization Code + PKCE<br>C. Client Credentials<br>D. Direct Grant</p></div>
+  <div class="callout exercise"><div class="label">QCM 2</div><p>Quel token une API doit-elle généralement recevoir ?<br>A. ID token<br>B. Access token<br>C. Refresh token<br>D. Session cookie de l’IdP</p></div>
+</section>
+<section class="panel">
+  <h2>Mini études de cas</h2>
+  <div class="callout exercise"><div class="label">Cas 1</div><p>Tu as une appli React, une API Spring Boot et des utilisateurs internes. Propose le type de client, le flow, et la stratégie de validation côté API.</p></div>
+  <div class="callout exercise"><div class="label">Cas 2</div><p>Un compte admin doit être protégé contre le phishing. Quelle évolution recommandes-tu ?</p></div>
+  <div class="callout exercise"><div class="label">Cas 3</div><p>Ton équipe a mis tous les rôles dans des realm roles globaux. Quels problèmes futurs vois-tu ?</p></div>
+</section>
+<section class="panel">
+  <h2>Lecture de JWT</h2>
+  <pre><code>{
+  "aud": "finance-api",
+  "azp": "web-portal",
+  "realm_access": { "roles": ["user"] },
+  "resource_access": {
+    "finance-api": { "roles": ["invoice:approve"] }
+  }
+}</code></pre>
+  <div class="callout exercise"><div class="label">Questions</div><p>Ce token peut-il théoriquement appeler <span class="inline-code">finance-api</span> ? Quel rôle fin semble présent ? Quel client a initié l’authentification ?</p></div>
+</section>
+<section class="panel">
+  <h2>Corrigés</h2>
+  <div class="callout retenir"><div class="label">Corrigé QCM</div><p><strong>QCM 1 :</strong> B. <strong>QCM 2 :</strong> B.</p></div>
+  <div class="callout retenir"><div class="label">Corrigé Cas 1</div><p>React = public client, Authorization Code + PKCE, l’API valide localement les JWT via l’issuer et les clés publiées.</p></div>
+  <div class="callout retenir"><div class="label">Corrigé Cas 2</div><p>Activer du MFA fort, idéalement WebAuthn/FIDO2, au minimum pour les administrateurs.</p></div>
+  <div class="callout retenir"><div class="label">Corrigé Cas 3</div><p>Tu perds en granularité, tu gonfles les tokens, tu mélanges les responsabilités et tu rends l’évolution applicative plus difficile.</p></div>
+  <div class="callout retenir"><div class="label">Corrigé lecture JWT</div><p><span class="inline-code">aud=finance-api</span> indique la cible prévue. Le rôle fin présent semble être <span class="inline-code">invoice:approve</span>. Le client initiateur semble être <span class="inline-code">web-portal</span> via <span class="inline-code">azp</span>.</p></div>
+</section>
+
+      <div class="footer-nav"><a href="../pages/cas-pratiques.html">← Page précédente</a><a href="../pages/conclusion.html">Page suivante →</a></div>
+    </main>
+  </div>
+  <script src="../assets/js/app.js"></script>
+</body>
+</html>

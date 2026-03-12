@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bonnes pratiques d’architecture concurrente — Cours Multithreading</title>
+  <link rel="stylesheet" href="../assets/css/styles.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-badge">MT</div>
+        <div>
+          <strong>Multithreading Course</strong>
+          <p>Java & Python</p>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="../index.html">Accueil</a>
+<a href="introduction.html">Introduction</a>
+<a href="concepts-fondamentaux.html">Concepts fondamentaux</a>
+<a href="java-threads-basics.html">Java — bases</a>
+<a href="java-concurrency-advanced.html">Java — avancé</a>
+<a href="python-threads-basics.html">Python — bases</a>
+<a href="python-concurrency-advanced.html">Python — avancé</a>
+<a href="synchronization.html">Synchronisation</a>
+<a href="race-condition-deadlock.html">Bugs classiques</a>
+<a href="executors-thread-pools.html">Pools & async</a>
+<a href="async-vs-threading.html">Async vs threads</a>
+<a href="performance-debugging.html">Perf & debugging</a>
+<a class="active" href="best-practices.html">Bonnes pratiques</a>
+<a href="exercises.html">Exercices</a>
+<a href="corrections.html">Corrigés</a>
+      </nav>
+    </aside>
+    <main class="content">
+      <header class="hero hero-small">
+        <span class="eyebrow">Support progressif — junior à avancé</span>
+        <h1>Bonnes pratiques d’architecture concurrente</h1>
+        <p>Les réflexes d’architecture qui évitent les systèmes concurrents fragiles et difficiles à maintenir.</p>
+      </header>
+      <div class="page-grid">
+        <article class="article">
+          
+<section>
+<h2>1. Principes d’architecture</h2>
+<ul>
+  <li>Minimiser l’état mutable partagé.</li>
+  <li>Privilégier l’immutabilité quand possible.</li>
+  <li>Découpler production, coordination et consommation.</li>
+  <li>Choisir la primitive la plus haut niveau possible.</li>
+</ul>
+</section>
+
+<section>
+<h2>2. Recommandations de senior / tech lead</h2>
+<div class="table-wrap"><table><thead><tr><th>Bonne pratique</th><th>Pourquoi</th><th>Exemple</th></tr></thead><tbody><tr><td>Préférer les queues</td><td>Réduit le couplage et clarifie le flux</td><td>Producteur/consommateur avec BlockingQueue / Queue</td></tr><tr><td>Séparer les pools</td><td>Évite qu’un type de tâche bloque tous les autres</td><td>Pool API externe distinct du pool CPU interne</td></tr><tr><td>Documenter thread-safe ou non</td><td>Évite les usages implicites dangereux</td><td>Javadoc ou doc de classe</td></tr><tr><td>Prévoir arrêt et timeout</td><td>Évite les workers zombies</td><td>Signal d’arrêt, interruption, Event, deadlines</td></tr><tr><td>Tester sous charge</td><td>Révèle contention et deadlocks rares</td><td>Tests de concurrence ciblés</td></tr></tbody></table></div>
+</section>
+
+<section>
+<h2>3. Ce qu’il faut éviter</h2>
+<ul>
+  <li>Créer des threads manuels partout.</li>
+  <li>Partager des collections non thread-safe sans protection.</li>
+  <li>Mélanger plusieurs responsabilités dans un même worker.</li>
+  <li>Verrouiller trop large “au cas où”.</li>
+  <li>Ajouter de la concurrence avant d’avoir mesuré le besoin réel.</li>
+</ul>
+</section>
+
+<section>
+<h2>4. Robustesse et lisibilité</h2>
+<p>Le code concurrent doit être encore plus lisible que le code classique. Les protocoles implicites sont dangereux. Il faut rendre visible :</p>
+<ul>
+  <li>qui possède quoi,</li>
+  <li>qui modifie quoi,</li>
+  <li>qui arrête quoi,</li>
+  <li>quels délais et timeouts existent,</li>
+  <li>quelles garanties de thread-safety sont offertes.</li>
+</ul>
+<div class="callout callout-note"><h3>À retenir</h3><ul><li>La meilleure concurrence est souvent celle qu’on simplifie.</li><li>Un code moins 'parallèle' mais plus fiable vaut souvent mieux en production.</li><li>Architecture, observabilité et simplicité priment sur la démonstration technique.</li></ul></div>
+</section>
+<div class="prev-next"><a href="performance-debugging.html">← Performance, debugging et observabilité</a><a href="exercises.html">Exercices →</a></div>
+
+        </article>
+        <aside class="toc">
+          <div class="toc-box">
+            <h3>Sommaire</h3>
+            <div id="toc"></div>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+  <script src="../assets/js/script.js"></script>
+</body>
+</html>

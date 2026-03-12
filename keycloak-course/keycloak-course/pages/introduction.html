@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Introduction générale — Keycloak 25 Course</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <a class="brand" href="../index.html">Keycloak Course<small>Junior → Expert</small></a>
+      <div class="nav-group">
+        <a href="../index.html">Accueil</a>
+        <a href="../pages/introduction.html">Introduction générale</a>
+<a href="../pages/fondamentaux-identite-et-auth.html">Fondamentaux identité et authentification</a>
+<a href="../pages/keycloak-25-overview.html">Keycloak 25 overview</a>
+<a href="../pages/sso.html">SSO</a>
+<a href="../pages/oauth2.html">OAuth2</a>
+<a href="../pages/oidc.html">OpenID Connect</a>
+<a href="../pages/fido2-webauthn.html">FIDO2 / WebAuthn</a>
+<a href="../pages/rbac.html">RBAC</a>
+<a href="../pages/keycloak-realms-clients-users-roles.html">Realms, clients, users, roles</a>
+<a href="../pages/flows-et-authentication.html">Flows et authentication</a>
+<a href="../pages/integration-application.html">Intégration applicative</a>
+<a href="../pages/securite-bonnes-pratiques.html">Sécurité et bonnes pratiques</a>
+<a href="../pages/cas-pratiques.html">Cas pratiques</a>
+<a href="../pages/exercices.html">Exercices et corrigés</a>
+<a href="../pages/conclusion.html">Conclusion</a>
+      </div>
+    </aside>
+    <main class="content">
+      
+<section class="hero">
+  <h1>Introduction générale</h1>
+  <p class="lead">IAM signifie <strong>Identity and Access Management</strong>. C’est la discipline qui gère l’identité des utilisateurs, leur authentification et leurs droits d’accès.</p>
+</section>
+<section class="panel">
+  <h2>Pourquoi ce sujet est central</h2>
+  <p>Dans une application métier, les bugs d’authentification et d’autorisation coûtent cher : fuite de données, escalade de privilèges, expérience utilisateur dégradée, audits de sécurité ratés. Keycloak sert précisément à centraliser ces sujets.</p>
+  <div class="callout definition"><div class="label">Définition</div><p><strong>Authentication</strong> répond à la question : « Qui es-tu ? »<br><strong>Authorization</strong> répond à la question : « Que peux-tu faire ? »</p></div>
+  <div class="callout retenir"><div class="label">À retenir</div><p>Un utilisateur peut être correctement authentifié mais insuffisamment autorisé. Les deux problèmes sont différents et doivent être modélisés séparément.</p></div>
+</section>
+<section class="panel">
+  <h2>Vocabulaire minimal</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Terme</th><th>Idée simple</th><th>Exemple</th></tr></thead>
+      <tbody>
+        <tr><td>Identity</td><td>Le profil de l’utilisateur</td><td>Nom, email, identifiant interne</td></tr>
+        <tr><td>Session</td><td>État de connexion maintenu</td><td>Cookie de session côté navigateur</td></tr>
+        <tr><td>Federation</td><td>Déléguer l’identité à un tiers</td><td>Se connecter avec Azure AD ou Google</td></tr>
+        <tr><td>IdP</td><td>Identity Provider</td><td>Keycloak, Azure AD, Okta</td></tr>
+        <tr><td>Client</td><td>Application qui délègue le login</td><td>SPA React, API Spring Boot, portail RH</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+<section class="panel">
+  <h2>Pourquoi Keycloak en entreprise</h2>
+  <ul class="check">
+    <li>Centraliser le login et le SSO.</li>
+    <li>Appliquer des politiques communes : MFA, password policies, WebAuthn, fédération.</li>
+    <li>Émettre des tokens standards OIDC / OAuth2.</li>
+    <li>Gérer utilisateurs, groupes, rôles, clients et identity brokering.</li>
+    <li>Éviter de réinventer l’authentification dans chaque application.</li>
+  </ul>
+  <div class="callout attention"><div class="label">Attention</div><p>Keycloak ne remplace pas la modélisation métier de ton application. Il te donne une base d’identité et d’accès, mais ton domaine métier garde ses propres règles fines.</p></div>
+</section>
+<section class="panel">
+  <h2>Schéma mental</h2>
+  <pre><code>Utilisateur
+   ↓
+Navigateur / App mobile
+   ↓
+Client (frontend / backend)
+   ↓ redirige vers
+Keycloak (IdP / Authorization Server)
+   ↓ renvoie
+Token / Session
+   ↓
+API / Resource Server
+</code></pre>
+  <div class="callout practice"><div class="label">Bonne pratique</div><p>Pense toujours en chaîne complète : interface → redirection → login → token → API → contrôle d’accès.</p></div>
+</section>
+
+      <div class="footer-nav"><a href="../index.html">← Page précédente</a><a href="../pages/fondamentaux-identite-et-auth.html">Page suivante →</a></div>
+    </main>
+  </div>
+  <script src="../assets/js/app.js"></script>
+</body>
+</html>

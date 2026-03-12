@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SSO — Keycloak 25 Course</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <a class="brand" href="../index.html">Keycloak Course<small>Junior → Expert</small></a>
+      <div class="nav-group">
+        <a href="../index.html">Accueil</a>
+        <a href="../pages/introduction.html">Introduction générale</a>
+<a href="../pages/fondamentaux-identite-et-auth.html">Fondamentaux identité et authentification</a>
+<a href="../pages/keycloak-25-overview.html">Keycloak 25 overview</a>
+<a href="../pages/sso.html">SSO</a>
+<a href="../pages/oauth2.html">OAuth2</a>
+<a href="../pages/oidc.html">OpenID Connect</a>
+<a href="../pages/fido2-webauthn.html">FIDO2 / WebAuthn</a>
+<a href="../pages/rbac.html">RBAC</a>
+<a href="../pages/keycloak-realms-clients-users-roles.html">Realms, clients, users, roles</a>
+<a href="../pages/flows-et-authentication.html">Flows et authentication</a>
+<a href="../pages/integration-application.html">Intégration applicative</a>
+<a href="../pages/securite-bonnes-pratiques.html">Sécurité et bonnes pratiques</a>
+<a href="../pages/cas-pratiques.html">Cas pratiques</a>
+<a href="../pages/exercices.html">Exercices et corrigés</a>
+<a href="../pages/conclusion.html">Conclusion</a>
+      </div>
+    </aside>
+    <main class="content">
+      
+<section class="hero">
+  <h1>SSO</h1>
+  <p class="lead">Le Single Sign-On permet à un utilisateur de se connecter une seule fois puis d’accéder à plusieurs applications de confiance sans ressaisir son mot de passe.</p>
+</section>
+<section class="panel">
+  <h2>SSO : l’idée simple</h2>
+  <p>Imagine un campus avec plusieurs bâtiments. Au lieu de contrôler l’identité différemment à chaque porte, on vérifie une fois à l’accueil central puis on réutilise cette preuve dans les bâtiments autorisés.</p>
+  <div class="callout retenir"><div class="label">À retenir</div><p>Le SSO ne veut pas dire que toutes les applications partagent leurs utilisateurs localement. Il veut dire qu’elles délèguent l’authentification à une autorité commune.</p></div>
+</section>
+<section class="panel">
+  <h2>Comment ça fonctionne</h2>
+  <pre><code>App A → redirection vers Keycloak → login réussi → session SSO créée
+App B → redirection vers Keycloak → session déjà active → retour immédiat avec nouveau code/token
+</code></pre>
+  <p>Keycloak maintient une session globale côté IdP. Chaque client reçoit ensuite ses propres tokens.</p>
+</section>
+<section class="panel">
+  <h2>SSO basé session vs SSO avec OIDC</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Type</th><th>Principe</th><th>Contexte</th></tr></thead>
+      <tbody>
+        <tr><td>Session-centric</td><td>L’IdP s’appuie surtout sur un cookie de session</td><td>Portails web traditionnels</td></tr>
+        <tr><td>OIDC-based</td><td>Le client obtient des tokens après la session</td><td>SPA, API, microservices, apps modernes</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+<section class="panel">
+  <h2>Logout global</h2>
+  <p>Le <strong>Single Logout</strong> cherche à invalider la session centrale et, selon le design, à informer les clients. En pratique, le logout distribué est souvent plus subtil que le login, surtout avec des SPA, des tokens de courte durée et des sessions multiples.</p>
+  <div class="callout attention"><div class="label">Attention</div><p>Le logout parfait n’existe pas toujours dans une architecture distribuée. Il faut combiner suppression locale, expiration courte des tokens, rotation et session management cohérent.</p></div>
+</section>
+
+      <div class="footer-nav"><a href="../pages/keycloak-25-overview.html">← Page précédente</a><a href="../pages/oauth2.html">Page suivante →</a></div>
+    </main>
+  </div>
+  <script src="../assets/js/app.js"></script>
+</body>
+</html>

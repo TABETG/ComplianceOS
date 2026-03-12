@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cours complet Multithreading — Cours Multithreading</title>
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-badge">MT</div>
+        <div>
+          <strong>Multithreading Course</strong>
+          <p>Java & Python</p>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <a class="active" href="index.html">Accueil</a>
+<a href="introduction.html">Introduction</a>
+<a href="concepts-fondamentaux.html">Concepts fondamentaux</a>
+<a href="java-threads-basics.html">Java — bases</a>
+<a href="java-concurrency-advanced.html">Java — avancé</a>
+<a href="python-threads-basics.html">Python — bases</a>
+<a href="python-concurrency-advanced.html">Python — avancé</a>
+<a href="synchronization.html">Synchronisation</a>
+<a href="race-condition-deadlock.html">Bugs classiques</a>
+<a href="executors-thread-pools.html">Pools & async</a>
+<a href="async-vs-threading.html">Async vs threads</a>
+<a href="performance-debugging.html">Perf & debugging</a>
+<a href="best-practices.html">Bonnes pratiques</a>
+<a href="exercises.html">Exercices</a>
+<a href="corrections.html">Corrigés</a>
+      </nav>
+    </aside>
+    <main class="content">
+      <header class="hero hero-small">
+        <span class="eyebrow">Support progressif — junior à avancé</span>
+        <h1>Cours complet Multithreading</h1>
+        <p>Support modulaire, détaillé et exploitable sur Java et Python, avec progression de junior à avancé.</p>
+      </header>
+      <div class="page-grid">
+        <article class="article">
+          
+<section>
+  <div class="hero-card-grid">
+    <div class="card"><h3>Objectif</h3><p>Comprendre le multithreading de manière progressive, depuis les bases jusqu’aux pièges réels de production, avec un focus fort sur Java et Python.</p></div>
+    <div class="card"><h3>Public visé</h3><p>Développeurs junior, intermédiaire, senior, tech leads, profils backend ou data qui veulent concevoir, diagnostiquer et améliorer des traitements concurrents.</p></div>
+    <div class="card"><h3>Philosophie</h3><p>Toujours partir d’une explication simple, montrer un exemple minimal, puis aller vers les détails internes, les performances, les compromis et les bugs réels.</p></div>
+  </div>
+</section>
+
+<section>
+  <h2>Arborescence du projet</h2>
+  <pre class="code-block"><code class="language-text">multithreading-course/
+├── index.html
+├── pages/
+│   ├── introduction.html
+│   ├── concepts-fondamentaux.html
+│   ├── java-threads-basics.html
+│   ├── java-concurrency-advanced.html
+│   ├── python-threads-basics.html
+│   ├── python-concurrency-advanced.html
+│   ├── synchronization.html
+│   ├── race-condition-deadlock.html
+│   ├── executors-thread-pools.html
+│   ├── async-vs-threading.html
+│   ├── performance-debugging.html
+│   ├── best-practices.html
+│   ├── exercises.html
+│   └── corrections.html
+├── assets/
+│   ├── css/styles.css
+│   ├── js/script.js
+│   └── images/
+└── README.md</code></pre>
+</section>
+
+<section>
+  <h2>Plan pédagogique détaillé</h2>
+  <div class="chapter-list">
+    <div class="chapter-item"><h3>1. Introduction</h3><p>Définir un thread, son intérêt, ses coûts, et casser les idées reçues classiques.</p></div>
+    <div class="chapter-item"><h3>2. Concepts fondamentaux</h3><p>Processus vs thread, concurrence vs parallélisme, atomicité, visibilité mémoire, ordre d’exécution, contention.</p></div>
+    <div class="chapter-item"><h3>3. Java — bases</h3><p>Créer des threads, Runnable, Callable, Future, interruption, join, daemon threads.</p></div>
+    <div class="chapter-item"><h3>4. Java — avancé</h3><p>JMM, volatile, synchronized, locks, atomiques, collections concurrentes, CompletableFuture, pools et coordination.</p></div>
+    <div class="chapter-item"><h3>5. Python — bases</h3><p>threading.Thread, démarrage, synchronisation simple, partage d’état et explication claire du GIL.</p></div>
+    <div class="chapter-item"><h3>6. Python — avancé</h3><p>Lock, RLock, Event, Condition, Queue, ThreadPoolExecutor, ProcessPoolExecutor, multiprocessing, asyncio.</p></div>
+    <div class="chapter-item"><h3>7. Synchronisation</h3><p>Mutual exclusion, coordination, producteur/consommateur, exemples parallèles Java/Python.</p></div>
+    <div class="chapter-item"><h3>8. Bugs classiques</h3><p>Race conditions, deadlocks, livelocks, starvation, visibility bugs, lost updates.</p></div>
+    <div class="chapter-item"><h3>9. Executors et pools</h3><p>Pourquoi les pools existent, sizing, saturation, backpressure, erreurs de configuration.</p></div>
+    <div class="chapter-item"><h3>10. Async vs threads vs process</h3><p>Quand choisir synchrone, thread, async ou process selon la nature des tâches.</p></div>
+    <div class="chapter-item"><h3>11. Performance et debugging</h3><p>Thread dumps, logs, métriques, profiling, contention, diagnostic de blocages.</p></div>
+    <div class="chapter-item"><h3>12. Bonnes pratiques</h3><p>Architecture, immutabilité, documentation thread-safe, tests, recommandations de senior.</p></div>
+    <div class="chapter-item"><h3>13. Exercices</h3><p>Questions théoriques, code review, correction de bug concurrent, mini design d’architecture.</p></div>
+    <div class="chapter-item"><h3>14. Corrigés</h3><p>Corrigés détaillés, raisonnement, pièges fréquents et bonnes réponses argumentées.</p></div>
+  </div>
+</section>
+
+<section>
+  <h2>Comparaisons obligatoires couvertes</h2>
+  <div class="table-wrap"><table><thead><tr><th>Comparaison</th><th>Question à résoudre</th><th>Recommandation pratique</th></tr></thead><tbody><tr><td>Processus vs thread</td><td>Veux-tu isoler fortement ou partager facilement la mémoire ?</td><td>Processus pour isolation, threads pour collaboration intra-process.</td></tr><tr><td>Concurrence vs parallélisme</td><td>As-tu besoin d’avancer sur plusieurs tâches ou d’exécuter physiquement en même temps ?</td><td>Concurrence pour coordination, parallélisme pour accélération réelle si possible.</td></tr><tr><td>Synchrone vs asynchrone</td><td>Le coût principal vient-il de l’attente ?</td><td>Asynchrone quand on attend souvent des I/O ou des réponses réseau.</td></tr><tr><td>Java threads vs Python threads</td><td>Le langage permet-il un vrai parallélisme CPU simple ?</td><td>Java oui plus naturellement ; Python threads surtout utiles pour l’I/O.</td></tr><tr><td>threading vs multiprocessing</td><td>CPU-bound ou IO-bound ?</td><td>threading pour I/O ; multiprocessing pour CPU en Python.</td></tr><tr><td>synchronized vs Lock</td><td>Simplicité ou contrôle fin ?</td><td>synchronized d’abord ; Lock si besoin de tryLock, interruption, conditions multiples.</td></tr><tr><td>volatile vs AtomicInteger</td><td>Besoin de visibilité seule ou d’opération atomique ?</td><td>volatile pour signal simple, AtomicInteger pour incrément/compare-and-set.</td></tr><tr><td>wait/notify vs BlockingQueue</td><td>Coordination bas niveau ou primitive métier prête à l’emploi ?</td><td>BlockingQueue presque toujours préférable pour producteur/consommateur.</td></tr></tbody></table></div>
+</section>
+
+<section>
+  <h2>Comment utiliser ce support</h2>
+  <ol class="clean-list">
+    <li>Commence par <strong>Introduction</strong> et <strong>Concepts fondamentaux</strong>.</li>
+    <li>Travaille ensuite Java et Python en parallèle pour bien comparer les modèles.</li>
+    <li>Passe par <strong>Synchronisation</strong> avant de lire <strong>Bugs classiques</strong>.</li>
+    <li>Termine avec <strong>Performance</strong>, <strong>Bonnes pratiques</strong>, puis les <strong>Exercices</strong>.</li>
+  </ol>
+  <div class="callout callout-note"><h3>À retenir</h3><ul><li>Le multithreading n’est pas qu’une question de syntaxe : c’est surtout une question de conception.</li><li>Les bugs concurrents sont souvent intermittents, donc difficiles à reproduire.</li><li>Une solution simple et sûre vaut souvent mieux qu’une solution « très parallèle » mais fragile.</li></ul></div>
+</section>
+
+        </article>
+        <aside class="toc">
+          <div class="toc-box">
+            <h3>Sommaire</h3>
+            <div id="toc"></div>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+  <script src="assets/js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IoC / Inversion of Control / Dependency Injection</title>
+  <link rel="stylesheet" href="../assets/css/styles.css" />
+</head>
+<body>
+
+<header class="topbar">
+  <div class="container topbar-inner">
+    <a class="brand" href="../index.html">Spring Course</a>
+    <nav class="nav"><a href="../index.html" class="nav-link">Accueil</a><a href="spring-boot.html" class="nav-link">Spring Boot</a><a href="ioc-di.html" class="nav-link">IoC / DI</a><a href="aop.html" class="nav-link">AOP</a><a href="transactional.html" class="nav-link">@Transactional</a><a href="jpa.html" class="nav-link">Spring Data JPA</a><a href="graphql-dgs.html" class="nav-link">GraphQL DGS</a><a href="kafka.html" class="nav-link">Kafka</a><a href="rabbitmq.html" class="nav-link">RabbitMQ</a><a href="exercises.html" class="nav-link">Exercices</a><a href="corrections.html" class="nav-link">Corrigés</a></nav>
+    <button class="menu-toggle" aria-label="Ouvrir le menu">☰</button>
+  </div>
+</header>
+
+<main class="container page-layout">
+  <aside class="sidebar">
+    <div class="card sticky">
+      <p class="eyebrow">Chapitre</p>
+      <h1>IoC / Inversion of Control / Dependency Injection</h1>
+      <p>Comprendre le conteneur Spring, les beans, les scopes et l’injection propre.</p>
+      <div id="toc" class="toc"></div>
+    </div>
+  </aside>
+  <article class="content">
+    
+<section id="intro"><h2>1. Introduction</h2>
+<p><strong>IoC</strong> signifie <em>Inversion of Control</em>. Au lieu qu’une classe crée elle-même ses dépendances, elle les reçoit de l’extérieur, ici via le conteneur Spring.</p>
+<div class="callout info"><strong>Analogie :</strong> au restaurant, le cuisinier ne fabrique pas ses casseroles. Il les reçoit déjà prêtes. En IoC, une classe reçoit ce dont elle a besoin au lieu de tout construire elle-même.</div>
+<p>C’est important car cela améliore la testabilité, le découplage et la maintenabilité.</p></section>
+<section id="beginner"><h2>2. Niveau débutant</h2>
+<p><strong>Bean :</strong> objet géré par Spring.</p>
+<p><strong>Annotations clés :</strong> <code>@Component</code>, <code>@Service</code>, <code>@Repository</code>, <code>@Controller</code>.</p>
+<div class="table-wrap"><table><thead><tr><th>Annotation</th><th>Rôle</th><th>Quand l’utiliser</th></tr></thead><tbody>
+<tr><td>@Component</td><td>Composant générique</td><td>Classe technique sans sémantique métier forte</td></tr>
+<tr><td>@Service</td><td>Logique métier</td><td>Use cases, orchestration</td></tr>
+<tr><td>@Repository</td><td>Accès aux données</td><td>DAO, intégration persistence</td></tr>
+<tr><td>@Controller / @RestController</td><td>Entrée HTTP</td><td>API et web</td></tr>
+</tbody></table></div>
+<div class="code-block"><pre><code>@Service
+public class InvoiceService {
+    private final TaxCalculator taxCalculator;
+
+    public InvoiceService(TaxCalculator taxCalculator) {
+        this.taxCalculator = taxCalculator;
+    }
+}</code></pre></div>
+<p><strong>Piège débutant :</strong> injection par champ avec <code>@Autowired</code> partout. Ça marche, mais c’est moins testable et plus difficile à raisonner.</p></section>
+<section id="intermediate"><h2>3. Niveau intermédiaire</h2>
+<p>Trois styles d’injection existent :</p>
+<div class="table-wrap"><table><thead><tr><th>Type</th><th>Avantages</th><th>Inconvénients</th><th>Recommandation</th></tr></thead><tbody>
+<tr><td>Constructeur</td><td>Immutabilité, testabilité, dépendances explicites</td><td>Constructeurs longs si classe mal découpée</td><td><strong>À privilégier</strong></td></tr>
+<tr><td>Setter</td><td>Utile pour dépendances optionnelles</td><td>Objet potentiellement incomplet</td><td>Usage limité</td></tr>
+<tr><td>Champ</td><td>Écriture rapide</td><td>Testabilité faible, dépendances cachées</td><td>À éviter</td></tr>
+</tbody></table></div>
+<p>Quand plusieurs beans ont le même type, Spring a besoin d’aide :</p>
+<div class="code-block"><pre><code>@Bean
+@Primary
+public PaymentGateway stripeGateway() { ... }
+
+@Bean
+public PaymentGateway paypalGateway() { ... }
+
+@Service
+public class BillingService {
+    private final PaymentGateway paymentGateway;
+
+    public BillingService(@Qualifier("paypalGateway") PaymentGateway paymentGateway) {
+        this.paymentGateway = paymentGateway;
+    }
+}</code></pre></div>
+<p><strong>Scopes utiles :</strong> <code>singleton</code> par défaut, <code>prototype</code> rarement, <code>request</code> surtout en web, <code>session</code> plus rare dans les architectures modernes stateless.</p></section>
+<section id="advanced"><h2>4. Niveau avancé</h2>
+<p>Le conteneur Spring construit un graphe de dépendances. Si A dépend de B et B dépend de A, tu peux tomber sur une dépendance circulaire. C’est souvent un signal de mauvais découpage.</p>
+<div class="callout warning"><strong>Piège subtil :</strong> utiliser trop de beans “utilitaires” transverses qui deviennent des points d’accumulation. Une bonne architecture garde des responsabilités claires.</div>
+<p><strong>Cycle de vie :</strong> instanciation, injection, callbacks d’initialisation, utilisation, puis destruction éventuelle. Comprendre cela aide à gérer correctement les ressources coûteuses.</p>
+<div class="code-block"><pre><code>@Component
+public class CacheWarmupBean {
+
+    @PostConstruct
+    public void init() {
+        // Exécuté après injection des dépendances
+    }
+
+    @PreDestroy
+    public void cleanup() {
+        // Exécuté avant fermeture du contexte
+    }
+}</code></pre></div>
+<p><strong>Recommandation tech lead :</strong> l’injection par constructeur doit rendre les dépendances métier visibles. Si ton constructeur a 12 paramètres, ce n’est pas un problème d’injection, c’est un problème de design.</p></section>
+<section id="code"><h2>5. Exemples de code</h2>
+<div class="code-block"><pre><code>// Fichier : NotificationService.java
+@Service
+public class NotificationService {
+    private final MailClient mailClient;
+    private final SmsClient smsClient;
+
+    public NotificationService(MailClient mailClient, SmsClient smsClient) {
+        this.mailClient = mailClient;
+        this.smsClient = smsClient;
+    }
+
+    public void sendWelcomeMessage(User user) {
+        // Le service orchestre, il ne crée pas ses dépendances.
+        mailClient.send(user.email(), "Bienvenue !");
+        smsClient.send(user.phone(), "Votre compte est activé");
+    }
+}</code></pre></div></section>
+<section id="retain"><h2>6. À retenir</h2><ul>
+<li>Le conteneur Spring gère les beans et leurs dépendances.</li>
+<li>L’injection par constructeur est le standard recommandé.</li>
+<li>@Primary et @Qualifier résolvent les ambiguïtés.</li>
+<li>Les scopes doivent être choisis avec retenue.</li>
+<li>Une dépendance circulaire est souvent un défaut d’architecture.</li>
+</ul></section>
+<section id="exercises"><h2>7. Exercices</h2>
+<details><summary>Débutant</summary><p>Transforme une classe qui fait <code>new EmailSender()</code> en classe injectable par Spring.</p></details>
+<details><summary>Intermédiaire</summary><p>Deux implémentations d’une même interface existent. Force l’une par défaut avec <code>@Primary</code> puis injecte explicitement l’autre avec <code>@Qualifier</code>.</p></details>
+<details><summary>Avancé</summary><p>Analyse un cas de dépendance circulaire entre <code>OrderService</code> et <code>PaymentService</code>, puis propose un refactoring.</p></details>
+</section>
+<section id="corrections-link"><h2>8. Corrigés</h2><p>Voir <a href="corrections.html">Corrigés</a>.</p></section>
+
+    <div class="pager"><a class="btn secondary" href="spring-boot.html">← Précédent</a><a class="btn" href="aop.html">Suivant →</a></div>
+  </article>
+</main>
+<script src="../assets/js/script.js"></script>
+</body>
+</html>

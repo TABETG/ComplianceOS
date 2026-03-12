@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Executors, thread pools et exécution asynchrone</title>
+  <meta name="description" content="Pourquoi les pools existent, sizing, saturation, backpressure et futures." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/styles.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-badge">MT</div>
+        <div>
+          <p class="eyebrow">Support de formation</p>
+          <h1>Multithreading</h1>
+        </div>
+      </div>
+      <nav class="nav">
+        <a class="nav-link" href="../index.html" data-label="Accueil">Accueil</a>
+<a class="nav-link" href="../pages/introduction.html" data-label="Introduction">Introduction</a>
+<a class="nav-link" href="../pages/concepts-fondamentaux.html" data-label="Concepts fondamentaux">Concepts fondamentaux</a>
+<a class="nav-link" href="../pages/java-threads-basics.html" data-label="Java — bases">Java — bases</a>
+<a class="nav-link" href="../pages/java-concurrency-advanced.html" data-label="Java — avancé">Java — avancé</a>
+<a class="nav-link" href="../pages/python-threads-basics.html" data-label="Python — bases">Python — bases</a>
+<a class="nav-link" href="../pages/python-concurrency-advanced.html" data-label="Python — avancé">Python — avancé</a>
+<a class="nav-link" href="../pages/synchronization.html" data-label="Synchronisation">Synchronisation</a>
+<a class="nav-link" href="../pages/race-condition-deadlock.html" data-label="Race / Deadlock">Race / Deadlock</a>
+<a class="nav-link" href="../pages/executors-thread-pools.html" data-label="Pools / Executors">Pools / Executors</a>
+<a class="nav-link" href="../pages/async-vs-threading.html" data-label="Async vs Threads">Async vs Threads</a>
+<a class="nav-link" href="../pages/performance-debugging.html" data-label="Performance / Debug">Performance / Debug</a>
+<a class="nav-link" href="../pages/best-practices.html" data-label="Bonnes pratiques">Bonnes pratiques</a>
+<a class="nav-link" href="../pages/exercises.html" data-label="Exercices">Exercices</a>
+<a class="nav-link" href="../pages/corrections.html" data-label="Corrigés">Corrigés</a>
+      </nav>
+    </aside>
+    <main class="content">
+      <header class="page-header">
+        <div>
+          <p class="eyebrow">Cours progressif • Java & Python</p>
+          <h1>Executors, thread pools et exécution asynchrone</h1>
+          <p class="lead">Pourquoi les pools existent, sizing, saturation, backpressure et futures.</p>
+        </div>
+        <button id="toc-toggle" class="btn ghost mobile-only">Sommaire</button>
+      </header>
+
+      <div class="content-grid">
+        <article class="article">
+          
+<section>
+  <h2>1. Introduction</h2>
+  <p>Créer un thread a un coût. Répéter ce coût à chaque tâche, sans borne, est une mauvaise idée en production. Les pools permettent de réutiliser des threads et de contrôler la charge.</p>
+</section>
+<section>
+  <h2>2. Pourquoi les pools existent</h2>
+  <ul class="tight">
+    <li>Réutiliser les threads au lieu de les recréer sans cesse.</li>
+    <li>Limiter la concurrence maximale.</li>
+    <li>Appliquer une file d’attente.</li>
+    <li>Éviter la saturation incontrôlée.</li>
+  </ul>
+</section>
+<div class="code-shell"><pre><code>// Java
+ExecutorService pool = Executors.newFixedThreadPool(8);
+pool.submit(() -> System.out.println("job"));
+pool.shutdown();
+</code></pre></div><div class="code-shell"><pre><code># Python
+from concurrent.futures import ThreadPoolExecutor
+
+with ThreadPoolExecutor(max_workers=8) as pool:
+    future = pool.submit(lambda: "job")
+    print(future.result())
+</code></pre></div>
+<section>
+  <h2>3. Niveau intermédiaire</h2>
+  <h3>File d’attente, saturation, backpressure</h3>
+  <p>Si les tâches arrivent plus vite qu’elles ne sortent, la file grossit. À partir d’un certain point, la latence explose, la mémoire monte et le système se dégrade.</p>
+  <h3>Taille du pool</h3>
+  <p>Il n’existe pas de taille magique universelle. Pour du CPU-bound, on reste souvent proche du nombre de cœurs. Pour de l’IO-bound, on peut aller plus haut, mais il faut mesurer.</p>
+</section>
+<section>
+  <h2>4. Niveau avancé</h2>
+  <h3>ThreadPoolExecutor en Java</h3>
+  <p>Le vrai <span class="inline-code">ThreadPoolExecutor</span> permet de configurer finement le cœur du pool, le maximum, la file, le keep-alive et la politique de rejet.</p>
+</section>
+<div class="code-shell"><pre><code>import java.util.concurrent.*;
+
+ThreadPoolExecutor executor = new ThreadPoolExecutor(
+    4,                      // corePoolSize
+    8,                      // maximumPoolSize
+    60, TimeUnit.SECONDS,   // keepAliveTime
+    new ArrayBlockingQueue<>(100), // file bornée
+    new ThreadPoolExecutor.CallerRunsPolicy() // stratégie de rejet
+);
+</code></pre></div>
+<section>
+  <h3>CompletableFuture en Java</h3>
+  <p>Très utile pour composer des traitements asynchrones. Attention toutefois au choix de l’executor utilisé.</p>
+  <h3>concurrent.futures en Python</h3>
+  <p>API simple et propre pour récupérer des résultats, gérer erreurs et soumettre des lots de tâches.</p>
+  <h3>Erreurs fréquentes</h3>
+  <ul class="tight">
+    <li>Pool non borné.</li>
+    <li>Utiliser le même pool pour des tâches très hétérogènes.</li>
+    <li>Bloquer longtemps un pool destiné à la réactivité.</li>
+    <li>Oublier les politiques d’arrêt, de timeout et de rejet.</li>
+  </ul>
+</section>
+<div class="callout remember"><div class="callout-title">À retenir</div>
+<ul class="tight">
+  <li>Un pool contrôle la concurrence ; il n’est pas juste un confort de syntaxe.</li>
+  <li>Le sizing dépend du type de charge et doit être mesuré.</li>
+  <li>Une file infinie masque souvent un problème jusqu’au jour où elle explose.</li>
+</ul>
+</div>
+          <div class="pager">
+            <a class="btn ghost" href="race-condition-deadlock.html">← Précédent</a>
+            <a class="btn" href="async-vs-threading.html">Suivant →</a>
+          </div>
+        </article>
+        <aside class="toc" id="toc">
+          <div class="toc-card">
+            <p class="toc-title">Sommaire du chapitre</p>
+            <div id="toc-container"></div>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+  <script src="../assets/js/script.js"></script>
+</body>
+</html>

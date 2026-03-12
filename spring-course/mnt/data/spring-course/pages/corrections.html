@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Corrigés</title>
+  <link rel="stylesheet" href="../assets/css/styles.css" />
+</head>
+<body>
+
+<header class="topbar">
+  <div class="container topbar-inner">
+    <a class="brand" href="../index.html">Spring Course</a>
+    <nav class="nav"><a href="../index.html" class="nav-link">Accueil</a><a href="spring-boot.html" class="nav-link">Spring Boot</a><a href="ioc-di.html" class="nav-link">IoC / DI</a><a href="aop.html" class="nav-link">AOP</a><a href="transactional.html" class="nav-link">@Transactional</a><a href="jpa.html" class="nav-link">Spring Data JPA</a><a href="graphql-dgs.html" class="nav-link">GraphQL DGS</a><a href="kafka.html" class="nav-link">Kafka</a><a href="rabbitmq.html" class="nav-link">RabbitMQ</a><a href="exercises.html" class="nav-link">Exercices</a><a href="corrections.html" class="nav-link">Corrigés</a></nav>
+    <button class="menu-toggle" aria-label="Ouvrir le menu">☰</button>
+  </div>
+</header>
+
+<main class="container page-layout">
+  <aside class="sidebar">
+    <div class="card sticky">
+      <p class="eyebrow">Chapitre</p>
+      <h1>Corrigés</h1>
+      <p>Corrigés détaillés, raisonnement et erreurs fréquentes.</p>
+      <div id="toc" class="toc"></div>
+    </div>
+  </aside>
+  <article class="content">
+    
+<section id="intro"><h2>1. Introduction</h2>
+<p>Les corrigés ci-dessous ne donnent pas seulement la réponse. Ils expliquent le raisonnement attendu, les choix techniques valables et les erreurs fréquentes à éviter.</p></section>
+<section id="beginner"><h2>2. Corrigés débutant</h2>
+<details open><summary>Correction — Différence Spring Framework / Spring Boot</summary><p>Spring Framework est le socle. Spring Boot facilite son usage grâce aux starters, à l’auto-configuration et aux conventions. <code>@SpringBootApplication</code> regroupe configuration, scan et auto-configuration.</p><p><strong>Erreur fréquente :</strong> dire que Spring Boot est “autre chose que Spring”.</p></details>
+<details><summary>Correction — Injection par constructeur</summary><p>La classe ne doit pas faire <code>new Repository()</code>. Elle reçoit son repository dans le constructeur. Cela rend les dépendances explicites, facilite les tests unitaires et laisse le conteneur orchestrer les objets.</p></details>
+<details><summary>Correction — Entité JPA Book</summary><p>Attendu : <code>@Entity</code>, un identifiant, des champs simples, puis un repository Spring Data. La méthode dérivée <code>findByTitleContainingIgnoreCase</code> montre la puissance de Spring Data sans écrire de requête manuelle.</p></details>
+</section>
+<section id="intermediate"><h2>3. Corrigés intermédiaires</h2>
+<details><summary>Correction — Aspect de logging</summary><p>Bonne réponse : utiliser <code>@Aspect</code> et un pointcut ciblé sur le package <code>service</code>. Il faut éviter un pointcut trop global sinon on loggue aussi du technique inutile et on dégrade la lisibilité.</p></details>
+<details><summary>Correction — Placement de @Transactional</summary><p>Le bon niveau est généralement le service, car il porte le use case métier complet : création commande, mise à jour stock, audit. Si l’audit doit survivre à un échec principal, on peut envisager un service séparé en <code>REQUIRES_NEW</code>, avec prudence.</p></details>
+<details><summary>Correction — Schéma GraphQL</summary><p>On attend un type, une query et une mutation. Le data fetcher ne doit pas contenir toute la logique métier : il délègue au service. C’est un point important de maintenabilité.</p></details>
+<details><summary>Correction — Clé Kafka</summary><p>La clé doit refléter le besoin d’ordre. Si l’ordre importe par commande, la clé <code>orderId</code> est logique. Si l’ordre importe par client, la clé <code>customerId</code> peut être meilleure. La bonne réponse dépend donc du métier.</p></details>
+</section>
+<section id="advanced"><h2>4. Corrigés avancés</h2>
+<details><summary>Correction — N+1 sur commandes</summary><p>Problème : une requête principale suivie d’une requête supplémentaire pour chaque relation. Solutions attendues : <code>join fetch</code>, <code>@EntityGraph</code>, projection DTO, ou redesign de la lecture. Il fallait aussi mentionner l’impact perf et la différence entre correction rapide et solution durable.</p></details>
+<details><summary>Correction — @Transactional ignoré</summary><p>Bonne explication : Spring applique souvent <code>@Transactional</code> via un proxy. Un appel interne <code>this.maMethode()</code> ne passe pas par ce proxy. Solutions possibles : déplacer la méthode dans un autre bean, revoir le découpage, ou appeler via le bean proxy avec précaution.</p></details>
+<details><summary>Correction — Kafka vs RabbitMQ</summary><p>a) Notifications asynchrones métiers ciblées : RabbitMQ est souvent plus naturel grâce à ses exchanges et son routage. b) Conservation rejouable d’un flux : Kafka est souvent meilleur grâce à la rétention et au replay.</p></details>
+<details><summary>Correction — Mini architecture e-commerce</summary><p>Réponse attendue : le choix dépend du front et du métier. Exemple cohérent : REST si besoins simples et stables, GraphQL si front riche à composition variable ; JPA pour la persistence relationnelle ; Kafka pour les événements de domaine rejouables ; RabbitMQ pour des traitements asynchrones ciblés. Il fallait surtout justifier chaque décision par un besoin réel.</p></details>
+</section>
+<section id="retain"><h2>5. À retenir</h2><ul>
+<li>Un bon corrigé explique autant le “pourquoi” que le “quoi”.</li>
+<li>Les arbitrages d’architecture doivent toujours être justifiés par le contexte.</li>
+<li>La réponse la plus “senior” n’est pas la plus compliquée, mais la plus adaptée.</li>
+</ul></section>
+
+    <div class="pager"><a class="btn secondary" href="exercises.html">← Précédent</a><a class="btn" href="../index.html">Suivant →</a></div>
+  </article>
+</main>
+<script src="../assets/js/script.js"></script>
+</body>
+</html>

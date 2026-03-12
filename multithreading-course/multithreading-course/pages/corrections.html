@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Corrigés détaillés</title>
+  <meta name="description" content="Raisonnement, correction des bugs et justification des choix techniques." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/styles.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-badge">MT</div>
+        <div>
+          <p class="eyebrow">Support de formation</p>
+          <h1>Multithreading</h1>
+        </div>
+      </div>
+      <nav class="nav">
+        <a class="nav-link" href="../index.html" data-label="Accueil">Accueil</a>
+<a class="nav-link" href="../pages/introduction.html" data-label="Introduction">Introduction</a>
+<a class="nav-link" href="../pages/concepts-fondamentaux.html" data-label="Concepts fondamentaux">Concepts fondamentaux</a>
+<a class="nav-link" href="../pages/java-threads-basics.html" data-label="Java — bases">Java — bases</a>
+<a class="nav-link" href="../pages/java-concurrency-advanced.html" data-label="Java — avancé">Java — avancé</a>
+<a class="nav-link" href="../pages/python-threads-basics.html" data-label="Python — bases">Python — bases</a>
+<a class="nav-link" href="../pages/python-concurrency-advanced.html" data-label="Python — avancé">Python — avancé</a>
+<a class="nav-link" href="../pages/synchronization.html" data-label="Synchronisation">Synchronisation</a>
+<a class="nav-link" href="../pages/race-condition-deadlock.html" data-label="Race / Deadlock">Race / Deadlock</a>
+<a class="nav-link" href="../pages/executors-thread-pools.html" data-label="Pools / Executors">Pools / Executors</a>
+<a class="nav-link" href="../pages/async-vs-threading.html" data-label="Async vs Threads">Async vs Threads</a>
+<a class="nav-link" href="../pages/performance-debugging.html" data-label="Performance / Debug">Performance / Debug</a>
+<a class="nav-link" href="../pages/best-practices.html" data-label="Bonnes pratiques">Bonnes pratiques</a>
+<a class="nav-link" href="../pages/exercises.html" data-label="Exercices">Exercices</a>
+<a class="nav-link" href="../pages/corrections.html" data-label="Corrigés">Corrigés</a>
+      </nav>
+    </aside>
+    <main class="content">
+      <header class="page-header">
+        <div>
+          <p class="eyebrow">Cours progressif • Java & Python</p>
+          <h1>Corrigés détaillés</h1>
+          <p class="lead">Raisonnement, correction des bugs et justification des choix techniques.</p>
+        </div>
+        <button id="toc-toggle" class="btn ghost mobile-only">Sommaire</button>
+      </header>
+
+      <div class="content-grid">
+        <article class="article">
+          
+<section>
+  <h2>Correction 1 — Processus vs thread</h2>
+  <p>Un processus est une unité d’exécution isolée avec son propre espace mémoire. Un thread est un flux d’exécution léger dans un processus, partageant sa mémoire avec les autres threads du même processus.</p>
+</section>
+<section>
+  <h2>Correction 2 — Concurrence vs parallélisme</h2>
+  <p>La concurrence concerne la progression coordonnée de plusieurs tâches. Le parallélisme désigne leur exécution réelle simultanée sur plusieurs cœurs.</p>
+</section>
+<section>
+  <h2>Correction 3 — start() vs run()</h2>
+  <p><span class="inline-code">run()</span> est un appel normal. <span class="inline-code">start()</span> demande à la JVM de démarrer un nouveau thread qui exécutera ensuite <span class="inline-code">run()</span>.</p>
+</section>
+<section>
+  <h2>Correction 4 — GIL</h2>
+  <p>Le GIL signifie qu’en CPython, un seul thread exécute du bytecode Python à la fois. Cela limite les gains du threading sur du CPU-bound, mais reste très utile pour l’I/O.</p>
+</section>
+<section>
+  <h2>Correction 5 — Lecture de code Java</h2>
+</section>
+<div class="code-shell"><pre><code>Thread t = new Thread(() -> System.out.println("hello"));
+t.run();
+System.out.println("done");
+</code></pre></div>
+<section>
+  <p>Ici, le lambda s’exécute dans le thread courant, pas dans un nouveau thread. Le code utilise donc un seul thread d’exécution pour ce lambda.</p>
+</section>
+<section>
+  <h2>Correction 6 — Compteur Python</h2>
+  <p>Le bug est une race condition sur <span class="inline-code">counter</span>. La correction minimale consiste à protéger l’incrément avec un <span class="inline-code">Lock</span>. Une meilleure réponse peut aussi proposer une <span class="inline-code">Queue</span> ou une réduction locale par thread selon le besoin.</p>
+</section>
+<div class="code-shell"><pre><code>import threading
+
+counter = 0
+lock = threading.Lock()
+
+def increment():
+    global counter
+    for _ in range(10000):
+        with lock:
+            counter += 1
+
+threads = [threading.Thread(target=increment) for _ in range(4)]
+for t in threads:
+    t.start()
+for t in threads:
+    t.join()
+
+print(counter)
+</code></pre></div>
+<section>
+  <h2>Correction 7 — Producteur / consommateur</h2>
+  <p>La bonne solution attendue est souvent une file bloquante avec une sentinelle d’arrêt ou un protocole explicite de fin. L’intérêt est d’éviter le partage direct d’une liste mutable et d’obtenir une coordination simple.</p>
+</section>
+<section>
+  <h2>Correction 8 — Deadlock</h2>
+  <p>La correction classique est d’imposer un ordre total sur les locks : toujours prendre A puis B, jamais l’inverse.</p>
+</section>
+<section>
+  <h2>Correction 9 — Cas d’architecture</h2>
+  <p>Pour 10 000 appels HTTP, la solution synchrone est simple mais peu réactive. Un thread pool peut convenir si le débit est contrôlé. Une approche asynchrone peut être plus efficace si l’écosystème s’y prête et si l’équipe sait la maintenir. La vraie bonne réponse dépend du niveau de complexité acceptable, du besoin de débit et de l’observabilité disponible.</p>
+</section>
+<section>
+  <h2>Correction 10 — Sizing d’un pool</h2>
+  <ul class="tight">
+    <li>Mesurer la nature de la charge : CPU ou I/O.</li>
+    <li>Observer la taille de la file et les temps de traitement.</li>
+    <li>Vérifier si des dépendances externes ralentissent tout le pool.</li>
+    <li>Regarder s’il existe de la contention interne ou des locks trop gros.</li>
+  </ul>
+  <p>Augmenter le pool sans diagnostic peut empirer la saturation.</p>
+</section>
+<section>
+  <h2>Correction 11 — volatile et count++</h2>
+  <p><span class="inline-code">volatile</span> garantit la visibilité, mais <span class="inline-code">count++</span> reste une suite lecture-calcul-écriture. Deux threads peuvent toujours se marcher dessus. Il faut une opération atomique, par exemple <span class="inline-code">AtomicInteger</span>.</p>
+</section>
+<div class="callout warning"><div class="callout-title">Erreurs fréquentes à éviter</div>
+<ul class="tight">
+  <li>Donner une réponse purement syntaxique sans parler de shared state.</li>
+  <li>Proposer des locks partout sans discuter le design.</li>
+  <li>Confondre visibilité et atomicité.</li>
+  <li>Oublier la stratégie d’arrêt des workers.</li>
+</ul>
+</div>
+          <div class="pager">
+            <a class="btn ghost" href="exercises.html">← Précédent</a>
+            <a class="btn" href="../index.html">Suivant →</a>
+          </div>
+        </article>
+        <aside class="toc" id="toc">
+          <div class="toc-card">
+            <p class="toc-title">Sommaire du chapitre</p>
+            <div id="toc-container"></div>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+  <script src="../assets/js/script.js"></script>
+</body>
+</html>

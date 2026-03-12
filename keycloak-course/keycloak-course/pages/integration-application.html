@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Intégration applicative — Keycloak 25 Course</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <a class="brand" href="../index.html">Keycloak Course<small>Junior → Expert</small></a>
+      <div class="nav-group">
+        <a href="../index.html">Accueil</a>
+        <a href="../pages/introduction.html">Introduction générale</a>
+<a href="../pages/fondamentaux-identite-et-auth.html">Fondamentaux identité et authentification</a>
+<a href="../pages/keycloak-25-overview.html">Keycloak 25 overview</a>
+<a href="../pages/sso.html">SSO</a>
+<a href="../pages/oauth2.html">OAuth2</a>
+<a href="../pages/oidc.html">OpenID Connect</a>
+<a href="../pages/fido2-webauthn.html">FIDO2 / WebAuthn</a>
+<a href="../pages/rbac.html">RBAC</a>
+<a href="../pages/keycloak-realms-clients-users-roles.html">Realms, clients, users, roles</a>
+<a href="../pages/flows-et-authentication.html">Flows et authentication</a>
+<a href="../pages/integration-application.html">Intégration applicative</a>
+<a href="../pages/securite-bonnes-pratiques.html">Sécurité et bonnes pratiques</a>
+<a href="../pages/cas-pratiques.html">Cas pratiques</a>
+<a href="../pages/exercices.html">Exercices et corrigés</a>
+<a href="../pages/conclusion.html">Conclusion</a>
+      </div>
+    </aside>
+    <main class="content">
+      
+<section class="hero">
+  <h1>Intégration applicative</h1>
+  <p class="lead">Ici, on passe du protocole à l’implémentation : frontend, backend, API et microservices.</p>
+</section>
+<section class="panel">
+  <h2>SPA + API</h2>
+  <pre><code>Utilisateur
+  ↓
+SPA React (public client, PKCE)
+  ↓ obtains access token
+API Spring Boot (resource server)
+  ↓
+Services métier
+</code></pre>
+  <p>La SPA déclenche le login, reçoit des tokens via Authorization Code + PKCE, puis appelle l’API avec un bearer token.</p>
+</section>
+<section class="panel">
+  <h2>Exemple Spring Security Resource Server</h2>
+  <pre><code class="language-yaml">spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://sso.example.com/realms/acme
+</code></pre>
+  <pre><code class="language-java">@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
+
+    @Bean
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+            // Toute requête vers /api/admin/** exige le rôle admin
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/api/admin/**").hasRole("admin")
+                .requestMatchers("/api/invoices/**").hasAnyRole("user", "manager")
+                .anyRequest().authenticated()
+            )
+            // L'API se comporte comme un Resource Server JWT
+            .oauth2ResourceServer(oauth2 -> oauth2.jwt());
+
+        return http.build();
+    }
+}
+</code></pre>
+  <p>Point important : il faut souvent ajouter un convertisseur pour mapper proprement les rôles Keycloak vers les autorités Spring.</p>
+</section>
+<section class="panel">
+  <h2>Mapping des rôles Keycloak</h2>
+  <pre><code class="language-java">@Bean
+JwtAuthenticationConverter jwtAuthenticationConverter() {
+    JwtGrantedAuthoritiesConverter scopes = new JwtGrantedAuthoritiesConverter();
+    scopes.setAuthorityPrefix("SCOPE_");
+
+    JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
+    converter.setJwtGrantedAuthoritiesConverter(jwt -> {
+        Collection&lt;GrantedAuthority&gt; authorities = new ArrayList&lt;&gt;(scopes.convert(jwt));
+
+        Map&lt;String, Object&gt; realmAccess = jwt.getClaim("realm_access");
+        if (realmAccess != null && realmAccess.get("roles") instanceof Collection&lt;?&gt; roles) {
+            for (Object role : roles) {
+                authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
+            }
+        }
+        return authorities;
+    });
+    return converter;
+}
+</code></pre>
+  <div class="callout practice"><div class="label">Bonne pratique</div><p>Teste explicitement le mapping réel de tes tokens. N’assume jamais que <span class="inline-code">hasRole("admin")</span> marchera sans adaptation.</p></div>
+</section>
+<section class="panel">
+  <h2>Microservices</h2>
+  <p>Deux approches reviennent souvent :</p>
+  <ul class="check">
+    <li><strong>Validation locale JWT</strong> dans chaque service : rapide, robuste, moins de dépendance runtime.</li>
+    <li><strong>API Gateway</strong> qui centralise une partie du contrôle : utile mais ne remplace pas totalement la sécurité interne.</li>
+  </ul>
+  <div class="callout attention"><div class="label">Attention</div><p>Ne délègue pas toute la sécurité au frontend. La vérification décisive doit rester côté backend/API.</p></div>
+</section>
+
+      <div class="footer-nav"><a href="../pages/flows-et-authentication.html">← Page précédente</a><a href="../pages/securite-bonnes-pratiques.html">Page suivante →</a></div>
+    </main>
+  </div>
+  <script src="../assets/js/app.js"></script>
+</body>
+</html>

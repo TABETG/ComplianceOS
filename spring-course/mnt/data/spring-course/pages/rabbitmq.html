@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RabbitMQ</title>
+  <link rel="stylesheet" href="../assets/css/styles.css" />
+</head>
+<body>
+
+<header class="topbar">
+  <div class="container topbar-inner">
+    <a class="brand" href="../index.html">Spring Course</a>
+    <nav class="nav"><a href="../index.html" class="nav-link">Accueil</a><a href="spring-boot.html" class="nav-link">Spring Boot</a><a href="ioc-di.html" class="nav-link">IoC / DI</a><a href="aop.html" class="nav-link">AOP</a><a href="transactional.html" class="nav-link">@Transactional</a><a href="jpa.html" class="nav-link">Spring Data JPA</a><a href="graphql-dgs.html" class="nav-link">GraphQL DGS</a><a href="kafka.html" class="nav-link">Kafka</a><a href="rabbitmq.html" class="nav-link">RabbitMQ</a><a href="exercises.html" class="nav-link">Exercices</a><a href="corrections.html" class="nav-link">Corrigés</a></nav>
+    <button class="menu-toggle" aria-label="Ouvrir le menu">☰</button>
+  </div>
+</header>
+
+<main class="container page-layout">
+  <aside class="sidebar">
+    <div class="card sticky">
+      <p class="eyebrow">Chapitre</p>
+      <h1>RabbitMQ</h1>
+      <p>Messaging, exchanges, queues, Spring AMQP et comparaison avec Kafka.</p>
+      <div id="toc" class="toc"></div>
+    </div>
+  </aside>
+  <article class="content">
+    
+<section id="intro"><h2>1. Introduction</h2>
+<p>RabbitMQ est un broker de messages orienté files, très utilisé pour la communication asynchrone entre services, le routage précis et les workflows de traitement.</p>
+<div class="callout info"><strong>Analogie :</strong> si Kafka ressemble à un journal d’événements persistant, RabbitMQ ressemble à un centre de tri postal très flexible, capable d’orienter chaque message selon des règles.</div>
+<p>Cas d’usage : traitement asynchrone, file d’attente métier, notifications, jobs d’arrière-plan, intégration inter-applications.</p></section>
+<section id="beginner"><h2>2. Niveau débutant</h2>
+<p>Concepts essentiels :</p>
+<ul>
+<li><strong>Queue</strong> : file de messages.</li>
+<li><strong>Exchange</strong> : point d’entrée qui route vers une ou plusieurs queues.</li>
+<li><strong>Binding</strong> : règle de liaison entre exchange et queue.</li>
+<li><strong>Routing key</strong> : clé utilisée pour le routage.</li>
+</ul>
+<div class="table-wrap"><table><thead><tr><th>Type d’exchange</th><th>Principe</th><th>Usage</th></tr></thead><tbody>
+<tr><td>direct</td><td>Correspondance exacte</td><td>Routage simple</td></tr>
+<tr><td>topic</td><td>Motifs avec jokers</td><td>Routage fin par catégories</td></tr>
+<tr><td>fanout</td><td>Broadcast</td><td>Notifier plusieurs consommateurs</td></tr>
+<tr><td>headers</td><td>Basé sur les headers</td><td>Cas spécifiques</td></tr>
+</tbody></table></div>
+<div class="code-block"><pre><code>@Configuration
+public class RabbitConfig {
+    public static final String EXCHANGE = "order.exchange";
+    public static final String QUEUE = "billing.queue";
+    public static final String ROUTING_KEY = "order.created";
+
+    @Bean
+    TopicExchange exchange() { return new TopicExchange(EXCHANGE); }
+
+    @Bean
+    Queue queue() { return new Queue(QUEUE, true); }
+
+    @Bean
+    Binding binding() {
+        return BindingBuilder.bind(queue()).to(exchange()).with(ROUTING_KEY);
+    }
+}</code></pre></div>
+</section>
+<section id="intermediate"><h2>3. Niveau intermédiaire</h2>
+<p>Points importants en projet :</p>
+<ul>
+<li><strong>ack / nack</strong> pour confirmer ou refuser le traitement</li>
+<li><strong>retry</strong> pour retenter</li>
+<li><strong>TTL</strong> pour expiration</li>
+<li><strong>DLQ</strong> pour messages non traitables</li>
+</ul>
+<div class="code-block"><pre><code>@Component
+@Slf4j
+public class BillingConsumer {
+
+    @RabbitListener(queues = RabbitConfig.QUEUE)
+    public void consume(OrderCreatedEvent event) {
+        // Traitement métier asynchrone
+        log.info("Billing event received {}", event);
+    }
+}</code></pre></div>
+<p><strong>Piège fréquent :</strong> oublier la stratégie d’erreur. Sans retry / DLQ, les messages échoués deviennent vite ingérables.</p>
+</section>
+<section id="advanced"><h2>4. Niveau avancé</h2>
+<p><strong>Ordering :</strong> RabbitMQ peut préserver l’ordre dans certains scénarios, mais l’ordre global devient difficile dès qu’on introduit plusieurs consommateurs concurrents ou des retries.</p>
+<p><strong>Performance :</strong> penser taille des messages, prefetch, stratégie d’acknowledgement, concurrence des listeners et durabilité.</p>
+<p><strong>Patterns :</strong></p>
+<ul>
+<li>Work queue</li>
+<li>Publish/subscribe</li>
+<li>Request/reply</li>
+<li>Delayed retry via TTL + DLQ</li>
+</ul>
+<div class="callout warning"><strong>Kafka vs RabbitMQ :</strong> pour une chaîne de traitement métier avec routage fin et sémantique de file, RabbitMQ est souvent plus naturel. Pour un historique rejouable à grande échelle, Kafka est souvent meilleur.</div>
+<p><strong>Recommandation senior :</strong> choisis RabbitMQ quand tu penses “distribution ciblée de messages et traitement asynchrone”, pas quand ton vrai besoin est “historique rejouable de flux d’événements”.</p></section>
+<section id="code"><h2>5. Exemples de code</h2>
+<div class="code-block"><pre><code>// Fichier : OrderPublisher.java
+@Service
+@RequiredArgsConstructor
+public class OrderPublisher {
+    private final RabbitTemplate rabbitTemplate;
+
+    public void publish(OrderCreatedEvent event) {
+        rabbitTemplate.convertAndSend(
+            RabbitConfig.EXCHANGE,
+            RabbitConfig.ROUTING_KEY,
+            event
+        );
+    }
+}</code></pre></div>
+<div class="table-wrap"><table><thead><tr><th>Critère</th><th>RabbitMQ</th><th>Kafka</th><th>Recommandation pratique</th></tr></thead><tbody>
+<tr><td>Routing fin</td><td>Excellent</td><td>Plus limité</td><td>RabbitMQ</td></tr>
+<tr><td>Replay historique</td><td>Moins naturel</td><td>Excellent</td><td>Kafka</td></tr>
+<tr><td>Asynchronisme applicatif</td><td>Très bon</td><td>Bon mais autre style</td><td>Souvent RabbitMQ</td></tr>
+<tr><td>Streaming événementiel</td><td>Moins central</td><td>Cœur du produit</td><td>Kafka</td></tr>
+</tbody></table></div>
+</section>
+<section id="retain"><h2>6. À retenir</h2><ul>
+<li>RabbitMQ excelle dans le routage flexible et la messagerie applicative.</li>
+<li>Les exchanges sont au cœur du design.</li>
+<li>Il faut penser ack, retry, TTL et DLQ dès le départ.</li>
+<li>L’ordre devient subtil dès qu’il y a concurrence et retries.</li>
+<li>Le bon choix dépend du besoin métier, pas de la mode.</li>
+</ul></section>
+<section id="exercises"><h2>7. Exercices</h2>
+<details><summary>Débutant</summary><p>Décris le rôle d’une queue, d’un exchange et d’une routing key.</p></details>
+<details><summary>Intermédiaire</summary><p>Crée une configuration Spring AMQP avec un topic exchange et une queue de billing.</p></details>
+<details><summary>Avancé</summary><p>Conçois une stratégie de retry avec DLQ pour un message de paiement temporairement invalide.</p></details>
+</section>
+<section id="corrections-link"><h2>8. Corrigés</h2><p>Voir <a href="corrections.html">Corrigés</a>.</p></section>
+
+    <div class="pager"><a class="btn secondary" href="kafka.html">← Précédent</a><a class="btn" href="exercises.html">Suivant →</a></div>
+  </article>
+</main>
+<script src="../assets/js/script.js"></script>
+</body>
+</html>

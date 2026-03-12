@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OpenID Connect — Keycloak 25 Course</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <a class="brand" href="../index.html">Keycloak Course<small>Junior → Expert</small></a>
+      <div class="nav-group">
+        <a href="../index.html">Accueil</a>
+        <a href="../pages/introduction.html">Introduction générale</a>
+<a href="../pages/fondamentaux-identite-et-auth.html">Fondamentaux identité et authentification</a>
+<a href="../pages/keycloak-25-overview.html">Keycloak 25 overview</a>
+<a href="../pages/sso.html">SSO</a>
+<a href="../pages/oauth2.html">OAuth2</a>
+<a href="../pages/oidc.html">OpenID Connect</a>
+<a href="../pages/fido2-webauthn.html">FIDO2 / WebAuthn</a>
+<a href="../pages/rbac.html">RBAC</a>
+<a href="../pages/keycloak-realms-clients-users-roles.html">Realms, clients, users, roles</a>
+<a href="../pages/flows-et-authentication.html">Flows et authentication</a>
+<a href="../pages/integration-application.html">Intégration applicative</a>
+<a href="../pages/securite-bonnes-pratiques.html">Sécurité et bonnes pratiques</a>
+<a href="../pages/cas-pratiques.html">Cas pratiques</a>
+<a href="../pages/exercices.html">Exercices et corrigés</a>
+<a href="../pages/conclusion.html">Conclusion</a>
+      </div>
+    </aside>
+    <main class="content">
+      
+<section class="hero">
+  <h1>OpenID Connect</h1>
+  <p class="lead">OIDC ajoute une couche d’identité au-dessus d’OAuth2. C’est lui qui permet au client de savoir quel utilisateur s’est authentifié.</p>
+</section>
+<section class="panel">
+  <h2>Pourquoi OIDC existe</h2>
+  <p>OAuth2 répond au problème d’accès à une ressource. OIDC répond au problème d’identité. En clair : OAuth2 donne une clé d’accès ; OIDC dit aussi <em>qui</em> a ouvert la porte.</p>
+  <div class="callout definition"><div class="label">Définition</div><p>Un <strong>ID token</strong> est un token destiné au client pour attester l’authentification de l’utilisateur.</p></div>
+</section>
+<section class="panel">
+  <h2>Claims et scopes</h2>
+  <pre><code>{
+  "iss": "https://sso.example.com/realms/acme",
+  "sub": "user-123",
+  "aud": "web-portal",
+  "email": "alice@example.com",
+  "preferred_username": "alice",
+  "given_name": "Alice",
+  "family_name": "Martin"
+}</code></pre>
+  <p>Les scopes <span class="inline-code">openid</span>, <span class="inline-code">profile</span>, <span class="inline-code">email</span> contrôlent ce que le client demande en standard.</p>
+</section>
+<section class="panel">
+  <h2>Endpoints importants</h2>
+  <ul class="check">
+    <li><span class="inline-code">/.well-known/openid-configuration</span> : discovery endpoint</li>
+    <li><span class="inline-code">/protocol/openid-connect/certs</span> : JWKS</li>
+    <li><span class="inline-code">/protocol/openid-connect/userinfo</span> : profil utilisateur</li>
+  </ul>
+  <div class="callout practice"><div class="label">Bonne pratique</div><p>Utilise le discovery endpoint et le JWKS du provider, au lieu de coder en dur des URLs de clés sans gouvernance.</p></div>
+</section>
+<section class="panel">
+  <h2>Validation côté API</h2>
+  <pre><code># À valider au minimum
+- signature
+- iss (issuer)
+- exp / nbf / iat
+- aud ou azp selon le contexte
+- scopes / rôles nécessaires
+</code></pre>
+  <div class="callout attention"><div class="label">Attention</div><p>Décoder un JWT n’est pas le valider. Sans vérification cryptographique et contrôles de claims, tu n’as aucune garantie de confiance.</p></div>
+</section>
+
+      <div class="footer-nav"><a href="../pages/oauth2.html">← Page précédente</a><a href="../pages/fido2-webauthn.html">Page suivante →</a></div>
+    </main>
+  </div>
+  <script src="../assets/js/app.js"></script>
+</body>
+</html>

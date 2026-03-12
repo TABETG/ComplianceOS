@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AOP</title>
+  <link rel="stylesheet" href="../assets/css/styles.css" />
+</head>
+<body>
+
+<header class="topbar">
+  <div class="container topbar-inner">
+    <a class="brand" href="../index.html">Spring Course</a>
+    <nav class="nav"><a href="../index.html" class="nav-link">Accueil</a><a href="spring-boot.html" class="nav-link">Spring Boot</a><a href="ioc-di.html" class="nav-link">IoC / DI</a><a href="aop.html" class="nav-link">AOP</a><a href="transactional.html" class="nav-link">@Transactional</a><a href="jpa.html" class="nav-link">Spring Data JPA</a><a href="graphql-dgs.html" class="nav-link">GraphQL DGS</a><a href="kafka.html" class="nav-link">Kafka</a><a href="rabbitmq.html" class="nav-link">RabbitMQ</a><a href="exercises.html" class="nav-link">Exercices</a><a href="corrections.html" class="nav-link">Corrigés</a></nav>
+    <button class="menu-toggle" aria-label="Ouvrir le menu">☰</button>
+  </div>
+</header>
+
+<main class="container page-layout">
+  <aside class="sidebar">
+    <div class="card sticky">
+      <p class="eyebrow">Chapitre</p>
+      <h1>AOP</h1>
+      <p>Aspects, advices, pointcuts, limites et usages réalistes.</p>
+      <div id="toc" class="toc"></div>
+    </div>
+  </aside>
+  <article class="content">
+    
+<section id="intro"><h2>1. Introduction</h2>
+<p>L’AOP (<em>Aspect-Oriented Programming</em>) sert à traiter des préoccupations transverses sans polluer le code métier : logging, audit, métriques, sécurité, traçage.</p>
+<div class="callout info"><strong>Analogie :</strong> un contrôle qualité à l’entrée d’un atelier. Tu n’ajoutes pas le contrôle dans chaque machine ; tu mets un mécanisme transversal au bon endroit.</div>
+<p>Pourquoi c’est utile : éviter de dupliquer le même code avant/après chaque méthode.</p></section>
+<section id="beginner"><h2>2. Niveau débutant</h2>
+<p>Vocabulaire clé :</p>
+<ul>
+<li><strong>Aspect</strong> : classe qui contient la logique transverse.</li>
+<li><strong>Advice</strong> : code exécuté avant, après ou autour d’une méthode.</li>
+<li><strong>Pointcut</strong> : expression qui sélectionne les méthodes ciblées.</li>
+<li><strong>Join point</strong> : point d’exécution interceptable.</li>
+<li><strong>Weaving</strong> : application de l’aspect.</li>
+</ul>
+<div class="code-block"><pre><code>@Aspect
+@Component
+@Slf4j
+public class LoggingAspect {
+
+    @Before("execution(* com.example.demo.service..*(..))")
+    public void logBefore(JoinPoint joinPoint) {
+        log.info("Appel de la méthode {}", joinPoint.getSignature().getName());
+    }
+}</code></pre></div>
+<p><strong>Piège débutant :</strong> utiliser AOP pour la logique métier. L’AOP est utile pour le transversal, pas pour remplacer le design métier.</p></section>
+<section id="intermediate"><h2>3. Niveau intermédiaire</h2>
+<p>Les advices principaux :</p>
+<div class="table-wrap"><table><thead><tr><th>Advice</th><th>Moment</th><th>Usage typique</th></tr></thead><tbody>
+<tr><td>@Before</td><td>Avant l’exécution</td><td>Validation simple, log d’entrée</td></tr>
+<tr><td>@After</td><td>Après, succès ou échec</td><td>Nettoyage</td></tr>
+<tr><td>@AfterReturning</td><td>Après un succès</td><td>Métriques, audit</td></tr>
+<tr><td>@AfterThrowing</td><td>Après une exception</td><td>Logs d’erreur, alerting</td></tr>
+<tr><td>@Around</td><td>Avant et après, contrôle complet</td><td>Mesure de performance, wrappers</td></tr>
+</tbody></table></div>
+<div class="code-block"><pre><code>@Around("@annotation(TrackExecutionTime)")
+public Object measure(ProceedingJoinPoint pjp) throws Throwable {
+    long start = System.nanoTime();
+    try {
+        return pjp.proceed();
+    } finally {
+        long duration = System.nanoTime() - start;
+        log.info("{} took {} ms", pjp.getSignature(), duration / 1_000_000);
+    }
+}</code></pre></div>
+<p>En projet, on combine souvent AOP avec une annotation custom pour limiter l’impact et garder un ciblage clair.</p></section>
+<section id="advanced"><h2>4. Niveau avancé</h2>
+<p>En Spring, l’AOP standard repose surtout sur des proxies. Cela implique une limite importante : une méthode appelée en interne depuis la même classe peut ne pas passer par le proxy, donc l’aspect peut ne pas s’appliquer.</p>
+<div class="callout warning"><strong>Piège subtil :</strong> le fameux “pourquoi mon aspect ne se déclenche pas ?”. Souvent, la méthode interceptée n’est pas appelée via le bean proxy Spring mais via <code>this</code>.</div>
+<p><strong>Limites :</strong></p>
+<ul>
+<li>Lisibilité si les pointcuts deviennent trop larges.</li>
+<li>Complexité de debug.</li>
+<li>Couplage implicite si trop d’aspects sont empilés.</li>
+</ul>
+<p><strong>Recommandation senior :</strong> AOP oui, mais ciblé, documenté et réservé aux besoins transverses. Pour un comportement métier explicite, mieux vaut souvent du code lisible dans un service.</p></section>
+<section id="code"><h2>5. Exemples de code</h2>
+<div class="code-block"><pre><code>// Fichier : AuditAspect.java
+@Aspect
+@Component
+@RequiredArgsConstructor
+public class AuditAspect {
+    private final AuditService auditService;
+
+    @AfterReturning(
+        pointcut = "execution(* com.example.demo.service.OrderService.placeOrder(..))",
+        returning = "result"
+    )
+    public void auditOrderCreation(JoinPoint joinPoint, Object result) {
+        // On journalise après succès pour éviter d’auditer une opération échouée.
+        auditService.record("ORDER_CREATED", joinPoint.getArgs(), result);
+    }
+}</code></pre></div></section>
+<section id="retain"><h2>6. À retenir</h2><ul>
+<li>AOP sert aux préoccupations transverses.</li>
+<li>@Around est puissant mais doit être utilisé avec retenue.</li>
+<li>Les proxies Spring imposent des limites, notamment sur les appels internes.</li>
+<li>Évite les pointcuts trop généraux.</li>
+<li>Documente les aspects, sinon le comportement devient opaque.</li>
+</ul></section>
+<section id="exercises"><h2>7. Exercices</h2>
+<details><summary>Débutant</summary><p>Crée un aspect qui loggue l’entrée dans toutes les méthodes d’un package service.</p></details>
+<details><summary>Intermédiaire</summary><p>Mesure le temps d’exécution des méthodes annotées <code>@TrackExecutionTime</code>.</p></details>
+<details><summary>Avancé</summary><p>Explique pourquoi un aspect <code>@Transactional</code> ou custom ne s’applique pas sur un appel interne dans la même classe.</p></details>
+</section>
+<section id="corrections-link"><h2>8. Corrigés</h2><p>Voir <a href="corrections.html">Corrigés</a>.</p></section>
+
+    <div class="pager"><a class="btn secondary" href="ioc-di.html">← Précédent</a><a class="btn" href="transactional.html">Suivant →</a></div>
+  </article>
+</main>
+<script src="../assets/js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Executors, thread pools et exécution asynchrone — Cours Multithreading</title>
+  <link rel="stylesheet" href="../assets/css/styles.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-badge">MT</div>
+        <div>
+          <strong>Multithreading Course</strong>
+          <p>Java & Python</p>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="../index.html">Accueil</a>
+<a href="introduction.html">Introduction</a>
+<a href="concepts-fondamentaux.html">Concepts fondamentaux</a>
+<a href="java-threads-basics.html">Java — bases</a>
+<a href="java-concurrency-advanced.html">Java — avancé</a>
+<a href="python-threads-basics.html">Python — bases</a>
+<a href="python-concurrency-advanced.html">Python — avancé</a>
+<a href="synchronization.html">Synchronisation</a>
+<a href="race-condition-deadlock.html">Bugs classiques</a>
+<a class="active" href="executors-thread-pools.html">Pools & async</a>
+<a href="async-vs-threading.html">Async vs threads</a>
+<a href="performance-debugging.html">Perf & debugging</a>
+<a href="best-practices.html">Bonnes pratiques</a>
+<a href="exercises.html">Exercices</a>
+<a href="corrections.html">Corrigés</a>
+      </nav>
+    </aside>
+    <main class="content">
+      <header class="hero hero-small">
+        <span class="eyebrow">Support progressif — junior à avancé</span>
+        <h1>Executors, thread pools et exécution asynchrone</h1>
+        <p>Pertes de performance, dimensionnement, saturation, backpressure et usage propre des executors.</p>
+      </header>
+      <div class="page-grid">
+        <article class="article">
+          
+<section>
+<h2>1. Pourquoi les thread pools existent</h2>
+<p>Créer un thread a un coût : allocation mémoire, enregistrement auprès de l’OS, context switching, supervision difficile. Les pools réutilisent des threads existants pour traiter plusieurs tâches sans recréer constamment des threads.</p>
+</section>
+
+<section>
+<h2>2. Java ExecutorService</h2>
+<pre class="code-block"><code class="language-java">ExecutorService pool = new ThreadPoolExecutor(
+    8,                 // core threads
+    16,                // max threads
+    60, TimeUnit.SECONDS,
+    new ArrayBlockingQueue&lt;&gt;(1000)
+);</code></pre>
+<h3>Points clés</h3>
+<ul>
+  <li><strong>corePoolSize</strong> : taille de base.</li>
+  <li><strong>maximumPoolSize</strong> : limite haute.</li>
+  <li><strong>queue</strong> : file d’attente.</li>
+  <li><strong>rejectedExecutionHandler</strong> : comportement en saturation.</li>
+</ul>
+<h3>Erreurs fréquentes</h3>
+<ul>
+  <li>Queue infinie masquant la saturation.</li>
+  <li>Pool minuscule pour tâches bloquantes I/O.</li>
+  <li>Pool gigantesque causant contention et mémoire inutile.</li>
+</ul>
+</section>
+
+<section>
+<h2>3. Python ThreadPoolExecutor</h2>
+<pre class="code-block"><code class="language-python">from concurrent.futures import ThreadPoolExecutor, as_completed
+
+with ThreadPoolExecutor(max_workers=16) as pool:
+    futures = [pool.submit(fetch_url, url) for url in urls]
+    for future in as_completed(futures):
+        print(future.result())</code></pre>
+<p>Très utile pour des appels I/O parallélisés simplement.</p>
+</section>
+
+<section>
+<h2>4. Backpressure et saturation</h2>
+<p>Quand les producteurs créent plus vite que les consommateurs ne traitent, le système doit ralentir, rejeter ou bufferiser. Sans stratégie de backpressure, la mémoire explose ou la latence dérive.</p>
+<div class="table-wrap"><table><thead><tr><th>Problème</th><th>Symptôme</th><th>Remède</th></tr></thead><tbody><tr><td>Pool saturé</td><td>Temps de réponse qui monte</td><td>Limiter la production, augmenter les consumers, gérer la file.</td></tr><tr><td>Queue trop grande</td><td>Mémoire élevée, latence cachée</td><td>Capacité bornée, alerting, rejet contrôlé.</td></tr><tr><td>Tâches bloquantes dans petit pool</td><td>Blocage global</td><td>Pool dédié par type de charge.</td></tr></tbody></table></div>
+</section>
+
+<section>
+<h2>5. Taille optimale d’un pool</h2>
+<p>Il n’existe pas de taille universelle. Le sizing dépend de la nature des tâches :</p>
+<ul>
+  <li><strong>CPU-bound</strong> : proche du nombre de cœurs, avec ajustements selon contention.</li>
+  <li><strong>I/O-bound</strong> : souvent plus grand, car beaucoup de temps est passé à attendre.</li>
+</ul>
+<p>La vraie bonne réponse vient des métriques : temps d’exécution, attente, saturation, files, CPU, latence.</p>
+</section>
+
+<section>
+<h2>6. CompletableFuture et futur composable</h2>
+<p>En Java, <code>CompletableFuture</code> permet de chaîner des traitements asynchrones. En Python, <code>concurrent.futures</code> reste plus simple mais moins fluide pour les graphes complexes.</p>
+<div class="callout callout-note"><h3>À retenir</h3><ul><li>Les pools servent à contrôler la concurrence, pas seulement à l’accélérer.</li><li>Un pool doit être pensé avec sa file d’attente et sa stratégie de saturation.</li><li>Le mauvais pool au mauvais endroit peut plomber toute l’application.</li></ul></div>
+</section>
+<div class="prev-next"><a href="race-condition-deadlock.html">← Race conditions, deadlocks et bugs classiques</a><a href="async-vs-threading.html">Synchrone vs asynchrone vs threads vs process →</a></div>
+
+        </article>
+        <aside class="toc">
+          <div class="toc-box">
+            <h3>Sommaire</h3>
+            <div id="toc"></div>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+  <script src="../assets/js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flows et authentication — Keycloak 25 Course</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <a class="brand" href="../index.html">Keycloak Course<small>Junior → Expert</small></a>
+      <div class="nav-group">
+        <a href="../index.html">Accueil</a>
+        <a href="../pages/introduction.html">Introduction générale</a>
+<a href="../pages/fondamentaux-identite-et-auth.html">Fondamentaux identité et authentification</a>
+<a href="../pages/keycloak-25-overview.html">Keycloak 25 overview</a>
+<a href="../pages/sso.html">SSO</a>
+<a href="../pages/oauth2.html">OAuth2</a>
+<a href="../pages/oidc.html">OpenID Connect</a>
+<a href="../pages/fido2-webauthn.html">FIDO2 / WebAuthn</a>
+<a href="../pages/rbac.html">RBAC</a>
+<a href="../pages/keycloak-realms-clients-users-roles.html">Realms, clients, users, roles</a>
+<a href="../pages/flows-et-authentication.html">Flows et authentication</a>
+<a href="../pages/integration-application.html">Intégration applicative</a>
+<a href="../pages/securite-bonnes-pratiques.html">Sécurité et bonnes pratiques</a>
+<a href="../pages/cas-pratiques.html">Cas pratiques</a>
+<a href="../pages/exercices.html">Exercices et corrigés</a>
+<a href="../pages/conclusion.html">Conclusion</a>
+      </div>
+    </aside>
+    <main class="content">
+      
+<section class="hero">
+  <h1>Flows et authentication</h1>
+  <p class="lead">Les authentication flows de Keycloak décrivent l’ordre et les conditions des étapes de login.</p>
+</section>
+<section class="panel">
+  <h2>Flows principaux</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Flow</th><th>Usage</th></tr></thead>
+      <tbody>
+        <tr><td>Browser</td><td>Authentification web classique via redirection</td></tr>
+        <tr><td>Direct grant</td><td>Flux direct de credentials, à manipuler avec prudence</td></tr>
+        <tr><td>Reset credentials</td><td>Réinitialisation de mot de passe</td></tr>
+        <tr><td>First broker login</td><td>Premier login via un IdP externe</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+<section class="panel">
+  <h2>Exécutions et requirements</h2>
+  <p>Chaque flow contient des <strong>executions</strong> avec des requirements comme <span class="inline-code">REQUIRED</span>, <span class="inline-code">ALTERNATIVE</span>, <span class="inline-code">DISABLED</span>, <span class="inline-code">CONDITIONAL</span>.</p>
+  <pre><code>Browser flow
+├── Cookie                 [ALTERNATIVE]
+├── Kerberos               [DISABLED]
+└── Forms                  [ALTERNATIVE]
+    ├── Username Password Form   [REQUIRED]
+    ├── OTP Form                 [OPTIONAL / CONDITIONAL selon design]
+    └── WebAuthn Authenticator   [ALTERNATIVE ou REQUIRED]
+</code></pre>
+</section>
+<section class="panel">
+  <h2>MFA</h2>
+  <p>Le MFA consiste à exiger plusieurs facteurs : quelque chose que l’utilisateur sait, possède, ou est. Dans Keycloak, on le construit avec OTP, WebAuthn ou des conditions contextuelles.</p>
+  <div class="callout practice"><div class="label">Bonne pratique</div><p>Active le MFA au moins pour les comptes admin, les accès sensibles et les actions critiques. Évite de l’imposer aveuglément partout sans stratégie d’onboarding.</p></div>
+</section>
+<section class="panel">
+  <h2>Custom flows</h2>
+  <p>Tu peux dupliquer un flow et le personnaliser. C’est utile pour des parcours comme :</p>
+  <ul class="check">
+    <li>Forcer WebAuthn pour les administrateurs</li>
+    <li>OTP seulement hors réseau interne</li>
+    <li>Premier login avec mise à jour du profil</li>
+    <li>Acceptation de conditions d’utilisation</li>
+  </ul>
+  <div class="callout attention"><div class="label">Attention</div><p>Les custom flows sont puissants mais peuvent devenir difficiles à maintenir. Versionne et documente chaque variation.</p></div>
+</section>
+
+      <div class="footer-nav"><a href="../pages/keycloak-realms-clients-users-roles.html">← Page précédente</a><a href="../pages/integration-application.html">Page suivante →</a></div>
+    </main>
+  </div>
+  <script src="../assets/js/app.js"></script>
+</body>
+</html>

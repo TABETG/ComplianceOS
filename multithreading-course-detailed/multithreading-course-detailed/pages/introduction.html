@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Introduction au multithreading — Cours Multithreading</title>
+  <link rel="stylesheet" href="../assets/css/styles.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-badge">MT</div>
+        <div>
+          <strong>Multithreading Course</strong>
+          <p>Java & Python</p>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="../index.html">Accueil</a>
+<a class="active" href="introduction.html">Introduction</a>
+<a href="concepts-fondamentaux.html">Concepts fondamentaux</a>
+<a href="java-threads-basics.html">Java — bases</a>
+<a href="java-concurrency-advanced.html">Java — avancé</a>
+<a href="python-threads-basics.html">Python — bases</a>
+<a href="python-concurrency-advanced.html">Python — avancé</a>
+<a href="synchronization.html">Synchronisation</a>
+<a href="race-condition-deadlock.html">Bugs classiques</a>
+<a href="executors-thread-pools.html">Pools & async</a>
+<a href="async-vs-threading.html">Async vs threads</a>
+<a href="performance-debugging.html">Perf & debugging</a>
+<a href="best-practices.html">Bonnes pratiques</a>
+<a href="exercises.html">Exercices</a>
+<a href="corrections.html">Corrigés</a>
+      </nav>
+    </aside>
+    <main class="content">
+      <header class="hero hero-small">
+        <span class="eyebrow">Support progressif — junior à avancé</span>
+        <h1>Introduction au multithreading</h1>
+        <p>Pourquoi les threads existent, ce qu’ils apportent, ce qu’ils coûtent et pourquoi ils sont difficiles à maîtriser.</p>
+      </header>
+      <div class="page-grid">
+        <article class="article">
+          
+<section>
+<h2>1. Introduction</h2>
+<p>Un <strong>thread</strong> est une unité d’exécution à l’intérieur d’un processus. Plusieurs threads d’un même processus partagent la même mémoire, les mêmes objets, les mêmes fichiers ouverts, mais ils ont chacun leur pile d’exécution et leur compteur d’instruction. Dit autrement : un processus est une “boîte d’application”, un thread est un “ouvrier” qui travaille à l’intérieur.</p>
+<p>Le multithreading sert à <strong>faire avancer plusieurs tâches en même temps</strong> ou, plus précisément, à laisser plusieurs unités de travail progresser de manière concurrente. Cela peut améliorer la réactivité, le débit, l’utilisation CPU, ou simplement éviter de bloquer le thread principal pendant une attente réseau, disque ou I/O.</p>
+<div class="callout callout-note"><h3>À retenir</h3><ul><li>Multithreading ne veut pas automatiquement dire 'plus rapide'.</li><li>Le vrai enjeu n’est pas seulement la création de threads mais la coordination entre eux.</li><li>Plusieurs threads partagent souvent le même état, donc les bugs peuvent être subtils.</li></ul></div>
+</section>
+
+<section>
+<h2>2. Définition simple, utilité, importance</h2>
+<h3>Définition simple</h3>
+<p>Un thread exécute du code. Si tu n’as qu’un seul thread, ton application fait une chose à la fois. Si tu en as plusieurs, plusieurs tâches peuvent avancer en parallèle réel ou apparent selon le nombre de cœurs CPU et l’ordonnancement de l’OS.</p>
+<h3>À quoi ça sert</h3>
+<ul>
+  <li>Garder une application fluide pendant des opérations lentes.</li>
+  <li>Traiter plusieurs requêtes utilisateur ou messages simultanément.</li>
+  <li>Construire des workers, pipelines, batchs ou consommateurs de messages.</li>
+  <li>Exploiter plusieurs cœurs CPU pour certains calculs.</li>
+</ul>
+<h3>Quand on l’utilise</h3>
+<ul>
+  <li>Backend web qui reçoit plusieurs requêtes.</li>
+  <li>Consommation Kafka ou RabbitMQ.</li>
+  <li>Téléchargements, appels HTTP, accès base de données, scraping, fichiers.</li>
+  <li>Traitements batch parallélisés.</li>
+</ul>
+<div class="callout callout-warn"><h3>Pièges fréquents</h3><ul><li>Confondre concurrence et parallélisme.</li><li>Croire que plus de threads = forcément meilleures performances.</li><li>Oublier le coût de synchronisation et de contention.</li></ul></div>
+</section>
+
+<section>
+<h2>3. Niveau débutant</h2>
+<h3>Vocabulaire indispensable</h3>
+<div class="table-wrap"><table><thead><tr><th>Terme</th><th>Définition simple</th><th>À retenir</th></tr></thead><tbody><tr><td>Processus</td><td>Instance d’un programme</td><td>Isolé des autres processus, sauf mécanisme explicite.</td></tr><tr><td>Thread</td><td>Flux d’exécution dans un processus</td><td>Partage la mémoire du processus.</td></tr><tr><td>Shared state</td><td>État partagé</td><td>Source fréquente de bugs concurrents.</td></tr><tr><td>Critical section</td><td>Zone critique</td><td>Code qui accède à une ressource partagée.</td></tr><tr><td>Lock</td><td>Verrou</td><td>Mécanisme empêchant plusieurs accès simultanés incohérents.</td></tr><tr><td>Daemon thread</td><td>Thread d’arrière-plan</td><td>Peut être interrompu quand l’application s’arrête.</td></tr></tbody></table></div>
+<h3>Exemple mental</h3>
+<p>Imagine une cuisine de restaurant. Le processus est le restaurant entier. Chaque thread est un cuisinier. Tous les cuisiniers partagent le même frigo et les mêmes ustensiles. Si deux cuisiniers prennent la même casserole au même moment sans coordination, le chaos commence.</p>
+<h3>Exemple minimal</h3>
+<pre class="code-block"><code class="language-java">public class Main {
+    public static void main(String[] args) {
+        Thread worker = new Thread(() -&gt; {
+            System.out.println(&quot;Travail en arrière-plan&quot;);
+        });
+
+        worker.start(); // démarre un vrai nouveau thread
+        System.out.println(&quot;Thread principal&quot;);
+    }
+}</code></pre>
+<p>Ici, l’ordre d’affichage n’est pas garanti. Le thread principal et le thread worker peuvent s’exécuter dans un ordre différent selon l’ordonnancement.</p>
+</section>
+
+<section>
+<h2>4. Niveau intermédiaire</h2>
+<p>En vrai projet, le problème n’est presque jamais “comment créer un thread ?” mais plutôt :</p>
+<ul>
+  <li>combien de threads créer,</li>
+  <li>comment leur donner du travail,</li>
+  <li>comment partager ou éviter de partager l’état,</li>
+  <li>comment arrêter proprement un traitement,</li>
+  <li>comment éviter saturation, blocage ou corruption de données.</li>
+</ul>
+<p>Dans un backend Spring Boot, on préfère généralement un <strong>pool de threads</strong>, des <strong>queues</strong>, des <strong>executors</strong> ou des frameworks plus haut niveau plutôt que des `new Thread(...)` partout.</p>
+<pre class="code-block"><code class="language-python">import threading
+import time
+
+def fetch_data():
+    print(&quot;Début appel I/O&quot;)
+    time.sleep(2)
+    print(&quot;Fin appel I/O&quot;)
+
+worker = threading.Thread(target=fetch_data)
+worker.start()
+
+print(&quot;Le thread principal continue...&quot;)
+worker.join()
+print(&quot;Travail terminé&quot;)</code></pre>
+<p>Ce code n’accélère pas forcément le CPU, mais il montre bien qu’on peut laisser un travail attendre pendant qu’un autre thread continue.</p>
+</section>
+
+<section>
+<h2>5. Niveau avancé</h2>
+<h3>Coûts réels du multithreading</h3>
+<ul>
+  <li>Coût mémoire de chaque thread.</li>
+  <li>Context switching : le CPU change de thread courant.</li>
+  <li>Contention sur les verrous.</li>
+  <li>Complexité mentale et bugs non déterministes.</li>
+  <li>Difficulté de test et de reproduction.</li>
+</ul>
+<h3>Quand il ne faut pas l’utiliser</h3>
+<ul>
+  <li>Quand un traitement simple synchrone suffit.</li>
+  <li>Quand l’état partagé serait trop risqué.</li>
+  <li>Quand la vraie attente vient d’un service externe lent qui impose déjà ses propres limites.</li>
+  <li>Quand l’asynchrone ou la file de messages serait plus adaptée.</li>
+</ul>
+<h3>Recommandations de senior</h3>
+<ul>
+  <li>Réduis au minimum l’état mutable partagé.</li>
+  <li>Fais circuler des messages ou tâches plutôt que des objets mutables partagés.</li>
+  <li>Documente les garanties thread-safe d’une classe.</li>
+  <li>Prévois toujours une stratégie d’arrêt, de timeout et d’observabilité.</li>
+</ul>
+</section>
+
+<section>
+<h2>6. Comparaison simple : synchrone, concurrence, parallélisme</h2>
+<div class="table-wrap"><table><thead><tr><th>Concept</th><th>Définition</th><th>Exemple</th></tr></thead><tbody><tr><td>Synchrone</td><td>Une action attend la fin de la précédente</td><td>Lire 10 fichiers un à un.</td></tr><tr><td>Concurrence</td><td>Plusieurs tâches progressent sans forcément s’exécuter physiquement en même temps</td><td>Serveur qui gère plusieurs clients.</td></tr><tr><td>Parallélisme</td><td>Plusieurs tâches s’exécutent réellement sur plusieurs cœurs</td><td>Calcul matriciel réparti sur 8 cœurs.</td></tr></tbody></table></div>
+<div class="callout callout-note"><h3>À retenir</h3><ul><li>Concurrence = organisation de plusieurs tâches.</li><li>Parallélisme = exécution physique simultanée.</li><li>Une application concurrente n’est pas forcément parallèle.</li></ul></div>
+</section>
+<div class="prev-next"><span></span><a href="concepts-fondamentaux.html">Concepts fondamentaux de concurrence →</a></div>
+
+        </article>
+        <aside class="toc">
+          <div class="toc-box">
+            <h3>Sommaire</h3>
+            <div id="toc"></div>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+  <script src="../assets/js/script.js"></script>
+</body>
+</html>

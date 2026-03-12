@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spring Data JPA</title>
+  <link rel="stylesheet" href="../assets/css/styles.css" />
+</head>
+<body>
+
+<header class="topbar">
+  <div class="container topbar-inner">
+    <a class="brand" href="../index.html">Spring Course</a>
+    <nav class="nav"><a href="../index.html" class="nav-link">Accueil</a><a href="spring-boot.html" class="nav-link">Spring Boot</a><a href="ioc-di.html" class="nav-link">IoC / DI</a><a href="aop.html" class="nav-link">AOP</a><a href="transactional.html" class="nav-link">@Transactional</a><a href="jpa.html" class="nav-link">Spring Data JPA</a><a href="graphql-dgs.html" class="nav-link">GraphQL DGS</a><a href="kafka.html" class="nav-link">Kafka</a><a href="rabbitmq.html" class="nav-link">RabbitMQ</a><a href="exercises.html" class="nav-link">Exercices</a><a href="corrections.html" class="nav-link">Corrigés</a></nav>
+    <button class="menu-toggle" aria-label="Ouvrir le menu">☰</button>
+  </div>
+</header>
+
+<main class="container page-layout">
+  <aside class="sidebar">
+    <div class="card sticky">
+      <p class="eyebrow">Chapitre</p>
+      <h1>Spring Data JPA</h1>
+      <p>Entités, relations, repositories, DTO, performance et N+1.</p>
+      <div id="toc" class="toc"></div>
+    </div>
+  </aside>
+  <article class="content">
+    
+<section id="intro"><h2>1. Introduction</h2>
+<p>JPA est une spécification Java pour mapper des objets vers une base relationnelle. Hibernate est une implémentation populaire de cette spécification.</p>
+<div class="table-wrap"><table><thead><tr><th>Comparaison</th><th>JPA</th><th>Hibernate</th></tr></thead><tbody>
+<tr><td>Nature</td><td>Spécification</td><td>Implémentation</td></tr>
+<tr><td>Rôle</td><td>Définit des contrats</td><td>Exécute réellement le mapping et les requêtes</td></tr>
+<tr><td>Recommandation</td><td>Coder au plus près de JPA</td><td>Utiliser Hibernate quand ses fonctionnalités avancées sont utiles</td></tr>
+</tbody></table></div>
+</section>
+<section id="beginner"><h2>2. Niveau débutant</h2>
+<p>Les bases : <code>@Entity</code>, <code>@Id</code>, <code>@GeneratedValue</code>.</p>
+<div class="code-block"><pre><code>@Entity
+@Table(name = "customers")
+public class Customer {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
+    private String email;
+}</code></pre></div>
+<p>Un repository Spring Data simplifie les opérations courantes :</p>
+<div class="code-block"><pre><code>public interface CustomerRepository extends JpaRepository&lt;Customer, Long&gt; {
+    Optional&lt;Customer&gt; findByEmail(String email);
+}</code></pre></div>
+<p><strong>Piège débutant :</strong> retourner directement les entités JPA dans toutes les API externes sans DTO. Cela couple l’API HTTP au modèle de persistence.</p></section>
+<section id="intermediate"><h2>3. Niveau intermédiaire</h2>
+<p>Relations principales :</p>
+<ul>
+<li><code>@OneToOne</code> : profil utilisateur, carte bancaire, etc.</li>
+<li><code>@OneToMany</code> / <code>@ManyToOne</code> : commande et lignes de commande.</li>
+<li><code>@ManyToMany</code> : à utiliser avec prudence.</li>
+</ul>
+<div class="code-block"><pre><code>@Entity
+public class Order {
+    @Id @GeneratedValue
+    private Long id;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List&lt;OrderLine&gt; lines = new ArrayList&lt;&gt;();
+}
+
+@Entity
+public class OrderLine {
+    @Id @GeneratedValue
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id", nullable = false)
+    private Order order;
+}</code></pre></div>
+<div class="table-wrap"><table><thead><tr><th>Choix</th><th>Avantages</th><th>Risques</th><th>Recommandation</th></tr></thead><tbody>
+<tr><td>LAZY</td><td>Charge à la demande</td><td>LazyInitializationException si mal utilisé</td><td><strong>Par défaut</strong></td></tr>
+<tr><td>EAGER</td><td>Simple à court terme</td><td>Surcharge, N+1, explosions de graphes</td><td>À éviter sauf cas précis</td></tr>
+</tbody></table></div>
+<p><strong>CrudRepository vs JpaRepository :</strong> <code>JpaRepository</code> ajoute pagination, tri, flush et des outils très pratiques. C’est souvent le choix standard en projet Spring Data JPA.</p></section>
+<section id="advanced"><h2>4. Niveau avancé</h2>
+<p><strong>N+1 :</strong> problème fréquent où une requête principale déclenche ensuite une requête supplémentaire par ligne chargée. Très courant avec des relations lazy mal exploitées.</p>
+<div class="callout warning"><strong>Exemple :</strong> charger 100 commandes, puis accéder à leur client dans une boucle peut produire 101 requêtes.</div>
+<p>Solutions classiques :</p>
+<ul>
+<li><code>join fetch</code> en JPQL</li>
+<li><code>@EntityGraph</code></li>
+<li>Projections ou DTO dédiés</li>
+<li>Lecture optimisée selon le besoin écran / API</li>
+</ul>
+<div class="code-block"><pre><code>@Query("""
+    select o from Order o
+    join fetch o.customer
+    where o.status = :status
+""")
+List&lt;Order&gt; findAllWithCustomerByStatus(@Param("status") OrderStatus status);</code></pre></div>
+<p><strong>Audit :</strong> on utilise souvent <code>@CreatedDate</code>, <code>@LastModifiedDate</code> avec <code>@EnableJpaAuditing</code>.</p>
+<p><strong>Recommandation senior :</strong> penser les requêtes depuis le besoin métier et l’écran cible, pas depuis “l’entité complète”.</p></section>
+<section id="code"><h2>5. Exemples de code</h2>
+<div class="code-block"><pre><code>// Fichier : CustomerSummary.java
+public record CustomerSummary(Long id, String email, long orderCount) {}
+
+// Fichier : CustomerRepository.java
+@Query("""
+    select new com.example.demo.customer.CustomerSummary(c.id, c.email, count(o.id))
+    from Customer c
+    left join c.orders o
+    group by c.id, c.email
+""")
+Page&lt;CustomerSummary&gt; findCustomerSummaries(Pageable pageable);</code></pre></div>
+<p>Ici, on évite d’exposer toute l’entité et on répond exactement au besoin de lecture.</p></section>
+<section id="retain"><h2>6. À retenir</h2><ul>
+<li>JPA est une spécification, Hibernate une implémentation.</li>
+<li>Préférer LAZY par défaut sur les relations.</li>
+<li>Éviter les entités exposées directement aux API publiques.</li>
+<li>Surveiller le N+1 dès les premiers écrans.</li>
+<li>Les DTO et projections sont des outils d’architecture, pas juste de “l’enrobage”.</li>
+</ul></section>
+<section id="exercises"><h2>7. Exercices</h2>
+<details><summary>Débutant</summary><p>Crée une entité <code>Product</code> avec id, name et price, puis un repository permettant de chercher par nom.</p></details>
+<details><summary>Intermédiaire</summary><p>Modélise la relation <code>Order</code> / <code>OrderLine</code> et explique le rôle de <code>mappedBy</code>.</p></details>
+<details><summary>Avancé</summary><p>Corrige un problème de N+1 sur une liste de commandes affichant le client et le nombre de lignes.</p></details>
+</section>
+<section id="corrections-link"><h2>8. Corrigés</h2><p>Voir <a href="corrections.html">Corrigés</a>.</p></section>
+
+    <div class="pager"><a class="btn secondary" href="transactional.html">← Précédent</a><a class="btn" href="graphql-dgs.html">Suivant →</a></div>
+  </article>
+</main>
+<script src="../assets/js/script.js"></script>
+</body>
+</html>

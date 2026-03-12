@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Performance, debugging et observabilité — Cours Multithreading</title>
+  <link rel="stylesheet" href="../assets/css/styles.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-badge">MT</div>
+        <div>
+          <strong>Multithreading Course</strong>
+          <p>Java & Python</p>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="../index.html">Accueil</a>
+<a href="introduction.html">Introduction</a>
+<a href="concepts-fondamentaux.html">Concepts fondamentaux</a>
+<a href="java-threads-basics.html">Java — bases</a>
+<a href="java-concurrency-advanced.html">Java — avancé</a>
+<a href="python-threads-basics.html">Python — bases</a>
+<a href="python-concurrency-advanced.html">Python — avancé</a>
+<a href="synchronization.html">Synchronisation</a>
+<a href="race-condition-deadlock.html">Bugs classiques</a>
+<a href="executors-thread-pools.html">Pools & async</a>
+<a href="async-vs-threading.html">Async vs threads</a>
+<a class="active" href="performance-debugging.html">Perf & debugging</a>
+<a href="best-practices.html">Bonnes pratiques</a>
+<a href="exercises.html">Exercices</a>
+<a href="corrections.html">Corrigés</a>
+      </nav>
+    </aside>
+    <main class="content">
+      <header class="hero hero-small">
+        <span class="eyebrow">Support progressif — junior à avancé</span>
+        <h1>Performance, debugging et observabilité</h1>
+        <p>Thread dumps, logs, métriques, profiling et méthodes réelles pour diagnostiquer les problèmes concurrents.</p>
+      </header>
+      <div class="page-grid">
+        <article class="article">
+          
+<section>
+<h2>1. Diagnostic d’un bug concurrent</h2>
+<p>Un bug concurrent se manifeste souvent par : lenteur aléatoire, blocage, incohérence rare, thread qui ne s’arrête pas, CPU anormal, ou temps de réponse qui explose sous charge. Il faut donc observer le système à plusieurs niveaux.</p>
+</section>
+
+<section>
+<h2>2. Logs utiles</h2>
+<ul>
+  <li>Nom du thread.</li>
+  <li>Identifiant de corrélation de la requête ou du job.</li>
+  <li>Entrée/sortie d’étapes critiques.</li>
+  <li>Durées, timeouts, échecs de lock, saturations de queue.</li>
+</ul>
+<pre class="code-block"><code class="language-java">log.info(&quot;jobId={} thread={} start step=download&quot;,
+         jobId,
+         Thread.currentThread().getName());</code></pre>
+</section>
+
+<section>
+<h2>3. Thread dump et blocages</h2>
+<p>En Java, un thread dump permet de voir l’état des threads : RUNNABLE, BLOCKED, WAITING, TIMED_WAITING. C’est souvent l’outil numéro un pour diagnostiquer deadlock, contention ou starvation.</p>
+<ul>
+  <li><code>jstack &lt;pid&gt;</code></li>
+  <li><code>jcmd &lt;pid&gt; Thread.print</code></li>
+</ul>
+<p>Sur Python, on peut utiliser des traces, le module <code>faulthandler</code>, des dumps de stack et du profiling ciblé.</p>
+</section>
+
+<section>
+<h2>4. Profiling et contention</h2>
+<p>Le profiling permet de repérer :</p>
+<ul>
+  <li>temps passé à attendre des locks,</li>
+  <li>pools saturés,</li>
+  <li>threads trop nombreux,</li>
+  <li>code CPU chaud,</li>
+  <li>latences externes masquées par la concurrence.</li>
+</ul>
+<h3>Outils Java</h3>
+<ul>
+  <li>JFR / Java Flight Recorder</li>
+  <li>VisualVM</li>
+  <li>Async-profiler</li>
+  <li>Micrometer + Prometheus + Grafana pour métriques</li>
+</ul>
+<h3>Outils Python</h3>
+<ul>
+  <li>logging structuré</li>
+  <li>faulthandler</li>
+  <li>cProfile / py-spy selon contexte</li>
+  <li>métriques applicatives et traces</li>
+</ul>
+</section>
+
+<section>
+<h2>5. Bonnes pratiques d’observabilité</h2>
+<ul>
+  <li>Expose le nombre de tâches en file.</li>
+  <li>Expose l’occupation des pools.</li>
+  <li>Mesure temps d’attente et temps d’exécution.</li>
+  <li>Détecte explicitement les timeouts et retries.</li>
+  <li>Définis des alertes sur saturation et backlog.</li>
+</ul>
+<div class="callout callout-note"><h3>À retenir</h3><ul><li>Sans observabilité, un bug concurrent reste souvent une hypothèse.</li><li>Un thread dump bien lu vaut parfois plus qu’une heure de spéculation.</li><li>Mesurer la saturation des pools et des queues est indispensable en production.</li></ul></div>
+</section>
+<div class="prev-next"><a href="async-vs-threading.html">← Synchrone vs asynchrone vs threads vs process</a><a href="best-practices.html">Bonnes pratiques d’architecture concurrente →</a></div>
+
+        </article>
+        <aside class="toc">
+          <div class="toc-box">
+            <h3>Sommaire</h3>
+            <div id="toc"></div>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+  <script src="../assets/js/script.js"></script>
+</body>
+</html>

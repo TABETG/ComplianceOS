@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Java — Concurrency avancée</title>
+  <meta name="description" content="Locks, JMM, volatile, atomic, concurrent collections, latches, barriers, futures et recommandations de senior." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/styles.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-badge">MT</div>
+        <div>
+          <p class="eyebrow">Support de formation</p>
+          <h1>Multithreading</h1>
+        </div>
+      </div>
+      <nav class="nav">
+        <a class="nav-link" href="../index.html" data-label="Accueil">Accueil</a>
+<a class="nav-link" href="../pages/introduction.html" data-label="Introduction">Introduction</a>
+<a class="nav-link" href="../pages/concepts-fondamentaux.html" data-label="Concepts fondamentaux">Concepts fondamentaux</a>
+<a class="nav-link" href="../pages/java-threads-basics.html" data-label="Java — bases">Java — bases</a>
+<a class="nav-link" href="../pages/java-concurrency-advanced.html" data-label="Java — avancé">Java — avancé</a>
+<a class="nav-link" href="../pages/python-threads-basics.html" data-label="Python — bases">Python — bases</a>
+<a class="nav-link" href="../pages/python-concurrency-advanced.html" data-label="Python — avancé">Python — avancé</a>
+<a class="nav-link" href="../pages/synchronization.html" data-label="Synchronisation">Synchronisation</a>
+<a class="nav-link" href="../pages/race-condition-deadlock.html" data-label="Race / Deadlock">Race / Deadlock</a>
+<a class="nav-link" href="../pages/executors-thread-pools.html" data-label="Pools / Executors">Pools / Executors</a>
+<a class="nav-link" href="../pages/async-vs-threading.html" data-label="Async vs Threads">Async vs Threads</a>
+<a class="nav-link" href="../pages/performance-debugging.html" data-label="Performance / Debug">Performance / Debug</a>
+<a class="nav-link" href="../pages/best-practices.html" data-label="Bonnes pratiques">Bonnes pratiques</a>
+<a class="nav-link" href="../pages/exercises.html" data-label="Exercices">Exercices</a>
+<a class="nav-link" href="../pages/corrections.html" data-label="Corrigés">Corrigés</a>
+      </nav>
+    </aside>
+    <main class="content">
+      <header class="page-header">
+        <div>
+          <p class="eyebrow">Cours progressif • Java & Python</p>
+          <h1>Java — Concurrency avancée</h1>
+          <p class="lead">Locks, JMM, volatile, atomic, concurrent collections, latches, barriers, futures et recommandations de senior.</p>
+        </div>
+        <button id="toc-toggle" class="btn ghost mobile-only">Sommaire</button>
+      </header>
+
+      <div class="content-grid">
+        <article class="article">
+          
+<section>
+  <h2>1. Introduction</h2>
+  <p>Le niveau avancé en Java commence quand on manipule sérieusement la synchronisation, le Java Memory Model, les primitives de coordination et les abstractions haut niveau.</p>
+</section>
+<section>
+  <h2>2. Niveau débutant renforcé</h2>
+  <h3>synchronized</h3>
+  <p><span class="inline-code">synchronized</span> protège une section critique avec un verrou intrinsèque. Sur une méthode d’instance, le lock est porté par <span class="inline-code">this</span>. Sur une méthode statique, il est porté par la classe.</p>
+</section>
+<div class="code-shell"><pre><code>public class SafeCounter {
+    private int value = 0;
+
+    public synchronized void increment() {
+        value++;
+    }
+
+    public synchronized int getValue() {
+        return value;
+    }
+}
+</code></pre></div>
+<section>
+  <h3>wait(), notify(), notifyAll()</h3>
+  <p>Ces méthodes servent à la coordination sous monitor. Elles doivent être utilisées dans un bloc synchronisé sur le même objet. Aujourd’hui, on préfère souvent des abstractions plus robustes comme <span class="inline-code">BlockingQueue</span> ou <span class="inline-code">Condition</span>.</p>
+</section>
+<section>
+  <h2>3. Niveau intermédiaire</h2>
+  <h3>ReentrantLock, ReadWriteLock, Semaphore</h3>
+  <div class="compare-table-wrap"><table><thead><tr><th>Primitive</th><th>Usage</th><th>Avantage</th><th>Limite</th></tr></thead><tbody><tr><td>synchronized</td><td>Protection simple</td><td>Syntaxe courte</td><td>Moins flexible</td></tr><tr><td>ReentrantLock</td><td>Lock explicite</td><td>tryLock, fairness, conditions</td><td>Plus verbeux</td></tr><tr><td>ReadWriteLock</td><td>Beaucoup de lectures, peu d’écritures</td><td>Plus de concurrence pour les lecteurs</td><td>Peut complexifier inutilement</td></tr><tr><td>Semaphore</td><td>Limiter le nombre d’accès</td><td>Très utile pour quotas</td><td>N’exprime pas tout seul l’intégrité métier</td></tr></tbody></table></div>
+</section>
+<div class="code-shell"><pre><code>import java.util.concurrent.locks.ReentrantLock;
+
+public class BankAccount {
+    private final ReentrantLock lock = new ReentrantLock();
+    private int balance = 0;
+
+    public void deposit(int amount) {
+        lock.lock();
+        try {
+            balance += amount;
+        } finally {
+            // Toujours libérer le lock dans finally
+            lock.unlock();
+        }
+    }
+
+    public int getBalance() {
+        lock.lock();
+        try {
+            return balance;
+        } finally {
+            lock.unlock();
+        }
+    }
+}
+</code></pre></div>
+<section>
+  <h3>Collections concurrentes</h3>
+  <p><span class="inline-code">ConcurrentHashMap</span>, <span class="inline-code">CopyOnWriteArrayList</span>, <span class="inline-code">BlockingQueue</span> réduisent beaucoup de code fragile écrit “à la main”.</p>
+</section>
+<section>
+  <h2>4. Niveau avancé</h2>
+  <h3>Java Memory Model</h3>
+  <p>Le JMM définit les garanties de visibilité et d’ordre entre threads. Sans relation <span class="inline-code">happens-before</span>, un thread peut ne pas voir les écritures d’un autre comme tu l’imagines.</p>
+  <h3>volatile</h3>
+  <p><span class="inline-code">volatile</span> garantit la visibilité d’une variable et interdit certains réordonnancements autour d’elle. En revanche, il ne rend pas un incrément atomique.</p>
+</section>
+<div class="code-shell"><pre><code>public class StopFlag {
+    private volatile boolean running = true;
+
+    public void stop() {
+        running = false; // visible rapidement par les autres threads
+    }
+
+    public void work() {
+        while (running) {
+            // traitement
+        }
+    }
+}
+</code></pre></div>
+<section>
+  <h3>AtomicInteger</h3>
+  <p>Pour un compteur atomique, <span class="inline-code">AtomicInteger</span> est adapté.</p>
+</section>
+<div class="code-shell"><pre><code>import java.util.concurrent.atomic.AtomicInteger;
+
+public class AtomicCounter {
+    private final AtomicInteger value = new AtomicInteger();
+
+    public void increment() {
+        value.incrementAndGet(); // opération atomique
+    }
+
+    public int getValue() {
+        return value.get();
+    }
+}
+</code></pre></div>
+<section>
+  <h3>ExecutorService, ScheduledExecutorService, CountDownLatch, CyclicBarrier</h3>
+  <p>Ces outils servent à orchestrer des groupes de tâches proprement. Le <span class="inline-code">CountDownLatch</span> attend N événements ; le <span class="inline-code">CyclicBarrier</span> synchronise plusieurs participants sur plusieurs cycles.</p>
+  <h3>CompletableFuture</h3>
+  <p><span class="inline-code">CompletableFuture</span> est très utile pour composer des traitements asynchrones, chaîner des étapes, gérer erreurs et fusion de résultats.</p>
+</section>
+<div class="code-shell"><pre><code>import java.util.concurrent.*;
+
+public class CompletableFutureExample {
+    public static void main(String[] args) {
+        CompletableFuture<String> userFuture =
+            CompletableFuture.supplyAsync(() -> "Alice");
+
+        CompletableFuture<String> orderFuture =
+            CompletableFuture.supplyAsync(() -> "Commande-42");
+
+        String message = userFuture.thenCombine(orderFuture,
+            (user, order) -> user + " -> " + order
+        ).join();
+
+        System.out.println(message);
+    }
+}
+</code></pre></div>
+<section>
+  <h3>Recommandations de senior</h3>
+  <ul class="tight">
+    <li>Préférer les abstractions métier ou concurrentes éprouvées aux bricolages à base de <span class="inline-code">wait/notify</span>.</li>
+    <li>Mesurer avant d’optimiser.</li>
+    <li>Documenter explicitement les garanties thread-safe d’un composant.</li>
+    <li>En backend, attention aux interactions entre pool applicatif, base de données, réseau et pool de messages.</li>
+  </ul>
+</section>
+<div class="callout remember"><div class="callout-title">Comparaisons obligatoires</div><div class="compare-table-wrap"><table><thead><tr><th>Comparaison</th><th>Point clé</th><th>Recommandation</th></tr></thead><tbody><tr><td>synchronized vs Lock</td><td>Lock est plus flexible</td><td>Commencer par synchronized si le besoin est simple</td></tr><tr><td>volatile vs AtomicInteger</td><td>Visibility only vs atomic read-modify-write</td><td>Utiliser AtomicInteger pour compteur partagé</td></tr><tr><td>wait/notify vs BlockingQueue</td><td>Bas niveau vs abstraction métier sûre</td><td>Préférer BlockingQueue pour producteur/consommateur</td></tr></tbody></table></div></div>
+          <div class="pager">
+            <a class="btn ghost" href="java-threads-basics.html">← Précédent</a>
+            <a class="btn" href="python-threads-basics.html">Suivant →</a>
+          </div>
+        </article>
+        <aside class="toc" id="toc">
+          <div class="toc-card">
+            <p class="toc-title">Sommaire du chapitre</p>
+            <div id="toc-container"></div>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+  <script src="../assets/js/script.js"></script>
+</body>
+</html>

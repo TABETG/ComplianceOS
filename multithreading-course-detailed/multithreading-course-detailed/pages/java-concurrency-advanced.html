@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Java — Concurrency avancée — Cours Multithreading</title>
+  <link rel="stylesheet" href="../assets/css/styles.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-badge">MT</div>
+        <div>
+          <strong>Multithreading Course</strong>
+          <p>Java & Python</p>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="../index.html">Accueil</a>
+<a href="introduction.html">Introduction</a>
+<a href="concepts-fondamentaux.html">Concepts fondamentaux</a>
+<a href="java-threads-basics.html">Java — bases</a>
+<a class="active" href="java-concurrency-advanced.html">Java — avancé</a>
+<a href="python-threads-basics.html">Python — bases</a>
+<a href="python-concurrency-advanced.html">Python — avancé</a>
+<a href="synchronization.html">Synchronisation</a>
+<a href="race-condition-deadlock.html">Bugs classiques</a>
+<a href="executors-thread-pools.html">Pools & async</a>
+<a href="async-vs-threading.html">Async vs threads</a>
+<a href="performance-debugging.html">Perf & debugging</a>
+<a href="best-practices.html">Bonnes pratiques</a>
+<a href="exercises.html">Exercices</a>
+<a href="corrections.html">Corrigés</a>
+      </nav>
+    </aside>
+    <main class="content">
+      <header class="hero hero-small">
+        <span class="eyebrow">Support progressif — junior à avancé</span>
+        <h1>Java — Concurrency avancée</h1>
+        <p>Synchronisation, JMM, atomiques, locks, queues, pools et primitives avancées en Java.</p>
+      </header>
+      <div class="page-grid">
+        <article class="article">
+          
+<section>
+<h2>1. Introduction</h2>
+<p>La vraie puissance de Java apparaît avec <strong>java.util.concurrent</strong> et le Java Memory Model. Ici, on quitte la simple création de threads pour entrer dans la coordination, la scalabilité et la sûreté mémoire.</p>
+</section>
+
+<section>
+<h2>2. Synchronisation classique</h2>
+<h3>synchronized</h3>
+<p><code>synchronized</code> protège une section critique via le moniteur d’un objet. Il apporte exclusion mutuelle et effets de visibilité mémoire.</p>
+<pre class="code-block"><code class="language-java">public class Counter {
+    private int value = 0;
+
+    public synchronized void increment() {
+        value++;
+    }
+
+    public synchronized int getValue() {
+        return value;
+    }
+}</code></pre>
+<h3>Verrou d’instance vs verrou de classe</h3>
+<ul>
+  <li>Méthode d’instance synchronisée : verrou sur <code>this</code>.</li>
+  <li>Méthode statique synchronisée : verrou sur l’objet <code>Class</code>.</li>
+</ul>
+<h3>wait / notify / notifyAll</h3>
+<p>Ce trio permet d’attendre une condition sur un moniteur. Toujours utiliser une boucle <code>while</code> et non un simple <code>if</code> à cause des réveils intempestifs.</p>
+</section>
+
+<section>
+<h2>3. java.util.concurrent</h2>
+<h3>Locks avancés</h3>
+<div class="table-wrap"><table><thead><tr><th>Primitive</th><th>Atout principal</th><th>Quand la choisir</th></tr></thead><tbody><tr><td>ReentrantLock</td><td>Plus de contrôle que synchronized</td><td>tryLock, lockInterruptibly, fairness éventuelle.</td></tr><tr><td>ReadWriteLock</td><td>Lectures nombreuses, écritures rares</td><td>Caches et structures lues souvent.</td></tr><tr><td>Semaphore</td><td>Limiter un nombre d’accès concurrents</td><td>Pool de connexions, quota de ressource.</td></tr><tr><td>CountDownLatch</td><td>Attendre N événements</td><td>Démarrage coordonné, attente de sous-tâches.</td></tr><tr><td>CyclicBarrier</td><td>Faire se rejoindre plusieurs threads</td><td>Étapes synchronisées répétitives.</td></tr><tr><td>BlockingQueue</td><td>Coordination + transfert de données</td><td>Producteur/consommateur robuste.</td></tr></tbody></table></div>
+<pre class="code-block"><code class="language-java">BlockingQueue&lt;String&gt; queue = new ArrayBlockingQueue&lt;&gt;(100);
+
+queue.put(&quot;message&quot;);   // bloque si la file est pleine
+String value = queue.take(); // bloque si la file est vide</code></pre>
+<p>Pour un pipeline producteur/consommateur, <code>BlockingQueue</code> est souvent préférable à une coordination manuelle par <code>wait/notify</code>.</p>
+</section>
+
+<section>
+<h2>4. Modèle mémoire Java</h2>
+<h3>volatile</h3>
+<p><code>volatile</code> garantit principalement la <strong>visibilité</strong> et certaines contraintes d’ordre. Il ne rend pas atomique un <code>counter++</code>.</p>
+<pre class="code-block"><code class="language-java">class StopSignal {
+    volatile boolean running = true;
+}</code></pre>
+<h3>AtomicInteger</h3>
+<p>Quand tu as besoin d’une opération atomique simple comme un incrément sûr, préfère souvent <code>AtomicInteger</code>.</p>
+<pre class="code-block"><code class="language-java">AtomicInteger counter = new AtomicInteger(0);
+counter.incrementAndGet();</code></pre>
+<h3>happens-before</h3>
+<p>Le JMM définit des règles garantissant qu’une écriture devient visible pour une lecture ultérieure dans un autre thread. Les locks, accès volatile, démarrage de thread, fin de thread et autres primitives créent ces relations.</p>
+</section>
+
+<section>
+<h2>5. Exécution asynchrone haut niveau</h2>
+<h3>ExecutorService et ThreadPoolExecutor</h3>
+<pre class="code-block"><code class="language-java">ExecutorService pool = Executors.newFixedThreadPool(8);
+
+pool.submit(() -&gt; {
+    // traitement I/O ou CPU selon le cas
+});
+
+pool.shutdown();</code></pre>
+<h3>ScheduledExecutorService</h3>
+<p>Permet de planifier une tâche périodique ou différée.</p>
+<h3>CompletableFuture</h3>
+<pre class="code-block"><code class="language-java">CompletableFuture.supplyAsync(() -&gt; fetchCustomer())
+    .thenApply(customer -&gt; enrich(customer))
+    .thenAccept(System.out::println)
+    .exceptionally(ex -&gt; {
+        ex.printStackTrace();
+        return null;
+    });</code></pre>
+<p><code>CompletableFuture</code> est utile pour composer plusieurs traitements sans sombrer dans l’enfer des callbacks. Attention : il faut savoir sur quel executor tourne chaque étape.</p>
+</section>
+
+<section>
+<h2>6. Collections concurrentes et cas réels</h2>
+<h3>ConcurrentHashMap</h3>
+<p>Appropriée quand plusieurs threads lisent et écrivent une map partagée sans verrou global externe.</p>
+<h3>Cas d’usage entreprise</h3>
+<ul>
+  <li>Backend HTTP qui traite plusieurs requêtes en parallèle.</li>
+  <li>Workers qui consomment une queue interne puis appellent des APIs externes.</li>
+  <li>Consommateurs Kafka traitant des événements et enrichissant des données.</li>
+  <li>Batch de recalcul réparti via pool et barrière de synchronisation.</li>
+</ul>
+<div class="callout callout-warn"><h3>Pièges fréquents</h3><ul><li>Un pool mal dimensionné peut bloquer toute l’application.</li><li>CompletableFuture sans executor explicite peut utiliser le pool commun à ton insu.</li><li>volatile ne remplace pas un verrou pour les mises à jour composées.</li></ul></div>
+<div class="callout callout-note"><h3>À retenir</h3><ul><li>Utilise d’abord les primitives haut niveau de java.util.concurrent.</li><li>Comprendre le JMM évite les faux raisonnements sur la visibilité.</li><li>Choisis la primitive la plus simple qui garantit la sûreté nécessaire.</li></ul></div>
+</section>
+<div class="prev-next"><a href="java-threads-basics.html">← Java — Threads : bases</a><a href="python-threads-basics.html">Python — Threads : bases →</a></div>
+
+        </article>
+        <aside class="toc">
+          <div class="toc-box">
+            <h3>Sommaire</h3>
+            <div id="toc"></div>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+  <script src="../assets/js/script.js"></script>
+</body>
+</html>

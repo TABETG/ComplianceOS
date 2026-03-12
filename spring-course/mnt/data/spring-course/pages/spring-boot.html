@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spring Boot</title>
+  <link rel="stylesheet" href="../assets/css/styles.css" />
+</head>
+<body>
+
+<header class="topbar">
+  <div class="container topbar-inner">
+    <a class="brand" href="../index.html">Spring Course</a>
+    <nav class="nav"><a href="../index.html" class="nav-link">Accueil</a><a href="spring-boot.html" class="nav-link">Spring Boot</a><a href="ioc-di.html" class="nav-link">IoC / DI</a><a href="aop.html" class="nav-link">AOP</a><a href="transactional.html" class="nav-link">@Transactional</a><a href="jpa.html" class="nav-link">Spring Data JPA</a><a href="graphql-dgs.html" class="nav-link">GraphQL DGS</a><a href="kafka.html" class="nav-link">Kafka</a><a href="rabbitmq.html" class="nav-link">RabbitMQ</a><a href="exercises.html" class="nav-link">Exercices</a><a href="corrections.html" class="nav-link">Corrigés</a></nav>
+    <button class="menu-toggle" aria-label="Ouvrir le menu">☰</button>
+  </div>
+</header>
+
+<main class="container page-layout">
+  <aside class="sidebar">
+    <div class="card sticky">
+      <p class="eyebrow">Chapitre</p>
+      <h1>Spring Boot</h1>
+      <p>Fondations, auto-configuration, profils, structure et bonnes pratiques.</p>
+      <div id="toc" class="toc"></div>
+    </div>
+  </aside>
+  <article class="content">
+    
+<section id="intro">
+  <h2>1. Introduction</h2>
+  <p><strong>Définition simple :</strong> Spring Boot est une surcouche du Spring Framework qui réduit la configuration nécessaire pour démarrer une application Java moderne. Il ne remplace pas Spring : il l’organise, le préconfigure et standardise la façon de construire une application.</p>
+  <p><strong>À quoi ça sert :</strong> accélérer le démarrage d’un projet, réduire le boilerplate, homogénéiser la configuration et faciliter l’exécution locale comme le déploiement.</p>
+  <div class="callout info"><strong>Analogie :</strong> Spring Framework, c’est une grande boîte à outils. Spring Boot, c’est un atelier déjà préparé avec les bons outils sur la table, l’électricité branchée et une organisation cohérente.</div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Comparaison</th><th>Spring Framework</th><th>Spring Boot</th><th>Recommandation</th></tr></thead>
+    <tbody>
+      <tr><td>Philosophie</td><td>Framework modulaire très flexible</td><td>Convention over configuration</td><td>Utiliser Boot pour presque tous les projets métier modernes</td></tr>
+      <tr><td>Configuration</td><td>Souvent plus explicite</td><td>Beaucoup d’auto-configuration</td><td>Boot fait gagner du temps, mais il faut comprendre ce qu’il configure</td></tr>
+      <tr><td>Démarrage</td><td>Plus manuel</td><td>Très rapide avec starters</td><td>Idéal en formation et en production</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout warning"><strong>Erreur fréquente :</strong> croire que Spring Boot “fait de la magie”. En réalité, il applique des règles lisibles, basées sur le classpath, les propriétés et les beans déjà présents.</div>
+</section>
+<section id="beginner">
+  <h2>2. Niveau débutant</h2>
+  <p>Les briques à connaître en premier :</p>
+  <ul>
+    <li><strong>Starter</strong> : dépendance groupée qui apporte un ensemble cohérent de librairies.</li>
+    <li><strong>Auto-configuration</strong> : configuration automatique activée selon le contexte.</li>
+    <li><strong>Component scan</strong> : détection automatique des classes annotées.</li>
+    <li><strong>Bean</strong> : objet géré par le conteneur Spring.</li>
+    <li><strong>Application context</strong> : le conteneur principal de Spring.</li>
+  </ul>
+  <div class="code-block"><pre><code>src/main/java/com/example/demo/
+├── DemoApplication.java
+├── controller/
+│   └── HelloController.java
+└── service/
+    └── GreetingService.java</code></pre></div>
+  <div class="code-block"><pre><code>// Fichier : src/main/java/com/example/demo/DemoApplication.java
+@SpringBootApplication
+public class DemoApplication {
+    public static void main(String[] args) {
+        // Lance le conteneur Spring, crée les beans et démarre le serveur embarqué
+        SpringApplication.run(DemoApplication.class, args);
+    }
+}
+
+// Fichier : src/main/java/com/example/demo/service/GreetingService.java
+@Service
+public class GreetingService {
+    public String sayHello() {
+        return "Bonjour Spring Boot";
+    }
+}
+
+// Fichier : src/main/java/com/example/demo/controller/HelloController.java
+@RestController
+@RequestMapping("/api")
+public class HelloController {
+    private final GreetingService greetingService;
+
+    // Injection par constructeur : claire, testable, recommandée
+    public HelloController(GreetingService greetingService) {
+        this.greetingService = greetingService;
+    }
+
+    @GetMapping("/hello")
+    public String hello() {
+        return greetingService.sayHello();
+    }
+}</code></pre></div>
+  <div class="callout success"><strong>Piège débutant :</strong> placer la classe principale dans un package trop bas. La règle simple : mets la classe annotée <code>@SpringBootApplication</code> à la racine du package principal.</div>
+</section>
+<section id="intermediate">
+  <h2>3. Niveau intermédiaire</h2>
+  <p>Quand ton application grandit, tu dois comprendre ce que contient réellement <code>@SpringBootApplication</code>. Cette annotation combine :</p>
+  <ul>
+    <li><code>@Configuration</code> : la classe peut déclarer des beans.</li>
+    <li><code>@EnableAutoConfiguration</code> : Spring Boot active ses configurations automatiques.</li>
+    <li><code>@ComponentScan</code> : Spring cherche les composants dans le package courant et ses sous-packages.</li>
+  </ul>
+  <div class="callout info"><strong>Cas réel :</strong> en entreprise, on ajoute souvent plusieurs profils Spring comme <code>dev</code>, <code>test</code>, <code>staging</code>, <code>prod</code> pour changer l’URL de base de données, les niveaux de logs ou l’activation de certains beans.</div>
+  <div class="code-block"><pre><code># Fichier : src/main/resources/application.yml
+spring:
+  application:
+    name: billing-service
+  profiles:
+    active: dev
+server:
+  port: 8081
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: jdbc:postgresql://localhost:5432/billing_dev
+    username: postgres
+    password: postgres
+logging:
+  level:
+    root: INFO
+    com.example: DEBUG
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    url: jdbc:postgresql://prod-db:5432/billing
+    username: billing_app
+    password: ${DB_PASSWORD}</code></pre></div>
+  <p>Bonnes pratiques :</p>
+  <ul>
+    <li>Externaliser la configuration sensible avec des variables d’environnement.</li>
+    <li>Éviter de coder en dur les secrets.</li>
+    <li>Créer des classes de configuration dédiées via <code>@ConfigurationProperties</code> quand le nombre de propriétés grandit.</li>
+  </ul>
+</section>
+<section id="advanced">
+  <h2>4. Niveau avancé</h2>
+  <p><strong>Auto-configuration :</strong> Spring Boot charge des classes d’auto-configuration conditionnelles. Elles s’activent selon des conditions comme “une classe est présente sur le classpath” ou “aucun bean équivalent n’a déjà été déclaré”.</p>
+  <p><strong>Conséquence :</strong> si tu déclares ton propre bean <code>ObjectMapper</code>, <code>DataSource</code> ou <code>TaskExecutor</code>, tu peux remplacer ou compléter le comportement par défaut.</p>
+  <div class="callout warning"><strong>Piège subtil :</strong> “ça marche en local mais pas en production” est souvent un problème de profil, de variables d’environnement ou d’auto-configuration neutralisée par un bean custom.</div>
+  <p><strong>Cycle de vie simplifié :</strong></p>
+  <ol class="steps">
+    <li>Lecture des propriétés et préparation de l’environnement.</li>
+    <li>Création de l’application context.</li>
+    <li>Scan des composants.</li>
+    <li>Application des auto-configurations.</li>
+    <li>Création et injection des beans.</li>
+    <li>Exécution des hooks de démarrage comme <code>CommandLineRunner</code>.</li>
+    <li>Démarrage du serveur embarqué si application web.</li>
+  </ol>
+  <div class="code-block"><pre><code>@Configuration
+public class HttpClientConfig {
+
+    @Bean
+    public RestClient restClient(RestClient.Builder builder) {
+        // On personnalise le bean fourni par Spring Boot plutôt que de tout reconstruire à la main
+        return builder
+                .baseUrl("https://api.example.com")
+                .build();
+    }
+}</code></pre></div>
+  <p><strong>Recommandation senior :</strong> comprendre ce que Boot t’offre par défaut, puis ne personnaliser que ce qui apporte une vraie valeur métier ou opérationnelle.</p>
+</section>
+<section id="code">
+  <h2>5. Exemples de code</h2>
+  <div class="code-block"><pre><code>// Fichier : src/main/java/com/example/demo/config/MailConfiguration.java
+@Configuration
+public class MailConfiguration {
+
+    @Bean
+    public MailClient mailClient(MailProperties properties) {
+        // @Bean indique que l'objet retourné doit être géré par Spring.
+        // Ici on construit un composant externe qu'on ne peut pas annoter avec @Component.
+        return new MailClient(properties.host(), properties.port());
+    }
+}
+
+// Fichier : src/main/java/com/example/demo/config/MailProperties.java
+@ConfigurationProperties(prefix = "mail")
+public record MailProperties(String host, int port) {}
+
+// Fichier : src/main/resources/application.yml
+mail:
+  host: smtp.example.com
+  port: 587</code></pre></div>
+  <p>Pourquoi cette approche est bonne :</p>
+  <ul>
+    <li>La configuration reste centralisée.</li>
+    <li>Le composant externe est bien intégré au conteneur.</li>
+    <li>Le code métier n’a pas besoin de connaître les détails techniques de création.</li>
+  </ul>
+</section>
+<section id="retain">
+  <h2>6. À retenir</h2>
+  <ul>
+    <li>Spring Boot accélère Spring, il ne le remplace pas.</li>
+    <li>Les starters simplifient les dépendances.</li>
+    <li>L’auto-configuration dépend du classpath, des propriétés et des beans déjà définis.</li>
+    <li>Les profils sont essentiels pour la gestion des environnements.</li>
+    <li>Une bonne structure de projet réduit énormément les bugs de configuration.</li>
+  </ul>
+</section>
+<section id="exercises">
+  <h2>7. Exercices</h2>
+  <details><summary>Débutant</summary><p>Explique la différence entre Spring Framework et Spring Boot. Puis crée un contrôleur REST avec un service injecté par constructeur.</p></details>
+  <details><summary>Intermédiaire</summary><p>Ajoute deux profils <code>dev</code> et <code>prod</code> avec deux configurations de datasource différentes. Justifie pourquoi les secrets ne doivent pas être commités.</p></details>
+  <details><summary>Avancé</summary><p>Un bean custom désactive involontairement une auto-configuration utile. Décris une méthode de diagnostic et propose une correction.</p></details>
+</section>
+<section id="corrections-link">
+  <h2>8. Corrigés</h2>
+  <p>Les corrigés détaillés se trouvent dans la page <a href="corrections.html">Corrigés</a>, avec le raisonnement et les erreurs fréquentes.</p>
+</section>
+
+    <div class="pager"><a class="btn secondary" href="../index.html">← Précédent</a><a class="btn" href="ioc-di.html">Suivant →</a></div>
+  </article>
+</main>
+<script src="../assets/js/script.js"></script>
+</body>
+</html>

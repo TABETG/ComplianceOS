@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Java — Threads : bases — Cours Multithreading</title>
+  <link rel="stylesheet" href="../assets/css/styles.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-badge">MT</div>
+        <div>
+          <strong>Multithreading Course</strong>
+          <p>Java & Python</p>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="../index.html">Accueil</a>
+<a href="introduction.html">Introduction</a>
+<a href="concepts-fondamentaux.html">Concepts fondamentaux</a>
+<a class="active" href="java-threads-basics.html">Java — bases</a>
+<a href="java-concurrency-advanced.html">Java — avancé</a>
+<a href="python-threads-basics.html">Python — bases</a>
+<a href="python-concurrency-advanced.html">Python — avancé</a>
+<a href="synchronization.html">Synchronisation</a>
+<a href="race-condition-deadlock.html">Bugs classiques</a>
+<a href="executors-thread-pools.html">Pools & async</a>
+<a href="async-vs-threading.html">Async vs threads</a>
+<a href="performance-debugging.html">Perf & debugging</a>
+<a href="best-practices.html">Bonnes pratiques</a>
+<a href="exercises.html">Exercices</a>
+<a href="corrections.html">Corrigés</a>
+      </nav>
+    </aside>
+    <main class="content">
+      <header class="hero hero-small">
+        <span class="eyebrow">Support progressif — junior à avancé</span>
+        <h1>Java — Threads : bases</h1>
+        <p>Les briques de base de la concurrence Java, avec syntaxe, comportements et pièges essentiels.</p>
+      </header>
+      <div class="page-grid">
+        <article class="article">
+          
+<section>
+<h2>1. Introduction</h2>
+<p>Java propose un écosystème très riche pour la concurrence. La première étape consiste à maîtriser les briques de base : <code>Thread</code>, <code>Runnable</code>, <code>Callable</code>, <code>Future</code>, interruption, attente et coordination simple.</p>
+<div class="table-wrap"><table><thead><tr><th>API</th><th>Rôle</th><th>Quand l’utiliser</th></tr></thead><tbody><tr><td>Thread</td><td>Représente un thread</td><td>Rarement directement en production.</td></tr><tr><td>Runnable</td><td>Tâche sans valeur de retour</td><td>Travail simple exécuté par un thread ou un pool.</td></tr><tr><td>Callable<T></td><td>Tâche avec résultat et exception</td><td>Quand on veut un retour de valeur.</td></tr><tr><td>Future<T></td><td>Promesse de résultat futur</td><td>Quand on veut récupérer le résultat plus tard.</td></tr></tbody></table></div>
+</section>
+
+<section>
+<h2>2. Niveau débutant</h2>
+<h3>Thread et Runnable</h3>
+<pre class="code-block"><code class="language-java">public class BasicThreads {
+    public static void main(String[] args) throws InterruptedException {
+        Runnable job = () -&gt; {
+            System.out.println(&quot;Travail lancé dans &quot; + Thread.currentThread().getName());
+        };
+
+        Thread worker = new Thread(job, &quot;worker-1&quot;);
+        worker.start(); // démarre un nouveau thread
+
+        worker.join();  // le thread principal attend la fin du worker
+        System.out.println(&quot;Fin du programme&quot;);
+    }
+}</code></pre>
+<p><strong>start()</strong> démarre un nouveau thread. <strong>run()</strong> appelé directement ne crée pas de nouveau thread : il exécute la méthode dans le thread courant.</p>
+<h3>sleep()</h3>
+<p><code>Thread.sleep(...)</code> suspend le thread courant pendant une durée donnée, mais ne libère pas un verrou déjà détenu.</p>
+<h3>join()</h3>
+<p><code>join()</code> sert à attendre la fin d’un autre thread.</p>
+</section>
+
+<section>
+<h2>3. Niveau intermédiaire</h2>
+<h3>Callable et Future</h3>
+<pre class="code-block"><code class="language-java">import java.util.concurrent.*;
+
+public class FutureExample {
+    public static void main(String[] args) throws Exception {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+
+        Callable&lt;Integer&gt; task = () -&gt; {
+            Thread.sleep(500);
+            return 42;
+        };
+
+        Future&lt;Integer&gt; future = executor.submit(task);
+        Integer result = future.get(); // bloquant jusqu&#x27;au résultat
+
+        System.out.println(&quot;Résultat = &quot; + result);
+        executor.shutdown();
+    }
+}</code></pre>
+<p>Avec <code>Callable</code>, on peut retourner une valeur et lever une exception. Le <code>Future</code> permet de récupérer le résultat plus tard.</p>
+<h3>Interruption</h3>
+<p>L’interruption est un mécanisme de coopération. Un thread n’est pas “tué” brutalement : on lui demande de s’arrêter proprement.</p>
+<pre class="code-block"><code class="language-java">while (!Thread.currentThread().isInterrupted()) {
+    // travail par morceaux
+}</code></pre>
+<p>Les méthodes bloquantes comme <code>sleep()</code> ou certaines opérations de queue peuvent lever <code>InterruptedException</code>. Bonne pratique : soit propager, soit rétablir le flag d’interruption.</p>
+</section>
+
+<section>
+<h2>4. Niveau avancé</h2>
+<h3>Daemon threads</h3>
+<p>Un daemon thread est un thread d’arrière-plan qui ne retient pas la JVM en vie. Quand il ne reste plus que des daemon threads, la JVM peut s’arrêter. Ils sont utiles pour certaines tâches auxiliaires, mais dangereux si le traitement doit absolument finir.</p>
+<h3>Éviter les threads manuels</h3>
+<p>En production, on préfère éviter les <code>new Thread(...)</code> dispersés. Les raisons :</p>
+<ul>
+  <li>pas de centralisation des limites,</li>
+  <li>pas de monitoring simple,</li>
+  <li>risque d’explosion du nombre de threads,</li>
+  <li>arrêt difficile à piloter.</li>
+</ul>
+<h3>Cas réels</h3>
+<ul>
+  <li>Consumer Kafka traité via plusieurs workers.</li>
+  <li>Traitement batch réparti via pool.</li>
+  <li>Backend Spring Boot déléguant des tâches I/O longues.</li>
+</ul>
+<div class="callout callout-note"><h3>À retenir</h3><ul><li>Runnable = tâche sans retour ; Callable = tâche avec retour.</li><li>start() crée un nouveau thread ; run() seul n’en crée pas.</li><li>Interruption = coopération, pas arrêt forcé magique.</li><li>En prod, préfère pools et executors.</li></ul></div>
+</section>
+<div class="prev-next"><a href="concepts-fondamentaux.html">← Concepts fondamentaux de concurrence</a><a href="java-concurrency-advanced.html">Java — Concurrency avancée →</a></div>
+
+        </article>
+        <aside class="toc">
+          <div class="toc-box">
+            <h3>Sommaire</h3>
+            <div id="toc"></div>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+  <script src="../assets/js/script.js"></script>
+</body>
+</html>

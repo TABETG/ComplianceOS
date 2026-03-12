@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GraphQL avec Netflix DGS</title>
+  <link rel="stylesheet" href="../assets/css/styles.css" />
+</head>
+<body>
+
+<header class="topbar">
+  <div class="container topbar-inner">
+    <a class="brand" href="../index.html">Spring Course</a>
+    <nav class="nav"><a href="../index.html" class="nav-link">Accueil</a><a href="spring-boot.html" class="nav-link">Spring Boot</a><a href="ioc-di.html" class="nav-link">IoC / DI</a><a href="aop.html" class="nav-link">AOP</a><a href="transactional.html" class="nav-link">@Transactional</a><a href="jpa.html" class="nav-link">Spring Data JPA</a><a href="graphql-dgs.html" class="nav-link">GraphQL DGS</a><a href="kafka.html" class="nav-link">Kafka</a><a href="rabbitmq.html" class="nav-link">RabbitMQ</a><a href="exercises.html" class="nav-link">Exercices</a><a href="corrections.html" class="nav-link">Corrigés</a></nav>
+    <button class="menu-toggle" aria-label="Ouvrir le menu">☰</button>
+  </div>
+</header>
+
+<main class="container page-layout">
+  <aside class="sidebar">
+    <div class="card sticky">
+      <p class="eyebrow">Chapitre</p>
+      <h1>GraphQL avec Netflix DGS</h1>
+      <p>Schéma, resolvers, mutations, DataLoaders et organisation projet.</p>
+      <div id="toc" class="toc"></div>
+    </div>
+  </aside>
+  <article class="content">
+    
+<section id="intro"><h2>1. Introduction</h2>
+<p>GraphQL est un langage de requête pour API. Le client demande exactement les champs voulus. Netflix DGS est un framework Java très pratique pour construire des API GraphQL sur Spring Boot.</p>
+<div class="table-wrap"><table><thead><tr><th>Comparaison</th><th>REST</th><th>GraphQL</th></tr></thead><tbody>
+<tr><td>Forme des réponses</td><td>Fixée par l’endpoint</td><td>Choisie par le client</td></tr>
+<tr><td>Sur-récupération</td><td>Fréquente</td><td>Réduite</td></tr>
+<tr><td>Endpoints</td><td>Multiples</td><td>Souvent un endpoint unique</td></tr>
+<tr><td>Complexité</td><td>Souvent plus simple au début</td><td>Plus puissante mais plus exigeante</td></tr>
+</tbody></table></div>
+</section>
+<section id="beginner"><h2>2. Niveau débutant</h2>
+<p>Les bases :</p>
+<ul>
+<li><strong>Schema</strong> : contrat de l’API</li>
+<li><strong>type</strong> : structure d’un objet</li>
+<li><strong>Query</strong> : lecture</li>
+<li><strong>Mutation</strong> : écriture</li>
+<li><strong>Input</strong> : objet d’entrée</li>
+<li><strong>Resolver / Data fetcher</strong> : code Java qui fournit la donnée</li>
+</ul>
+<div class="code-block"><pre><code># Fichier : src/main/resources/schema/schema.graphqls
+type Query {
+  productById(id: ID!): Product
+}
+
+type Product {
+  id: ID!
+  name: String!
+  price: Float!
+}</code></pre></div>
+<div class="code-block"><pre><code>@DgsComponent
+public class ProductDataFetcher {
+    private final ProductService productService;
+
+    public ProductDataFetcher(ProductService productService) {
+        this.productService = productService;
+    }
+
+    @DgsQuery
+    public Product productById(@InputArgument Long id) {
+        return productService.findById(id);
+    }
+}</code></pre></div>
+</section>
+<section id="intermediate"><h2>3. Niveau intermédiaire</h2>
+<p>Organisation de projet recommandée avec DGS :</p>
+<div class="code-block"><pre><code>src/main/java/com/example/catalog/
+├── graphql/
+│   ├── query/
+│   ├── mutation/
+│   └── dataloader/
+├── service/
+├── repository/
+└── domain/</code></pre></div>
+<p>Exemple de mutation :</p>
+<div class="code-block"><pre><code>input CreateProductInput {
+  name: String!
+  price: Float!
+}
+
+type Mutation {
+  createProduct(input: CreateProductInput!): Product!
+}</code></pre></div>
+<div class="code-block"><pre><code>@DgsComponent
+public class ProductMutation {
+    private final ProductService productService;
+
+    @DgsMutation
+    public Product createProduct(@InputArgument CreateProductInput input) {
+        return productService.create(input.name(), input.price());
+    }
+}</code></pre></div>
+<p>Bonnes pratiques :</p>
+<ul>
+<li>Valider les inputs côté service.</li>
+<li>Ne pas laisser les data fetchers porter toute la logique métier.</li>
+<li>Prévoir pagination et filtrage dès les listes volumineuses.</li>
+</ul>
+</section>
+<section id="advanced"><h2>4. Niveau avancé</h2>
+<p><strong>N+1 en GraphQL :</strong> comme en JPA, tu peux tomber sur une explosion de requêtes si chaque champ imbriqué déclenche une lecture supplémentaire. DGS permet d’utiliser des DataLoaders pour batcher les accès.</p>
+<div class="callout info"><strong>Cas réel :</strong> une requête demande 50 produits et pour chacun son fournisseur. Sans batching, tu peux faire 51 appels. Avec un DataLoader, tu regroupes ces lectures.</div>
+<p><strong>Erreurs :</strong> il faut distinguer erreurs techniques, erreurs de validation et absence de données. GraphQL renvoie souvent un tableau <code>errors</code> avec des détails contextualisés.</p>
+<p><strong>Pagination :</strong> pour une API durable, préfère un modèle explicite de pagination. Selon les cas, offset/limit suffit, sinon pense “cursor-based pagination”.</p>
+<p><strong>Recommandation senior :</strong> GraphQL est excellent quand le front a besoin de composer des vues riches et variables. Pour une API simple et stable, REST peut rester plus facile à opérer.</p>
+</section>
+<section id="code"><h2>5. Exemples de code</h2>
+<div class="code-block"><pre><code>// Fichier : SupplierDataLoader.java
+@DgsDataLoader(name = "supplierLoader")
+public class SupplierDataLoader implements BatchLoader&lt;Long, Supplier&gt; {
+    private final SupplierService supplierService;
+
+    @Override
+    public CompletionStage&lt;List&lt;Supplier&gt;&gt; load(List&lt;Long&gt; supplierIds) {
+        // On batch la lecture pour éviter le N+1.
+        return CompletableFuture.supplyAsync(() -> supplierService.findAllByIds(supplierIds));
+    }
+}</code></pre></div>
+</section>
+<section id="retain"><h2>6. À retenir</h2><ul>
+<li>GraphQL permet au client de choisir ses champs.</li>
+<li>DGS structure bien l’intégration GraphQL dans un projet Spring Boot.</li>
+<li>Attention au N+1 et aux DataLoaders.</li>
+<li>Les data fetchers doivent rester minces.</li>
+<li>GraphQL n’est pas “meilleur partout” que REST ; il répond à certains besoins.</li>
+</ul></section>
+<section id="exercises"><h2>7. Exercices</h2>
+<details><summary>Débutant</summary><p>Écris un schéma GraphQL avec un type <code>Book</code> et une query <code>bookById</code>.</p></details>
+<details><summary>Intermédiaire</summary><p>Ajoute une mutation de création et une validation simple sur le prix.</p></details>
+<details><summary>Avancé</summary><p>Explique comment tu éviterais un N+1 sur un champ imbriqué <code>author</code> pour une liste de livres.</p></details>
+</section>
+<section id="corrections-link"><h2>8. Corrigés</h2><p>Voir <a href="corrections.html">Corrigés</a>.</p></section>
+
+    <div class="pager"><a class="btn secondary" href="jpa.html">← Précédent</a><a class="btn" href="kafka.html">Suivant →</a></div>
+  </article>
+</main>
+<script src="../assets/js/script.js"></script>
+</body>
+</html>

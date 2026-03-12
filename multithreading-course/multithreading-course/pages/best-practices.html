@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bonnes pratiques d’architecture</title>
+  <meta name="description" content="Immutabilité, réduction du shared state, choix des abstractions et recommandations de senior." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/styles.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-badge">MT</div>
+        <div>
+          <p class="eyebrow">Support de formation</p>
+          <h1>Multithreading</h1>
+        </div>
+      </div>
+      <nav class="nav">
+        <a class="nav-link" href="../index.html" data-label="Accueil">Accueil</a>
+<a class="nav-link" href="../pages/introduction.html" data-label="Introduction">Introduction</a>
+<a class="nav-link" href="../pages/concepts-fondamentaux.html" data-label="Concepts fondamentaux">Concepts fondamentaux</a>
+<a class="nav-link" href="../pages/java-threads-basics.html" data-label="Java — bases">Java — bases</a>
+<a class="nav-link" href="../pages/java-concurrency-advanced.html" data-label="Java — avancé">Java — avancé</a>
+<a class="nav-link" href="../pages/python-threads-basics.html" data-label="Python — bases">Python — bases</a>
+<a class="nav-link" href="../pages/python-concurrency-advanced.html" data-label="Python — avancé">Python — avancé</a>
+<a class="nav-link" href="../pages/synchronization.html" data-label="Synchronisation">Synchronisation</a>
+<a class="nav-link" href="../pages/race-condition-deadlock.html" data-label="Race / Deadlock">Race / Deadlock</a>
+<a class="nav-link" href="../pages/executors-thread-pools.html" data-label="Pools / Executors">Pools / Executors</a>
+<a class="nav-link" href="../pages/async-vs-threading.html" data-label="Async vs Threads">Async vs Threads</a>
+<a class="nav-link" href="../pages/performance-debugging.html" data-label="Performance / Debug">Performance / Debug</a>
+<a class="nav-link" href="../pages/best-practices.html" data-label="Bonnes pratiques">Bonnes pratiques</a>
+<a class="nav-link" href="../pages/exercises.html" data-label="Exercices">Exercices</a>
+<a class="nav-link" href="../pages/corrections.html" data-label="Corrigés">Corrigés</a>
+      </nav>
+    </aside>
+    <main class="content">
+      <header class="page-header">
+        <div>
+          <p class="eyebrow">Cours progressif • Java & Python</p>
+          <h1>Bonnes pratiques d’architecture</h1>
+          <p class="lead">Immutabilité, réduction du shared state, choix des abstractions et recommandations de senior.</p>
+        </div>
+        <button id="toc-toggle" class="btn ghost mobile-only">Sommaire</button>
+      </header>
+
+      <div class="content-grid">
+        <article class="article">
+          
+<section>
+  <h2>1. Introduction</h2>
+  <p>Les bonnes pratiques d’architecture en concurrence cherchent d’abord la robustesse et la lisibilité, avant la sophistication.</p>
+</section>
+<section>
+  <h2>2. Principes fondamentaux</h2>
+  <ul class="tight">
+    <li>Minimiser l’état mutable partagé.</li>
+    <li>Privilégier l’immutabilité.</li>
+    <li>Découpler les responsabilités.</li>
+    <li>Préférer les abstractions haut niveau.</li>
+    <li>Documenter les garanties thread-safe.</li>
+  </ul>
+</section>
+<section>
+  <h2>3. Recommandations de senior / tech lead</h2>
+  <h3>Choisir la bonne primitive</h3>
+  <p>Ne prends pas un lock “par défaut”. Demande-toi si une queue, un message, une architecture sans partage ou une future suffirait mieux.</p>
+  <h3>Éviter la sur-ingénierie</h3>
+  <p>Un design concurrent élégant est souvent plus simple qu’on ne l’imagine : une file bornée, quelques workers, des timeouts, des retries mesurés, des métriques.</p>
+  <h3>Tester intelligemment</h3>
+  <ul class="tight">
+    <li>Faire des tests répétés.</li>
+    <li>Injecter du délai artificiel pour exposer les interleavings.</li>
+    <li>Tester l’arrêt propre, les timeouts et la saturation.</li>
+  </ul>
+  <h3>Documenter</h3>
+  <p>Une classe devrait préciser : est-elle thread-safe ? Quelles méthodes peuvent être appelées concurremment ? Quel état est protégé par quel lock ?</p>
+</section>
+<div class="compare-table-wrap"><table><thead><tr><th>Mauvaise habitude</th><th>Pourquoi c’est risqué</th><th>Alternative</th></tr></thead><tbody><tr><td>Variable globale partagée</td><td>Couplage fort et bugs subtils</td><td>Queue, immutabilité, confinement</td></tr><tr><td>Thread manuel par requête</td><td>Coût et saturation</td><td>Pool borné</td></tr><tr><td>Lock partout</td><td>Lisibilité faible, contention</td><td>Réduire le shared state</td></tr><tr><td>Pas de timeouts</td><td>Blocages interminables</td><td>Timeouts et stratégie d’échec</td></tr></tbody></table></div>
+<section>
+  <h2>4. Cas d’usage réels</h2>
+  <ul class="tight">
+    <li>Backend Spring Boot : pool séparé pour tâches lentes.</li>
+    <li>Consommateur Kafka : ne pas bloquer le thread de consommation trop longtemps.</li>
+    <li>Pipeline Python : queue + workers pour l’I/O, multiprocessing pour le calcul lourd.</li>
+  </ul>
+</section>
+<div class="callout remember"><div class="callout-title">À retenir</div>
+<ul class="tight">
+  <li>Le meilleur design concurrent est souvent celui qui partage le moins possible.</li>
+  <li>Préférer les abstractions haut niveau réduit fortement les bugs.</li>
+  <li>Documenter la thread safety fait gagner énormément de temps en équipe.</li>
+</ul>
+</div>
+          <div class="pager">
+            <a class="btn ghost" href="performance-debugging.html">← Précédent</a>
+            <a class="btn" href="exercises.html">Suivant →</a>
+          </div>
+        </article>
+        <aside class="toc" id="toc">
+          <div class="toc-card">
+            <p class="toc-title">Sommaire du chapitre</p>
+            <div id="toc-container"></div>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+  <script src="../assets/js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Python — Threads : bases — Cours Multithreading</title>
+  <link rel="stylesheet" href="../assets/css/styles.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-badge">MT</div>
+        <div>
+          <strong>Multithreading Course</strong>
+          <p>Java & Python</p>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="../index.html">Accueil</a>
+<a href="introduction.html">Introduction</a>
+<a href="concepts-fondamentaux.html">Concepts fondamentaux</a>
+<a href="java-threads-basics.html">Java — bases</a>
+<a href="java-concurrency-advanced.html">Java — avancé</a>
+<a class="active" href="python-threads-basics.html">Python — bases</a>
+<a href="python-concurrency-advanced.html">Python — avancé</a>
+<a href="synchronization.html">Synchronisation</a>
+<a href="race-condition-deadlock.html">Bugs classiques</a>
+<a href="executors-thread-pools.html">Pools & async</a>
+<a href="async-vs-threading.html">Async vs threads</a>
+<a href="performance-debugging.html">Perf & debugging</a>
+<a href="best-practices.html">Bonnes pratiques</a>
+<a href="exercises.html">Exercices</a>
+<a href="corrections.html">Corrigés</a>
+      </nav>
+    </aside>
+    <main class="content">
+      <header class="hero hero-small">
+        <span class="eyebrow">Support progressif — junior à avancé</span>
+        <h1>Python — Threads : bases</h1>
+        <p>Créer, lancer, attendre et coordonner des threads Python en comprenant vraiment le rôle du GIL.</p>
+      </header>
+      <div class="page-grid">
+        <article class="article">
+          
+<section>
+<h2>1. Introduction</h2>
+<p>En Python, le multithreading passe souvent par le module <code>threading</code>. Il est très utile pour les tâches I/O-bound : appels réseau, lecture de fichiers, scraping, traitements d’attente. Pour les calculs CPU purs, il faut comprendre le <strong>GIL</strong>.</p>
+</section>
+
+<section>
+<h2>2. Niveau débutant</h2>
+<h3>Créer un thread</h3>
+<pre class="code-block"><code class="language-python">import threading
+import time
+
+def worker(name):
+    print(f&quot;{name} démarre&quot;)
+    time.sleep(1)
+    print(f&quot;{name} termine&quot;)
+
+thread = threading.Thread(target=worker, args=(&quot;T1&quot;,))
+thread.start()
+thread.join()</code></pre>
+<h3>start() et join()</h3>
+<ul>
+  <li><code>start()</code> lance réellement le thread.</li>
+  <li><code>join()</code> attend sa fin.</li>
+</ul>
+<h3>Daemon threads</h3>
+<p>Comme en Java, un daemon thread sert à l’arrière-plan. Il peut être abandonné à l’arrêt du programme.</p>
+</section>
+
+<section>
+<h2>3. Partage d’état et pièges</h2>
+<pre class="code-block"><code class="language-python">import threading
+
+counter = 0
+lock = threading.Lock()
+
+def increment():
+    global counter
+    for _ in range(10000):
+        with lock:
+            counter += 1</code></pre>
+<p>Le lock protège ici une section critique. Sans lui, le résultat final pourrait être incohérent.</p>
+<h3>Piège fréquent</h3>
+<p>Voir le GIL comme une garantie absolue de thread-safety est faux. Le GIL simplifie certaines choses au niveau de l’interpréteur CPython, mais il ne rend pas automatiquement la logique métier correcte ni toutes les opérations composées sûres.</p>
+</section>
+
+<section>
+<h2>4. GIL : explication simple</h2>
+<p>Le <strong>Global Interpreter Lock</strong> permet à un seul thread Python d’exécuter du bytecode Python à la fois dans CPython. Conséquence principale :</p>
+<ul>
+  <li>pour les tâches <strong>CPU-bound</strong>, le threading Python ne donne souvent pas de vrai gain de parallélisme CPU,</li>
+  <li>pour les tâches <strong>I/O-bound</strong>, le threading reste très utile car les threads peuvent attendre des I/O pendant que d’autres avancent.</li>
+</ul>
+<div class="table-wrap"><table><thead><tr><th>Type de tâche</th><th>Threading Python</th><th>Pourquoi</th></tr></thead><tbody><tr><td>I/O-bound</td><td>Souvent bon choix</td><td>Pendant l’attente I/O, d’autres threads peuvent progresser.</td></tr><tr><td>CPU-bound</td><td>Souvent limité</td><td>Le GIL empêche un vrai parallélisme bytecode sur plusieurs cœurs.</td></tr><tr><td>Tâches mixtes</td><td>À analyser</td><td>Le profil exact décide entre threads, process ou asyncio.</td></tr></tbody></table></div>
+</section>
+
+<section>
+<h2>5. Cas réels</h2>
+<ul>
+  <li>Téléchargement de plusieurs pages web.</li>
+  <li>Écriture/lecture de fichiers multiples.</li>
+  <li>Petit worker d’arrière-plan sur des appels API.</li>
+  <li>Prétraitement concurrent léger côté ETL I/O.</li>
+</ul>
+<div class="callout callout-note"><h3>À retenir</h3><ul><li>Le threading Python est très utile pour l’I/O.</li><li>Le GIL limite surtout le CPU-bound pur.</li><li>Utiliser des locks reste nécessaire quand l’état est partagé.</li></ul></div>
+</section>
+<div class="prev-next"><a href="java-concurrency-advanced.html">← Java — Concurrency avancée</a><a href="python-concurrency-advanced.html">Python — Concurrency avancée →</a></div>
+
+        </article>
+        <aside class="toc">
+          <div class="toc-box">
+            <h3>Sommaire</h3>
+            <div id="toc"></div>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+  <script src="../assets/js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Concepts fondamentaux de concurrence</title>
+  <meta name="description" content="Shared state, thread safety, atomicité, visibilité mémoire, ordering, contention et coordination." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/styles.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-badge">MT</div>
+        <div>
+          <p class="eyebrow">Support de formation</p>
+          <h1>Multithreading</h1>
+        </div>
+      </div>
+      <nav class="nav">
+        <a class="nav-link" href="../index.html" data-label="Accueil">Accueil</a>
+<a class="nav-link" href="../pages/introduction.html" data-label="Introduction">Introduction</a>
+<a class="nav-link" href="../pages/concepts-fondamentaux.html" data-label="Concepts fondamentaux">Concepts fondamentaux</a>
+<a class="nav-link" href="../pages/java-threads-basics.html" data-label="Java — bases">Java — bases</a>
+<a class="nav-link" href="../pages/java-concurrency-advanced.html" data-label="Java — avancé">Java — avancé</a>
+<a class="nav-link" href="../pages/python-threads-basics.html" data-label="Python — bases">Python — bases</a>
+<a class="nav-link" href="../pages/python-concurrency-advanced.html" data-label="Python — avancé">Python — avancé</a>
+<a class="nav-link" href="../pages/synchronization.html" data-label="Synchronisation">Synchronisation</a>
+<a class="nav-link" href="../pages/race-condition-deadlock.html" data-label="Race / Deadlock">Race / Deadlock</a>
+<a class="nav-link" href="../pages/executors-thread-pools.html" data-label="Pools / Executors">Pools / Executors</a>
+<a class="nav-link" href="../pages/async-vs-threading.html" data-label="Async vs Threads">Async vs Threads</a>
+<a class="nav-link" href="../pages/performance-debugging.html" data-label="Performance / Debug">Performance / Debug</a>
+<a class="nav-link" href="../pages/best-practices.html" data-label="Bonnes pratiques">Bonnes pratiques</a>
+<a class="nav-link" href="../pages/exercises.html" data-label="Exercices">Exercices</a>
+<a class="nav-link" href="../pages/corrections.html" data-label="Corrigés">Corrigés</a>
+      </nav>
+    </aside>
+    <main class="content">
+      <header class="page-header">
+        <div>
+          <p class="eyebrow">Cours progressif • Java & Python</p>
+          <h1>Concepts fondamentaux de concurrence</h1>
+          <p class="lead">Shared state, thread safety, atomicité, visibilité mémoire, ordering, contention et coordination.</p>
+        </div>
+        <button id="toc-toggle" class="btn ghost mobile-only">Sommaire</button>
+      </header>
+
+      <div class="content-grid">
+        <article class="article">
+          
+<section>
+  <h2>1. Introduction</h2>
+  <p>Les concepts fondamentaux de concurrence expliquent pourquoi des bugs subtils apparaissent même quand le code semble correct “à l’œil nu”.</p>
+  <h3>Vocabulaire essentiel</h3>
+  <ul class="tight">
+    <li><strong>Shared state</strong> : état partagé entre plusieurs threads.</li>
+    <li><strong>Mutable state</strong> : état qui peut changer.</li>
+    <li><strong>Thread safety</strong> : capacité à rester correct même avec plusieurs threads.</li>
+    <li><strong>Atomicité</strong> : opération indivisible.</li>
+    <li><strong>Visibilité mémoire</strong> : quand un thread voit ou non les mises à jour d’un autre.</li>
+    <li><strong>Ordering</strong> : ordre garanti ou non entre les opérations.</li>
+  </ul>
+</section>
+<section>
+  <h2>2. Niveau débutant</h2>
+  <h3>Section critique</h3>
+  <p>Une section critique est une partie du code qui manipule une ressource partagée et qui doit être protégée.</p>
+  <h3>Race condition</h3>
+  <p>Une race condition survient quand le résultat dépend de l’ordre exact d’exécution des threads.</p>
+</section>
+<div class="code-shell"><pre><code>// Java - incrément non atomique
+class Counter {
+    int value = 0;
+
+    void increment() {
+        value++; // lecture + calcul + écriture = plusieurs étapes
+    }
+}
+</code></pre></div>
+<section>
+  <p>Le <span class="inline-code">value++</span> n’est pas atomique. Deux threads peuvent lire la même valeur, puis écrire chacun leur résultat, ce qui perd une mise à jour.</p>
+  <h3>Visibilité mémoire</h3>
+  <p>Un thread peut continuer à voir une ancienne valeur s’il n’existe pas de garantie de visibilité. En Java, <span class="inline-code">volatile</span>, les locks et certaines primitives concurrentes jouent un rôle clé.</p>
+</section>
+<section>
+  <h2>3. Niveau intermédiaire</h2>
+  <h3>Coordination entre threads</h3>
+  <p>La synchronisation ne sert pas seulement à empêcher deux threads d’entrer en même temps dans une zone sensible. Elle sert aussi à coordonner : attendre un signal, publier un état, consommer une donnée disponible.</p>
+  <div class="compare-table-wrap"><table><thead><tr><th>Concept</th><th>But</th><th>Exemple</th></tr></thead><tbody><tr><td>Lock</td><td>Exclusion mutuelle</td><td>Protéger un compteur partagé</td></tr><tr><td>Condition / wait-notify</td><td>Coordination</td><td>Attendre qu’un buffer contienne une donnée</td></tr><tr><td>Semaphore</td><td>Limiter le nombre d’accès</td><td>N connexions simultanées max</td></tr><tr><td>Barrier / Latch</td><td>Synchroniser plusieurs threads</td><td>Attendre 5 workers avant de continuer</td></tr><tr><td>Queue bloquante</td><td>Découpler producteurs et consommateurs</td><td>Pipeline de tâches</td></tr></tbody></table></div>
+  <h3>Starvation, livelock, deadlock</h3>
+  <ul class="tight">
+    <li><strong>Starvation</strong> : un thread n’obtient jamais la ressource dont il a besoin.</li>
+    <li><strong>Livelock</strong> : les threads bougent, mais n’avancent pas réellement.</li>
+    <li><strong>Deadlock</strong> : chaque thread attend une ressource détenue par l’autre.</li>
+  </ul>
+</section>
+<section>
+  <h2>4. Niveau avancé</h2>
+  <h3>Immutabilité et confinement</h3>
+  <p>La meilleure synchronisation est souvent d’éviter le partage. Un objet immuable n’a pas besoin de lock pour être lu en sécurité. Un état confiné à un thread n’est pas exposé aux interleavings concurrents.</p>
+  <h3>Idempotence</h3>
+  <p>En système distribué ou dans certains pipelines concurrents, rendre une opération idempotente permet de supporter des retries ou des exécutions répétées sans corrompre l’état.</p>
+  <h3>Recommandation de senior</h3>
+  <p>Commence toujours par la solution la plus simple qui respecte la sûreté. La sophistication concurrente doit être justifiée par un besoin réel.</p>
+</section>
+<div class="callout success"><div class="callout-title">Comparaison clé</div><div class="compare-table-wrap"><table><thead><tr><th>Sujet</th><th>Point important</th><th>Recommandation pratique</th></tr></thead><tbody><tr><td>Atomicité vs visibilité</td><td>Une variable peut être visible sans rendre l’opération atomique</td><td>Ne pas confondre volatile et AtomicInteger</td></tr><tr><td>Lock vs immutabilité</td><td>Lock protège, immutabilité évite le risque</td><td>Préférer immutabilité quand possible</td></tr><tr><td>Shared state vs message passing</td><td>Le partage est flexible mais dangereux</td><td>Préférer queues, événements, pipelines</td></tr></tbody></table></div></div><div class="callout remember"><div class="callout-title">À retenir</div>
+<ul class="tight">
+  <li>La plupart des bugs concurrents viennent du shared mutable state.</li>
+  <li>Un design sûr cherche d’abord à réduire le partage, puis à protéger ce qui reste.</li>
+  <li>Comprendre visibilité, atomicité et ordering est indispensable pour lire du code concurrent sérieusement.</li>
+</ul>
+</div>
+          <div class="pager">
+            <a class="btn ghost" href="introduction.html">← Précédent</a>
+            <a class="btn" href="java-threads-basics.html">Suivant →</a>
+          </div>
+        </article>
+        <aside class="toc" id="toc">
+          <div class="toc-card">
+            <p class="toc-title">Sommaire du chapitre</p>
+            <div id="toc-container"></div>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+  <script src="../assets/js/script.js"></script>
+</body>
+</html>

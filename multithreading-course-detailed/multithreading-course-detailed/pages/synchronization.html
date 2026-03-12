@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Synchronisation et coordination — Cours Multithreading</title>
+  <link rel="stylesheet" href="../assets/css/styles.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-badge">MT</div>
+        <div>
+          <strong>Multithreading Course</strong>
+          <p>Java & Python</p>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="../index.html">Accueil</a>
+<a href="introduction.html">Introduction</a>
+<a href="concepts-fondamentaux.html">Concepts fondamentaux</a>
+<a href="java-threads-basics.html">Java — bases</a>
+<a href="java-concurrency-advanced.html">Java — avancé</a>
+<a href="python-threads-basics.html">Python — bases</a>
+<a href="python-concurrency-advanced.html">Python — avancé</a>
+<a class="active" href="synchronization.html">Synchronisation</a>
+<a href="race-condition-deadlock.html">Bugs classiques</a>
+<a href="executors-thread-pools.html">Pools & async</a>
+<a href="async-vs-threading.html">Async vs threads</a>
+<a href="performance-debugging.html">Perf & debugging</a>
+<a href="best-practices.html">Bonnes pratiques</a>
+<a href="exercises.html">Exercices</a>
+<a href="corrections.html">Corrigés</a>
+      </nav>
+    </aside>
+    <main class="content">
+      <header class="hero hero-small">
+        <span class="eyebrow">Support progressif — junior à avancé</span>
+        <h1>Synchronisation et coordination</h1>
+        <p>Exclusion mutuelle, coordination, files, signaux et patterns classiques avec exemples Java et Python.</p>
+      </header>
+      <div class="page-grid">
+        <article class="article">
+          
+<section>
+<h2>1. Introduction</h2>
+<p>Synchroniser, ce n’est pas seulement “mettre un lock”. C’est choisir comment plusieurs threads se coordonnent pour accéder à une ressource, attendre un événement, se transmettre du travail ou limiter une capacité.</p>
+</section>
+
+<section>
+<h2>2. Exclusion mutuelle</h2>
+<p>L’exclusion mutuelle garantit qu’une seule exécution à la fois entre dans une section critique.</p>
+<div class="cards-2">
+  <div class="card"><h3>Java</h3><p>Utiliser synchronized, ReentrantLock ou parfois des structures concurrentes qui encapsulent déjà la synchronisation.</p></div>
+  <div class="card"><h3>Python</h3><p>Utiliser Lock ou RLock, avec un bloc context manager pour garantir la libération du verrou même en cas d’erreur.</p></div>
+</div>
+<pre class="code-block"><code class="language-java">private final ReentrantLock lock = new ReentrantLock();
+
+public void update() {
+    lock.lock();
+    try {
+        // section critique
+    } finally {
+        lock.unlock();
+    }
+}</code></pre>
+<pre class="code-block"><code class="language-python">lock = threading.Lock()
+
+with lock:
+    # section critique
+    pass</code></pre>
+</section>
+
+<section>
+<h2>3. Conditions, sémaphores, barrières</h2>
+<div class="table-wrap"><table><thead><tr><th>Primitive</th><th>But</th><th>Bon cas d’usage</th></tr></thead><tbody><tr><td>Condition</td><td>Attendre qu’un état devienne vrai</td><td>Attendre qu’un buffer contienne des éléments.</td></tr><tr><td>Semaphore</td><td>Limiter la concurrence à N</td><td>Limiter des appels API à 10 simultanés.</td></tr><tr><td>Barrier / CyclicBarrier</td><td>Faire se rejoindre plusieurs threads</td><td>Étapes synchronisées d’un batch parallèle.</td></tr><tr><td>Event</td><td>Diffuser un signal simple</td><td>Arrêt coordonné ou début d’une phase.</td></tr></tbody></table></div>
+<p>Plus la primitive est spécifique, plus elle réduit le risque d’erreur. C’est pour cela qu’une queue thread-safe est souvent meilleure qu’un protocole maison de signaux et locks.</p>
+</section>
+
+<section>
+<h2>4. Producteur / consommateur</h2>
+<p>Pattern central : un ou plusieurs producteurs fabriquent des éléments, un ou plusieurs consommateurs les traitent. On ne veut ni perdre des messages, ni lire du vide, ni saturer la mémoire.</p>
+<pre class="code-block"><code class="language-java">BlockingQueue&lt;Job&gt; queue = new LinkedBlockingQueue&lt;&gt;(1000);
+
+// producteur
+queue.put(job);
+
+// consommateur
+Job job = queue.take();
+process(job);</code></pre>
+<pre class="code-block"><code class="language-python">queue = Queue(maxsize=1000)
+
+queue.put(job)
+job = queue.get()
+process(job)
+queue.task_done()</code></pre>
+<h3>Pourquoi ce pattern est bon</h3>
+<ul>
+  <li>transfert de données clair,</li>
+  <li>backpressure simple avec capacité maximale,</li>
+  <li>coordination robuste sans signaux maison fragiles.</li>
+</ul>
+</section>
+
+<section>
+<h2>5. Quand choisir quelle primitive</h2>
+<div class="table-wrap"><table><thead><tr><th>Besoin</th><th>Primitive recommandée</th><th>Pourquoi</th></tr></thead><tbody><tr><td>Protéger un compteur simple</td><td>AtomicInteger / lock</td><td>Évite lost update.</td></tr><tr><td>Limiter N accès simultanés</td><td>Semaphore</td><td>Modélise directement le besoin.</td></tr><tr><td>Transférer du travail</td><td>BlockingQueue / Queue</td><td>Meilleur niveau d’abstraction.</td></tr><tr><td>Attendre la fin de N tâches</td><td>CountDownLatch / Future / as_completed</td><td>Plus simple qu’un flag maison.</td></tr><tr><td>Diffuser un signal d’arrêt</td><td>volatile flag / Event</td><td>Lisible et adapté.</td></tr></tbody></table></div>
+<div class="callout callout-note"><h3>À retenir</h3><ul><li>Choisis la primitive la plus proche du besoin métier.</li><li>Une bonne synchronisation réduit le code de coordination manuelle.</li><li>Plus on réinvente un protocole, plus on augmente le risque de bug.</li></ul></div>
+</section>
+<div class="prev-next"><a href="python-concurrency-advanced.html">← Python — Concurrency avancée</a><a href="race-condition-deadlock.html">Race conditions, deadlocks et bugs classiques →</a></div>
+
+        </article>
+        <aside class="toc">
+          <div class="toc-box">
+            <h3>Sommaire</h3>
+            <div id="toc"></div>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+  <script src="../assets/js/script.js"></script>
+</body>
+</html>

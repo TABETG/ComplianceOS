@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Python — Threads : bases indispensables</title>
+  <meta name="description" content="threading, start, join, daemon, partage d’état et compréhension claire du GIL." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/styles.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-badge">MT</div>
+        <div>
+          <p class="eyebrow">Support de formation</p>
+          <h1>Multithreading</h1>
+        </div>
+      </div>
+      <nav class="nav">
+        <a class="nav-link" href="../index.html" data-label="Accueil">Accueil</a>
+<a class="nav-link" href="../pages/introduction.html" data-label="Introduction">Introduction</a>
+<a class="nav-link" href="../pages/concepts-fondamentaux.html" data-label="Concepts fondamentaux">Concepts fondamentaux</a>
+<a class="nav-link" href="../pages/java-threads-basics.html" data-label="Java — bases">Java — bases</a>
+<a class="nav-link" href="../pages/java-concurrency-advanced.html" data-label="Java — avancé">Java — avancé</a>
+<a class="nav-link" href="../pages/python-threads-basics.html" data-label="Python — bases">Python — bases</a>
+<a class="nav-link" href="../pages/python-concurrency-advanced.html" data-label="Python — avancé">Python — avancé</a>
+<a class="nav-link" href="../pages/synchronization.html" data-label="Synchronisation">Synchronisation</a>
+<a class="nav-link" href="../pages/race-condition-deadlock.html" data-label="Race / Deadlock">Race / Deadlock</a>
+<a class="nav-link" href="../pages/executors-thread-pools.html" data-label="Pools / Executors">Pools / Executors</a>
+<a class="nav-link" href="../pages/async-vs-threading.html" data-label="Async vs Threads">Async vs Threads</a>
+<a class="nav-link" href="../pages/performance-debugging.html" data-label="Performance / Debug">Performance / Debug</a>
+<a class="nav-link" href="../pages/best-practices.html" data-label="Bonnes pratiques">Bonnes pratiques</a>
+<a class="nav-link" href="../pages/exercises.html" data-label="Exercices">Exercices</a>
+<a class="nav-link" href="../pages/corrections.html" data-label="Corrigés">Corrigés</a>
+      </nav>
+    </aside>
+    <main class="content">
+      <header class="page-header">
+        <div>
+          <p class="eyebrow">Cours progressif • Java & Python</p>
+          <h1>Python — Threads : bases indispensables</h1>
+          <p class="lead">threading, start, join, daemon, partage d’état et compréhension claire du GIL.</p>
+        </div>
+        <button id="toc-toggle" class="btn ghost mobile-only">Sommaire</button>
+      </header>
+
+      <div class="content-grid">
+        <article class="article">
+          
+<section>
+  <h2>1. Introduction</h2>
+  <p>En Python, le module <span class="inline-code">threading</span> permet de lancer plusieurs threads. Le point central à comprendre est le GIL : il influence fortement ce que le threading peut réellement accélérer.</p>
+</section>
+<section>
+  <h2>2. Niveau débutant</h2>
+  <h3>Création de threads</h3>
+</section>
+<div class="code-shell"><pre><code>import threading
+import time
+
+def worker(name):
+    print(f"{name} démarre")
+    time.sleep(1)  # simulation d'attente I/O
+    print(f"{name} termine")
+
+t1 = threading.Thread(target=worker, args=("worker-1",))
+t2 = threading.Thread(target=worker, args=("worker-2",), daemon=False)
+
+t1.start()
+t2.start()
+
+t1.join()
+t2.join()
+print("Main terminé")
+</code></pre></div>
+<section>
+  <h3>Daemon threads</h3>
+  <p>Comme en Java, un thread daemon ne doit pas porter un travail critique qui doit absolument finir avant l’arrêt du processus.</p>
+  <h3>Partage d’état</h3>
+  <p>Les variables globales partagées entre threads peuvent produire des bugs subtils, même en Python.</p>
+</section>
+<section>
+  <h2>3. Niveau intermédiaire</h2>
+  <h3>Le GIL expliqué simplement</h3>
+  <p>Le <strong>Global Interpreter Lock</strong> fait qu’en CPython, un seul thread exécute du bytecode Python à un instant donné. Cela signifie :</p>
+  <ul class="tight">
+    <li>Le threading est souvent utile pour des tâches <strong>IO-bound</strong> : réseau, disque, attente de service distant.</li>
+    <li>Il est généralement limité pour des tâches <strong>CPU-bound</strong> pures en Python pur.</li>
+  </ul>
+  <p class="quote">Image mentale : plusieurs threads font la queue pour exécuter du code Python, mais pendant qu’un thread attend une I/O, un autre peut avancer.</p>
+  <h3>Quand le GIL ne bloque pas tout</h3>
+  <ul class="tight">
+    <li>Quand un thread attend une I/O.</li>
+    <li>Quand des bibliothèques natives libèrent le GIL.</li>
+    <li>Quand on passe au multiprocessing au lieu du threading.</li>
+  </ul>
+</section>
+<section>
+  <h2>4. Niveau avancé</h2>
+  <h3>Choisir la bonne primitive</h3>
+  <p>En Python, la vraie compétence n’est pas seulement “savoir créer un thread”, mais choisir entre <span class="inline-code">threading</span>, <span class="inline-code">concurrent.futures</span>, <span class="inline-code">multiprocessing</span> et <span class="inline-code">asyncio</span>.</p>
+  <h3>Cas réels</h3>
+  <ul class="tight">
+    <li>Scraping et appels réseau concurrents : threading ou asyncio selon le design.</li>
+    <li>Traitements CPU lourds : multiprocessing ou extension native.</li>
+    <li>Workers légers en arrière-plan : ThreadPoolExecutor.</li>
+  </ul>
+</section>
+<div class="callout remember"><div class="callout-title">À retenir</div>
+<ul class="tight">
+  <li>Le threading Python est très utile pour l’I/O.</li>
+  <li>Le GIL limite les gains sur le CPU-bound en Python pur.</li>
+  <li>La bonne solution dépend du type de charge : IO-bound, CPU-bound, pipeline, attente d’événements.</li>
+</ul>
+</div>
+          <div class="pager">
+            <a class="btn ghost" href="java-concurrency-advanced.html">← Précédent</a>
+            <a class="btn" href="python-concurrency-advanced.html">Suivant →</a>
+          </div>
+        </article>
+        <aside class="toc" id="toc">
+          <div class="toc-card">
+            <p class="toc-title">Sommaire du chapitre</p>
+            <div id="toc-container"></div>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+  <script src="../assets/js/script.js"></script>
+</body>
+</html>

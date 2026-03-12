@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spring Course — Accueil</title>
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body>
+<header class="topbar">
+  <div class="container topbar-inner">
+    <a class="brand" href="index.html">Spring Course</a>
+    <nav class="nav">
+      <a href="pages/spring-boot.html" class="nav-link">Commencer</a>
+      <a href="pages/exercises.html" class="nav-link">Exercices</a>
+      <a href="pages/corrections.html" class="nav-link">Corrigés</a>
+    </nav>
+    <button class="menu-toggle" aria-label="Ouvrir le menu">☰</button>
+  </div>
+</header>
+<main>
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <p class="eyebrow">Support de formation technique</p>
+        <h1>Spring Boot, IoC, AOP, transactions, JPA, GraphQL DGS, Kafka et RabbitMQ</h1>
+        <p class="lead">Un cours progressif, professionnel et exploitable en formation interne, en révision d’entretien ou en auto-apprentissage. Chaque chapitre part des bases, monte vers les usages réalistes, puis va jusqu’aux pièges de production et aux recommandations senior.</p>
+        <div class="actions">
+          <a class="btn" href="pages/spring-boot.html">Démarrer le cours</a>
+          <a class="btn secondary" href="pages/exercises.html">Voir les exercices</a>
+        </div>
+      </div>
+      <div class="card highlight-card">
+        <h2>Ce que tu vas maîtriser</h2>
+        <ul class="check-list">
+          <li>Comprendre le conteneur Spring et la logique d’injection</li>
+          <li>Découper une application Spring Boot proprement</li>
+          <li>Éviter les pièges de @Transactional et JPA</li>
+          <li>Construire une API GraphQL avec Netflix DGS</li>
+          <li>Comparer Kafka et RabbitMQ avec des critères d’architecture</li>
+          <li>Passer du niveau junior au niveau avancé avec une vision production</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="container section">
+    <div class="section-heading">
+      <p class="eyebrow">Plan pédagogique</p>
+      <h2>Progression proposée</h2>
+    </div>
+    <div class="grid cards-2">
+      <article class="card"><h3>1. Spring Boot</h3><p>Différence Spring Framework / Spring Boot, starters, auto-configuration, profils, cycle de vie, structure d’application.</p><a class="text-link" href="pages/spring-boot.html">Lire le chapitre</a></article>
+      <article class="card"><h3>2. IoC / Dependency Injection</h3><p>Conteneur, beans, scopes, injections, ambiguïtés, architecture et recommandations de senior.</p><a class="text-link" href="pages/ioc-di.html">Lire le chapitre</a></article>
+      <article class="card"><h3>3. AOP</h3><p>Cross-cutting concerns, aspects, pointcuts, advices, limites, usages réalistes et pièges.</p><a class="text-link" href="pages/aop.html">Lire le chapitre</a></article>
+      <article class="card"><h3>4. @Transactional</h3><p>Propagation, isolation, rollback, proxies, lazy loading, performance et découpage service/repository.</p><a class="text-link" href="pages/transactional.html">Lire le chapitre</a></article>
+      <article class="card"><h3>5. Spring Data JPA</h3><p>Entités, relations, repositories, projections, DTO, pagination, N+1, mapping et optimisation.</p><a class="text-link" href="pages/jpa.html">Lire le chapitre</a></article>
+      <article class="card"><h3>6. GraphQL avec Netflix DGS</h3><p>Schéma, queries, mutations, data fetchers, validation, pagination, batching et organisation projet.</p><a class="text-link" href="pages/graphql-dgs.html">Lire le chapitre</a></article>
+      <article class="card"><h3>7. Kafka</h3><p>Topics, partitions, consumer groups, idempotence, transactions, DLQ, monitoring et Spring Kafka.</p><a class="text-link" href="pages/kafka.html">Lire le chapitre</a></article>
+      <article class="card"><h3>8. RabbitMQ</h3><p>Exchanges, bindings, routing, ack/nack, retry, TTL, DLQ, Spring AMQP et comparaison avec Kafka.</p><a class="text-link" href="pages/rabbitmq.html">Lire le chapitre</a></article>
+    </div>
+  </section>
+
+  <section class="container section">
+    <div class="section-heading">
+      <p class="eyebrow">Méthode</p>
+      <h2>Comment lire ce support</h2>
+    </div>
+    <div class="grid cards-3">
+      <article class="card"><h3>Junior</h3><p>Comprendre les mots, le rôle des annotations et les exemples minimaux.</p></article>
+      <article class="card"><h3>Intermédiaire</h3><p>Relier les concepts à une vraie application et identifier les bonnes pratiques projet.</p></article>
+      <article class="card"><h3>Avancé</h3><p>Voir les limites, les comportements internes, les impacts performance et les arbitrages d’architecture.</p></article>
+    </div>
+  </section>
+
+  <section class="container section">
+    <div class="notice">
+      <strong>Conseil de lecture :</strong> lis les chapitres dans l’ordre. Spring Boot, IoC et @Transactional forment le socle. Ensuite JPA, GraphQL et le messaging deviennent beaucoup plus simples à comprendre.
+    </div>
+  </section>
+</main>
+<script src="assets/js/script.js"></script>
+</body>
+</html>

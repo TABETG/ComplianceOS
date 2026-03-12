@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>@Transactional</title>
+  <link rel="stylesheet" href="../assets/css/styles.css" />
+</head>
+<body>
+
+<header class="topbar">
+  <div class="container topbar-inner">
+    <a class="brand" href="../index.html">Spring Course</a>
+    <nav class="nav"><a href="../index.html" class="nav-link">Accueil</a><a href="spring-boot.html" class="nav-link">Spring Boot</a><a href="ioc-di.html" class="nav-link">IoC / DI</a><a href="aop.html" class="nav-link">AOP</a><a href="transactional.html" class="nav-link">@Transactional</a><a href="jpa.html" class="nav-link">Spring Data JPA</a><a href="graphql-dgs.html" class="nav-link">GraphQL DGS</a><a href="kafka.html" class="nav-link">Kafka</a><a href="rabbitmq.html" class="nav-link">RabbitMQ</a><a href="exercises.html" class="nav-link">Exercices</a><a href="corrections.html" class="nav-link">Corrigés</a></nav>
+    <button class="menu-toggle" aria-label="Ouvrir le menu">☰</button>
+  </div>
+</header>
+
+<main class="container page-layout">
+  <aside class="sidebar">
+    <div class="card sticky">
+      <p class="eyebrow">Chapitre</p>
+      <h1>@Transactional</h1>
+      <p>Transactions Spring, propagation, rollback, proxy et pièges de production.</p>
+      <div id="toc" class="toc"></div>
+    </div>
+  </aside>
+  <article class="content">
+    
+<section id="intro"><h2>1. Introduction</h2>
+<p>Une transaction est une unité de travail qui doit être exécutée de manière cohérente. Soit tout réussit, soit tout est annulé.</p>
+<div class="callout info"><strong>Analogie :</strong> un virement bancaire : débiter sans créditer serait incohérent. La transaction garantit l’intégrité.</div>
+<p><code>@Transactional</code> permet à Spring d’encadrer des opérations de persistence dans une transaction.</p></section>
+<section id="beginner"><h2>2. Niveau débutant</h2>
+<p>Exemple simple :</p>
+<div class="code-block"><pre><code>@Service
+public class TransferService {
+    private final AccountRepository accountRepository;
+
+    @Transactional
+    public void transfer(Long fromId, Long toId, BigDecimal amount) {
+        Account from = accountRepository.findById(fromId).orElseThrow();
+        Account to = accountRepository.findById(toId).orElseThrow();
+
+        from.debit(amount);
+        to.credit(amount);
+    }
+}</code></pre></div>
+<p>Ici, si une exception survient après le débit et avant le crédit, la transaction évite un état incohérent.</p>
+<div class="callout warning"><strong>Erreur fréquente :</strong> penser que <code>@Transactional</code> agit “dans la méthode”. En réalité, Spring passe généralement par un proxy autour du bean.</div></section>
+<section id="intermediate"><h2>3. Niveau intermédiaire</h2>
+<p>Concepts indispensables :</p>
+<ul>
+<li><strong>Propagation</strong> : comment une transaction se comporte si une autre existe déjà.</li>
+<li><strong>Isolation</strong> : visibilité des données concurrentes.</li>
+<li><strong>Rollback</strong> : quand annuler les changements.</li>
+<li><strong>readOnly=true</strong> : optimisation potentielle pour lecture.</li>
+</ul>
+<div class="table-wrap"><table><thead><tr><th>Propagation</th><th>Effet</th><th>Usage</th></tr></thead><tbody>
+<tr><td>REQUIRED</td><td>Rejoint la transaction existante ou en crée une</td><td>Cas standard</td></tr>
+<tr><td>REQUIRES_NEW</td><td>Suspension de l’ancienne, création d’une nouvelle</td><td>Audit séparé, journalisation indépendante</td></tr>
+<tr><td>MANDATORY</td><td>Exige une transaction existante</td><td>API interne stricte</td></tr>
+</tbody></table></div>
+<p><strong>Checked vs unchecked exceptions :</strong> par défaut, Spring rollback sur les exceptions runtime, pas forcément sur les checked exceptions. On peut ajuster avec <code>rollbackFor</code>.</p>
+<div class="code-block"><pre><code>@Transactional(rollbackFor = IOException.class)
+public void importFile() throws IOException { ... }</code></pre></div>
+</section>
+<section id="advanced"><h2>4. Niveau avancé</h2>
+<p><strong>Piège majeur :</strong> les appels internes de méthode dans la même classe ne passent pas toujours par le proxy Spring. Donc un <code>@Transactional</code> sur une méthode appelée via <code>this</code> peut être ignoré.</p>
+<p><strong>Transaction et JPA :</strong> le contexte de persistence suit souvent le scope transactionnel. Le lazy loading a besoin d’une session active. Hors transaction, tu peux obtenir une <code>LazyInitializationException</code>.</p>
+<div class="callout warning"><strong>Performance :</strong> garder une transaction ouverte trop longtemps augmente les verrous, la contention et le temps de rétention des connexions SQL.</div>
+<p><strong>Recommandation senior :</strong> la transaction vit en général au niveau service, là où le use case métier est complet. Le repository doit rester focalisé sur l’accès aux données.</p>
+<div class="table-wrap"><table><thead><tr><th>Choix</th><th>Avantages</th><th>Risques</th><th>Recommandation</th></tr></thead><tbody>
+<tr><td>@Transactional sur service</td><td>Aligne transaction et use case métier</td><td>Peut devenir trop large si service mal découpé</td><td><strong>Préféré</strong></td></tr>
+<tr><td>@Transactional sur repository</td><td>Simple pour une opération isolée</td><td>Vision métier fragmentée</td><td>Usage ponctuel</td></tr>
+</tbody></table></div>
+</section>
+<section id="code"><h2>5. Exemples de code</h2>
+<div class="code-block"><pre><code>@Service
+@RequiredArgsConstructor
+public class OrderService {
+    private final OrderRepository orderRepository;
+    private final PaymentGateway paymentGateway;
+    private final AuditService auditService;
+
+    @Transactional
+    public Order placeOrder(CreateOrderCommand command) {
+        Order order = Order.create(command);
+        orderRepository.save(order);
+
+        paymentGateway.charge(order.totalAmount());
+
+        // Attention : si auditService utilise REQUIRES_NEW,
+        // l'audit peut être persisté même si la transaction principale échoue ensuite.
+        auditService.recordOrderCreation(order.getId());
+        return order;
+    }
+}</code></pre></div>
+</section>
+<section id="retain"><h2>6. À retenir</h2><ul>
+<li>@Transactional repose le plus souvent sur un proxy Spring.</li>
+<li>Le rollback par défaut vise surtout les runtime exceptions.</li>
+<li>Le lazy loading et la transaction sont étroitement liés.</li>
+<li>La transaction doit vivre au niveau du use case métier.</li>
+<li>Une transaction trop longue nuit aux performances.</li>
+</ul></section>
+<section id="exercises"><h2>7. Exercices</h2>
+<details><summary>Débutant</summary><p>Implémente un service de transfert bancaire transactionnel.</p></details>
+<details><summary>Intermédiaire</summary><p>Ajoute un audit indépendant avec <code>REQUIRES_NEW</code> et explique les conséquences.</p></details>
+<details><summary>Avancé</summary><p>Diagnostique un problème de <code>LazyInitializationException</code> après sortie du service transactionnel.</p></details>
+</section>
+<section id="corrections-link"><h2>8. Corrigés</h2><p>Voir <a href="corrections.html">Corrigés</a>.</p></section>
+
+    <div class="pager"><a class="btn secondary" href="aop.html">← Précédent</a><a class="btn" href="jpa.html">Suivant →</a></div>
+  </article>
+</main>
+<script src="../assets/js/script.js"></script>
+</body>
+</html>

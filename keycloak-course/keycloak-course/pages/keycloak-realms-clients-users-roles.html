@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Realms, clients, users, roles — Keycloak 25 Course</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <a class="brand" href="../index.html">Keycloak Course<small>Junior → Expert</small></a>
+      <div class="nav-group">
+        <a href="../index.html">Accueil</a>
+        <a href="../pages/introduction.html">Introduction générale</a>
+<a href="../pages/fondamentaux-identite-et-auth.html">Fondamentaux identité et authentification</a>
+<a href="../pages/keycloak-25-overview.html">Keycloak 25 overview</a>
+<a href="../pages/sso.html">SSO</a>
+<a href="../pages/oauth2.html">OAuth2</a>
+<a href="../pages/oidc.html">OpenID Connect</a>
+<a href="../pages/fido2-webauthn.html">FIDO2 / WebAuthn</a>
+<a href="../pages/rbac.html">RBAC</a>
+<a href="../pages/keycloak-realms-clients-users-roles.html">Realms, clients, users, roles</a>
+<a href="../pages/flows-et-authentication.html">Flows et authentication</a>
+<a href="../pages/integration-application.html">Intégration applicative</a>
+<a href="../pages/securite-bonnes-pratiques.html">Sécurité et bonnes pratiques</a>
+<a href="../pages/cas-pratiques.html">Cas pratiques</a>
+<a href="../pages/exercices.html">Exercices et corrigés</a>
+<a href="../pages/conclusion.html">Conclusion</a>
+      </div>
+    </aside>
+    <main class="content">
+      
+<section class="hero">
+  <h1>Realms, clients, users, roles</h1>
+  <p class="lead">C’est le cœur du modèle Keycloak. Bien le comprendre évite une grande partie des erreurs de conception.</p>
+</section>
+<section class="panel">
+  <h2>Realm</h2>
+  <p>Un realm est une frontière logique : utilisateurs, groupes, rôles, clients, sessions, providers. Deux realms différents sont isolés.</p>
+  <div class="callout attention"><div class="label">Attention</div><p>Un realm n’est pas juste un “dossier”. C’est une vraie frontière de configuration et d’identité. Le choix du nombre de realms est un choix d’architecture.</p></div>
+</section>
+<section class="panel">
+  <h2>Client</h2>
+  <p>Un client représente l’application ou le service qui délègue le login à Keycloak. Son type influence sa sécurité :</p>
+  <ul class="check">
+    <li><strong>Public client</strong> : ne peut pas garder un secret de manière fiable, typiquement SPA.</li>
+    <li><strong>Confidential client</strong> : peut protéger un secret, typiquement backend.</li>
+    <li><strong>Bearer-only</strong> : reçoit seulement des tokens, sans redirection de login classique.</li>
+  </ul>
+</section>
+<section class="panel">
+  <h2>User, group, role</h2>
+  <pre><code>Realm: acme
+Client: finance-api
+Groups:
+- finance-users
+- finance-managers
+
+Realm roles:
+- employee
+- admin
+
+Client roles (finance-api):
+- invoice:read
+- invoice:approve
+</code></pre>
+  <p>Un utilisateur peut recevoir des rôles directement ou via ses groupes.</p>
+</section>
+<section class="panel">
+  <h2>Scopes et protocol mappers</h2>
+  <p>Les <strong>client scopes</strong> et <strong>protocol mappers</strong> servent à contrôler quels claims sont injectés dans les tokens. C’est ici qu’on projette des rôles, groupes ou attributs utilisateur.</p>
+  <div class="callout piege"><div class="label">Piège fréquent</div><p>Mettre trop d’informations dans le token. Un token n’est pas un mini-annuaire LDAP ni une base de données transportable.</p></div>
+</section>
+
+      <div class="footer-nav"><a href="../pages/rbac.html">← Page précédente</a><a href="../pages/flows-et-authentication.html">Page suivante →</a></div>
+    </main>
+  </div>
+  <script src="../assets/js/app.js"></script>
+</body>
+</html>

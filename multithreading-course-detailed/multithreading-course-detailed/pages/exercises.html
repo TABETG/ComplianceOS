@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Exercices — Cours Multithreading</title>
+  <link rel="stylesheet" href="../assets/css/styles.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-badge">MT</div>
+        <div>
+          <strong>Multithreading Course</strong>
+          <p>Java & Python</p>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="../index.html">Accueil</a>
+<a href="introduction.html">Introduction</a>
+<a href="concepts-fondamentaux.html">Concepts fondamentaux</a>
+<a href="java-threads-basics.html">Java — bases</a>
+<a href="java-concurrency-advanced.html">Java — avancé</a>
+<a href="python-threads-basics.html">Python — bases</a>
+<a href="python-concurrency-advanced.html">Python — avancé</a>
+<a href="synchronization.html">Synchronisation</a>
+<a href="race-condition-deadlock.html">Bugs classiques</a>
+<a href="executors-thread-pools.html">Pools & async</a>
+<a href="async-vs-threading.html">Async vs threads</a>
+<a href="performance-debugging.html">Perf & debugging</a>
+<a href="best-practices.html">Bonnes pratiques</a>
+<a class="active" href="exercises.html">Exercices</a>
+<a href="corrections.html">Corrigés</a>
+      </nav>
+    </aside>
+    <main class="content">
+      <header class="hero hero-small">
+        <span class="eyebrow">Support progressif — junior à avancé</span>
+        <h1>Exercices</h1>
+        <p>Questions, lecture de code, bug hunting et mini cas d’architecture pour consolider le cours.</p>
+      </header>
+      <div class="page-grid">
+        <article class="article">
+          
+<section>
+<h2>1. Exercices débutant</h2>
+<ol>
+  <li>Explique la différence entre processus et thread avec un exemple concret.</li>
+  <li>En Java, explique précisément la différence entre <code>start()</code> et <code>run()</code>.</li>
+  <li>En Python, quand le threading est-il particulièrement pertinent malgré le GIL ?</li>
+  <li>Donne un exemple de race condition simple.</li>
+</ol>
+</section>
+
+<section>
+<h2>2. Lecture de code</h2>
+<pre class="code-block"><code class="language-java">class Counter {
+    private int value = 0;
+
+    public void increment() {
+        value++;
+    }
+
+    public int getValue() {
+        return value;
+    }
+}</code></pre>
+<ol class="clean-list">
+  <li>Ce code est-il thread-safe ? Pourquoi ?</li>
+  <li>Propose deux corrections possibles.</li>
+</ol>
+<pre class="code-block"><code class="language-python">from threading import Thread
+
+items = []
+
+def add_items():
+    for i in range(1000):
+        items.append(i)
+
+threads = [Thread(target=add_items) for _ in range(4)]
+for t in threads:
+    t.start()
+for t in threads:
+    t.join()</code></pre>
+<ol class="clean-list">
+  <li>Quels risques ce code fait-il apparaître d’un point de vue général ?</li>
+  <li>Que ferais-tu pour rendre le protocole plus robuste ?</li>
+</ol>
+</section>
+
+<section>
+<h2>3. Détection de bug concurrent</h2>
+<ol>
+  <li>Tu observes qu’un service Java se bloque parfois sous charge. Donne une méthode d’analyse en 5 étapes.</li>
+  <li>Tu as un consumer Python I/O-bound qui devient lent. Quelles métriques veux-tu voir ?</li>
+  <li>Différencie un deadlock d’une starvation dans les symptômes observés.</li>
+</ol>
+</section>
+
+<section>
+<h2>4. Correction de deadlock</h2>
+<p>On te donne deux ressources <code>lockA</code> et <code>lockB</code>. Deux threads les prennent parfois dans des ordres opposés. Donne :</p>
+<ul>
+  <li>le problème,</li>
+  <li>une correction simple,</li>
+  <li>une correction architecturale meilleure si possible.</li>
+</ul>
+</section>
+
+<section>
+<h2>5. Implémentation producteur / consommateur</h2>
+<ol>
+  <li>En Java, implémente un producteur et deux consommateurs avec <code>BlockingQueue</code>.</li>
+  <li>En Python, fais la même chose avec <code>Queue</code> et une sentinelle de fin.</li>
+  <li>Ajoute une stratégie d’arrêt propre.</li>
+</ol>
+</section>
+
+<section>
+<h2>6. Mini cas d’architecture</h2>
+<p>Tu dois concevoir un service qui :</p>
+<ul>
+  <li>reçoit des fichiers,</li>
+  <li>les envoie à une API externe lente,</li>
+  <li>récupère les résultats,</li>
+  <li>effectue un calcul léger,</li>
+  <li>stocke en base.</li>
+</ul>
+<p>Choisis entre synchrone, thread pool, async, queue interne ou process pool. Justifie.</p>
+</section>
+
+<section>
+<h2>7. Comparaisons</h2>
+<ol>
+  <li><code>synchronized</code> vs <code>ReentrantLock</code></li>
+  <li><code>volatile</code> vs <code>AtomicInteger</code></li>
+  <li>ThreadPoolExecutor Java vs Python</li>
+  <li>threading Python vs multiprocessing Python</li>
+  <li>wait/notify vs BlockingQueue</li>
+</ol>
+<button data-toggle-target="exercise-hints" data-show-text="Afficher des pistes" data-hide-text="Masquer les pistes">Afficher des pistes</button>
+<div id="exercise-hints" hidden>
+  <details open><summary>Piste 1</summary><div class="details-body">Commence toujours par identifier l’état partagé, la nature de la charge et la stratégie d’arrêt.</div></details>
+  <details ><summary>Piste 2</summary><div class="details-body">Pour une correction robuste, préfère les primitives haut niveau aux protocoles manuels.</div></details>
+  <details ><summary>Piste 3</summary><div class="details-body">Pense observabilité : comment verras-tu une saturation, un backlog, un blocage ?</div></details>
+</div>
+</section>
+<div class="prev-next"><a href="best-practices.html">← Bonnes pratiques d’architecture concurrente</a><a href="corrections.html">Corrigés détaillés →</a></div>
+
+        </article>
+        <aside class="toc">
+          <div class="toc-box">
+            <h3>Sommaire</h3>
+            <div id="toc"></div>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+  <script src="../assets/js/script.js"></script>
+</body>
+</html>

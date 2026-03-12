@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kafka</title>
+  <link rel="stylesheet" href="../assets/css/styles.css" />
+</head>
+<body>
+
+<header class="topbar">
+  <div class="container topbar-inner">
+    <a class="brand" href="../index.html">Spring Course</a>
+    <nav class="nav"><a href="../index.html" class="nav-link">Accueil</a><a href="spring-boot.html" class="nav-link">Spring Boot</a><a href="ioc-di.html" class="nav-link">IoC / DI</a><a href="aop.html" class="nav-link">AOP</a><a href="transactional.html" class="nav-link">@Transactional</a><a href="jpa.html" class="nav-link">Spring Data JPA</a><a href="graphql-dgs.html" class="nav-link">GraphQL DGS</a><a href="kafka.html" class="nav-link">Kafka</a><a href="rabbitmq.html" class="nav-link">RabbitMQ</a><a href="exercises.html" class="nav-link">Exercices</a><a href="corrections.html" class="nav-link">Corrigés</a></nav>
+    <button class="menu-toggle" aria-label="Ouvrir le menu">☰</button>
+  </div>
+</header>
+
+<main class="container page-layout">
+  <aside class="sidebar">
+    <div class="card sticky">
+      <p class="eyebrow">Chapitre</p>
+      <h1>Kafka</h1>
+      <p>Streaming d’événements, topics, partitions, Spring Kafka et bonnes pratiques.</p>
+      <div id="toc" class="toc"></div>
+    </div>
+  </aside>
+  <article class="content">
+    
+<section id="intro"><h2>1. Introduction</h2>
+<p>Kafka est une plateforme de streaming d’événements distribuée, conçue pour gérer de gros volumes, conserver les messages et permettre plusieurs consommateurs indépendants.</p>
+<p><strong>Pourquoi Kafka existe :</strong> absorber des flux importants, rejouer l’historique, découpler des systèmes et construire des architectures événementielles robustes.</p>
+<div class="callout info"><strong>Analogie :</strong> Kafka ressemble à un journal d’événements persistant. On écrit dans un registre ordonné, puis plusieurs lecteurs viennent lire chacun à leur rythme.</div>
+</section>
+<section id="beginner"><h2>2. Niveau débutant</h2>
+<p>Vocabulaire essentiel :</p>
+<ul>
+<li><strong>Broker</strong> : serveur Kafka.</li>
+<li><strong>Topic</strong> : canal logique.</li>
+<li><strong>Partition</strong> : subdivision d’un topic, base de parallélisme.</li>
+<li><strong>Offset</strong> : position d’un message dans une partition.</li>
+<li><strong>Producer</strong> : écrit des messages.</li>
+<li><strong>Consumer</strong> : lit des messages.</li>
+<li><strong>Consumer group</strong> : groupe partageant la consommation d’un topic.</li>
+</ul>
+<div class="code-block"><pre><code>// Fichier : OrderEventPublisher.java
+@Service
+@RequiredArgsConstructor
+public class OrderEventPublisher {
+    private final KafkaTemplate&lt;String, OrderCreatedEvent&gt; kafkaTemplate;
+
+    public void publish(OrderCreatedEvent event) {
+        // La clé influence la partition et donc l’ordre local des messages liés.
+        kafkaTemplate.send("order.created", event.orderId().toString(), event);
+    }
+}</code></pre></div>
+<p><strong>Piège débutant :</strong> croire que l’ordre est global sur tout le topic. En pratique, l’ordre est garanti au niveau d’une partition, pas du topic complet.</p></section>
+<section id="intermediate"><h2>3. Niveau intermédiaire</h2>
+<p>Concepts réalistes :</p>
+<ul>
+<li><strong>Rebalancing</strong> : répartition des partitions entre consommateurs d’un groupe.</li>
+<li><strong>Acks</strong> : niveau d’accusé de réception côté producteur.</li>
+<li><strong>Retries</strong> : tentatives de réémission.</li>
+<li><strong>DLQ</strong> : topic d’erreur pour les messages non traitables.</li>
+<li><strong>Retention</strong> : durée ou taille de conservation.</li>
+<li><strong>Compaction</strong> : conservation de la dernière valeur par clé.</li>
+</ul>
+<div class="code-block"><pre><code>@Configuration
+public class KafkaProducerConfig {
+    @Bean
+    public ProducerFactory&lt;String, OrderCreatedEvent&gt; producerFactory() {
+        Map&lt;String, Object&gt; props = new HashMap&lt;&gt;();
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+        props.put(ProducerConfig.ACKS_CONFIG, "all");
+        props.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
+        return new DefaultKafkaProducerFactory&lt;&gt;(props);
+    }
+}</code></pre></div>
+<p>Pourquoi <code>acks=all</code> et l’idempotence sont utiles : meilleure fiabilité, moins de doublons en cas de retry.</p>
+</section>
+<section id="advanced"><h2>4. Niveau avancé</h2>
+<p><strong>Exactly-once semantics :</strong> sujet subtil. Kafka peut offrir certaines garanties fortes, mais elles dépendent de la configuration du producteur, du consommateur et parfois des transactions Kafka.</p>
+<p><strong>Transactions Kafka :</strong> utiles lorsqu’on veut produire plusieurs messages de manière atomique, ou lire puis republier avec des garanties cohérentes.</p>
+<p><strong>Sérialisation :</strong> JSON est simple pour démarrer. Avro + Schema Registry devient intéressant quand les contrats évoluent et que plusieurs équipes consomment les événements.</p>
+<div class="callout warning"><strong>Piège subtil :</strong> traiter Kafka comme une simple queue. Kafka est aussi un log persistant, conçu pour replay, analytics, intégration multi-consommateurs et haut débit.</div>
+<p><strong>Monitoring :</strong> surveiller lag consommateur, débit, erreurs de sérialisation, timeouts, rebalances, tailles de topics et saturation des brokers.</p>
+<p><strong>Comparaison Kafka vs RabbitMQ :</strong> Kafka est excellent pour l’event streaming, la rétention et la relecture. RabbitMQ est souvent plus direct pour la messagerie applicative et le routage fin.</p>
+</section>
+<section id="code"><h2>5. Exemples de code</h2>
+<div class="code-block"><pre><code>// Fichier : OrderEventConsumer.java
+@Component
+@Slf4j
+public class OrderEventConsumer {
+
+    @KafkaListener(topics = "order.created", groupId = "billing-service")
+    public void onMessage(OrderCreatedEvent event) {
+        // Le consumer doit idéalement être idempotent côté métier.
+        // En cas de redelivery, il ne doit pas facturer deux fois.
+        log.info("Received order event {}", event);
+    }
+}</code></pre></div>
+<div class="table-wrap"><table><thead><tr><th>Critère</th><th>Kafka</th><th>RabbitMQ</th></tr></thead><tbody>
+<tr><td>Modèle dominant</td><td>Event streaming / log</td><td>Message broker / queues</td></tr>
+<tr><td>Rétention</td><td>Naturalisée</td><td>Moins centrale</td></tr>
+<tr><td>Replay</td><td>Très naturel</td><td>Moins naturel</td></tr>
+<tr><td>Routing</td><td>Moins riche que RabbitMQ</td><td>Très riche via exchanges</td></tr>
+<tr><td>Très haut débit</td><td>Très bon</td><td>Bon mais autre philosophie</td></tr>
+</tbody></table></div>
+</section>
+<section id="retain"><h2>6. À retenir</h2><ul>
+<li>L’ordre est garanti par partition, pas globalement par topic.</li>
+<li>Le design de la clé est un choix d’architecture important.</li>
+<li>Idempotence, retries et DLQ sont des sujets de base en production.</li>
+<li>Kafka n’est pas seulement une queue : c’est un log distribué persistant.</li>
+<li>Il faut penser schémas d’événements, observabilité et reprise.</li>
+</ul></section>
+<section id="exercises"><h2>7. Exercices</h2>
+<details><summary>Débutant</summary><p>Explique les rôles de topic, partition, offset et consumer group.</p></details>
+<details><summary>Intermédiaire</summary><p>Crée un producer Spring Kafka et un consumer pour un événement <code>UserRegisteredEvent</code>.</p></details>
+<details><summary>Avancé</summary><p>Conçois une stratégie pour éviter une double facturation en cas de redelivery.</p></details>
+</section>
+<section id="corrections-link"><h2>8. Corrigés</h2><p>Voir <a href="corrections.html">Corrigés</a>.</p></section>
+
+    <div class="pager"><a class="btn secondary" href="graphql-dgs.html">← Précédent</a><a class="btn" href="rabbitmq.html">Suivant →</a></div>
+  </article>
+</main>
+<script src="../assets/js/script.js"></script>
+</body>
+</html>

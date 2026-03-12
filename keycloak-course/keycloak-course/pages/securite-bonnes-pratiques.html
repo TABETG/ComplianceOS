@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sécurité et bonnes pratiques — Keycloak 25 Course</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <a class="brand" href="../index.html">Keycloak Course<small>Junior → Expert</small></a>
+      <div class="nav-group">
+        <a href="../index.html">Accueil</a>
+        <a href="../pages/introduction.html">Introduction générale</a>
+<a href="../pages/fondamentaux-identite-et-auth.html">Fondamentaux identité et authentification</a>
+<a href="../pages/keycloak-25-overview.html">Keycloak 25 overview</a>
+<a href="../pages/sso.html">SSO</a>
+<a href="../pages/oauth2.html">OAuth2</a>
+<a href="../pages/oidc.html">OpenID Connect</a>
+<a href="../pages/fido2-webauthn.html">FIDO2 / WebAuthn</a>
+<a href="../pages/rbac.html">RBAC</a>
+<a href="../pages/keycloak-realms-clients-users-roles.html">Realms, clients, users, roles</a>
+<a href="../pages/flows-et-authentication.html">Flows et authentication</a>
+<a href="../pages/integration-application.html">Intégration applicative</a>
+<a href="../pages/securite-bonnes-pratiques.html">Sécurité et bonnes pratiques</a>
+<a href="../pages/cas-pratiques.html">Cas pratiques</a>
+<a href="../pages/exercices.html">Exercices et corrigés</a>
+<a href="../pages/conclusion.html">Conclusion</a>
+      </div>
+    </aside>
+    <main class="content">
+      
+<section class="hero">
+  <h1>Sécurité et bonnes pratiques</h1>
+  <p class="lead">La sécurité IAM est un équilibre entre standards, configuration propre et discipline opérationnelle.</p>
+</section>
+<section class="panel">
+  <h2>Checklist essentielle</h2>
+  <ul class="check">
+    <li>HTTPS partout, sans exception en production.</li>
+    <li>Authorization Code + PKCE pour les clients publics.</li>
+    <li>Tokens courts, refresh tokens contrôlés.</li>
+    <li>Validation stricte des JWT côté API.</li>
+    <li>Rotation des clés et suivi du JWKS.</li>
+    <li>MFA pour les comptes sensibles.</li>
+    <li>Principe du moindre privilège.</li>
+    <li>Audit, logs et revue périodique des rôles.</li>
+  </ul>
+</section>
+<section class="panel">
+  <h2>Erreurs fréquentes</h2>
+  <div class="callout piege"><div class="label">Piège fréquent</div><p>Stocker des secrets dans le frontend, accepter n’importe quelle redirect URI, faire confiance à un token sans vérifier l’issuer, ou donner des rôles admin trop larges.</p></div>
+  <div class="callout attention"><div class="label">Attention</div><p>Les redirect URIs trop permissives ouvrent la porte à des attaques de type code interception ou redirection malveillante.</p></div>
+</section>
+<section class="panel">
+  <h2>Durée de vie des tokens</h2>
+  <p>Un token trop long augmente la surface de risque. Un token trop court peut casser l’expérience utilisateur. Il faut calibrer selon le canal, la sensibilité et la présence d’un refresh token ou d’une session centrale.</p>
+</section>
+<section class="panel">
+  <h2>Phishing et FIDO2</h2>
+  <p>Les mots de passe et OTP SMS sont vulnérables à plusieurs formes de phishing. WebAuthn/FIDO2 améliore nettement la résistance car la preuve est liée au relying party et à une clé cryptographique.</p>
+</section>
+
+      <div class="footer-nav"><a href="../pages/integration-application.html">← Page précédente</a><a href="../pages/cas-pratiques.html">Page suivante →</a></div>
+    </main>
+  </div>
+  <script src="../assets/js/app.js"></script>
+</body>
+</html>

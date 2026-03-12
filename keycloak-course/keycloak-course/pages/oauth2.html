@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OAuth2 — Keycloak 25 Course</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <a class="brand" href="../index.html">Keycloak Course<small>Junior → Expert</small></a>
+      <div class="nav-group">
+        <a href="../index.html">Accueil</a>
+        <a href="../pages/introduction.html">Introduction générale</a>
+<a href="../pages/fondamentaux-identite-et-auth.html">Fondamentaux identité et authentification</a>
+<a href="../pages/keycloak-25-overview.html">Keycloak 25 overview</a>
+<a href="../pages/sso.html">SSO</a>
+<a href="../pages/oauth2.html">OAuth2</a>
+<a href="../pages/oidc.html">OpenID Connect</a>
+<a href="../pages/fido2-webauthn.html">FIDO2 / WebAuthn</a>
+<a href="../pages/rbac.html">RBAC</a>
+<a href="../pages/keycloak-realms-clients-users-roles.html">Realms, clients, users, roles</a>
+<a href="../pages/flows-et-authentication.html">Flows et authentication</a>
+<a href="../pages/integration-application.html">Intégration applicative</a>
+<a href="../pages/securite-bonnes-pratiques.html">Sécurité et bonnes pratiques</a>
+<a href="../pages/cas-pratiques.html">Cas pratiques</a>
+<a href="../pages/exercices.html">Exercices et corrigés</a>
+<a href="../pages/conclusion.html">Conclusion</a>
+      </div>
+    </aside>
+    <main class="content">
+      
+<section class="hero">
+  <h1>OAuth2</h1>
+  <p class="lead">OAuth2 est un cadre de délégation d’autorisation. Il ne dit pas d’abord qui est l’utilisateur ; il dit comment un client peut obtenir un accès limité à une ressource.</p>
+</section>
+<section class="panel">
+  <h2>Les rôles OAuth2</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Rôle</th><th>Question</th><th>Exemple</th></tr></thead>
+      <tbody>
+        <tr><td>Resource Owner</td><td>À qui appartiennent les données ?</td><td>L’utilisateur</td></tr>
+        <tr><td>Client</td><td>Qui demande l’accès ?</td><td>SPA, backend, mobile app</td></tr>
+        <tr><td>Authorization Server</td><td>Qui délivre le feu vert ?</td><td>Keycloak</td></tr>
+        <tr><td>Resource Server</td><td>Qui protège la ressource ?</td><td>API métier</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+<section class="panel">
+  <h2>Authorization Code Flow</h2>
+  <pre><code># 1) Redirection vers /authorize
+GET /protocol/openid-connect/auth?
+  client_id=web-portal&
+  response_type=code&
+  scope=openid profile email&
+  redirect_uri=https://app.example.com/callback&
+  code_challenge=...&
+  code_challenge_method=S256
+
+# 2) Échange du code contre des tokens
+POST /protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=authorization_code&
+client_id=web-portal&
+code=abc123&
+redirect_uri=https://app.example.com/callback&
+code_verifier=...
+</code></pre>
+  <div class="callout practice"><div class="label">Bonne pratique</div><p>Pour les <strong>public clients</strong> comme les SPA et les apps mobiles, utilise <strong>Authorization Code + PKCE</strong>.</p></div>
+</section>
+<section class="panel">
+  <h2>Flows à connaître</h2>
+  <ul class="check">
+    <li><strong>Authorization Code + PKCE</strong> : standard moderne pour navigateur et mobile.</li>
+    <li><strong>Client Credentials</strong> : service-to-service sans utilisateur final.</li>
+    <li><strong>Refresh Token</strong> : renouvellement contrôlé des tokens.</li>
+    <li><strong>Device Authorization Grant</strong> : appareils à capacité d’input limitée.</li>
+  </ul>
+  <div class="callout piege"><div class="label">Piège fréquent</div><p>Utiliser <strong>Resource Owner Password Credentials</strong> ou des flows hérités par habitude. Dans une architecture moderne, on évite de demander le mot de passe directement au client.</p></div>
+</section>
+<section class="panel">
+  <h2>Quand utiliser quoi</h2>
+  <pre><code>SPA React               -> Authorization Code + PKCE
+Application mobile      -> Authorization Code + PKCE
+Backend batch technique -> Client Credentials
+TV / borne / CLI limitée-> Device Authorization Grant
+</code></pre>
+</section>
+
+      <div class="footer-nav"><a href="../pages/sso.html">← Page précédente</a><a href="../pages/oidc.html">Page suivante →</a></div>
+    </main>
+  </div>
+  <script src="../assets/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Multithreading Course — Java & Python</title>
+  <meta name="description" content="Cours complet de multithreading en Java et Python, de junior à avancé." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body>
+  <div class="hero-shell">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">Cours complet • Java & Python • Junior → Avancé</p>
+        <h1>Multithreading, concurrence et exécution asynchrone</h1>
+        <p class="lead">
+          Un support de formation progressif, professionnel et exploitable directement pour apprendre,
+          réviser un entretien, préparer une formation interne et comprendre les vrais problèmes rencontrés en projet.
+        </p>
+        <div class="hero-actions">
+          <a class="btn" href="pages/introduction.html">Commencer le cours</a>
+          <a class="btn ghost" href="pages/exercises.html">Aller aux exercices</a>
+        </div>
+      </div>
+      <div class="hero-panel card">
+        <p class="panel-title">Ce que tu vas maîtriser</p>
+        <ul class="check-list">
+          <li>Threads, processus, concurrence, parallélisme</li>
+          <li>Java Threads, Executors, CompletableFuture, JMM</li>
+          <li>Python threading, GIL, futures, multiprocessing</li>
+          <li>Synchronisation, locks, race conditions, deadlocks</li>
+          <li>Performance, debugging, observabilité</li>
+          <li>Bonnes pratiques d’architecture et de conception</li>
+        </ul>
+      </div>
+    </header>
+
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Plan du support</p>
+          <h2>Arborescence pédagogique</h2>
+        </div>
+      </div>
+      <div class="code-shell">
+<pre><code>multithreading-course/
+├── index.html
+├── pages/
+│   ├── introduction.html
+│   ├── concepts-fondamentaux.html
+│   ├── java-threads-basics.html
+│   ├── java-concurrency-advanced.html
+│   ├── python-threads-basics.html
+│   ├── python-concurrency-advanced.html
+│   ├── synchronization.html
+│   ├── race-condition-deadlock.html
+│   ├── executors-thread-pools.html
+│   ├── async-vs-threading.html
+│   ├── performance-debugging.html
+│   ├── best-practices.html
+│   ├── exercises.html
+│   └── corrections.html
+├── assets/
+│   ├── css/
+│   │   └── styles.css
+│   ├── js/
+│   │   └── script.js
+│   └── images/
+└── README.md</code></pre>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Parcours recommandé</p>
+          <h2>Plan pédagogique détaillé</h2>
+        </div>
+      </div>
+      <div class="cards-grid">
+        
+      <a class="chapter-card" href="pages/introduction.html">
+        <span class="card-kicker">01</span>
+        <h3>Introduction</h3>
+        <p>Pourquoi le multithreading existe, ses coûts, ses usages et ses limites.</p>
+      </a>
+      <a class="chapter-card" href="pages/concepts-fondamentaux.html">
+        <span class="card-kicker">02</span>
+        <h3>Concepts fondamentaux</h3>
+        <p>Concurrence, parallélisme, shared state, visibilité mémoire, locks et coordination.</p>
+      </a>
+      <a class="chapter-card" href="pages/java-threads-basics.html">
+        <span class="card-kicker">03</span>
+        <h3>Java — bases</h3>
+        <p>Thread, Runnable, Callable, Future, interruption, join, daemon threads.</p>
+      </a>
+      <a class="chapter-card" href="pages/java-concurrency-advanced.html">
+        <span class="card-kicker">04</span>
+        <h3>Java — avancé</h3>
+        <p>JMM, volatile, locks avancés, collections concurrentes, CompletableFuture.</p>
+      </a>
+      <a class="chapter-card" href="pages/python-threads-basics.html">
+        <span class="card-kicker">05</span>
+        <h3>Python — bases</h3>
+        <p>threading, start, join, daemon, partage d’état, GIL expliqué proprement.</p>
+      </a>
+      <a class="chapter-card" href="pages/python-concurrency-advanced.html">
+        <span class="card-kicker">06</span>
+        <h3>Python — avancé</h3>
+        <p>Lock, RLock, Semaphore, Event, Condition, Queue, futures, multiprocessing.</p>
+      </a>
+      <a class="chapter-card" href="pages/synchronization.html">
+        <span class="card-kicker">07</span>
+        <h3>Synchronisation</h3>
+        <p>Exclusion mutuelle, producteur/consommateur, sémaphores, barrières, files bloquantes.</p>
+      </a>
+      <a class="chapter-card" href="pages/race-condition-deadlock.html">
+        <span class="card-kicker">08</span>
+        <h3>Race / Deadlock</h3>
+        <p>Bugs concurrents classiques, exemples buggués, versions corrigées.</p>
+      </a>
+      <a class="chapter-card" href="pages/executors-thread-pools.html">
+        <span class="card-kicker">09</span>
+        <h3>Pools / Executors</h3>
+        <p>Pourquoi les pools existent, sizing, saturation, backpressure, Java/Python.</p>
+      </a>
+      <a class="chapter-card" href="pages/async-vs-threading.html">
+        <span class="card-kicker">10</span>
+        <h3>Async vs Threads</h3>
+        <p>Synchrone, asynchrone, multithreading, multiprocessing, quand choisir quoi.</p>
+      </a>
+      <a class="chapter-card" href="pages/performance-debugging.html">
+        <span class="card-kicker">11</span>
+        <h3>Performance / Debug</h3>
+        <p>Thread dump, profiling, contention, logs, observabilité et diagnostic.</p>
+      </a>
+      <a class="chapter-card" href="pages/best-practices.html">
+        <span class="card-kicker">12</span>
+        <h3>Bonnes pratiques</h3>
+        <p>Architecture, immutabilité, documentation thread-safe, recommandations de senior.</p>
+      </a>
+      <a class="chapter-card" href="pages/exercises.html">
+        <span class="card-kicker">13</span>
+        <h3>Exercices</h3>
+        <p>Exercices débutant à avancé, théorie, lecture de code, debug, architecture.</p>
+      </a>
+      <a class="chapter-card" href="pages/corrections.html">
+        <span class="card-kicker">14</span>
+        <h3>Corrigés</h3>
+        <p>Corrections détaillées avec raisonnement et erreurs fréquentes.</p>
+      </a>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Méthode</p>
+          <h2>Comment lire ce support</h2>
+        </div>
+      </div>
+      <div class="info-grid">
+        <div class="card">
+          <h3>1. Comprendre simple</h3>
+          <p>Chaque notion commence par une définition claire, une intuition et une analogie quand c’est utile.</p>
+        </div>
+        <div class="card">
+          <h3>2. Voir le code</h3>
+          <p>Les exemples montrent du vrai code Java et Python, commenté intelligemment et relié à des cas concrets.</p>
+        </div>
+        <div class="card">
+          <h3>3. Monter en niveau</h3>
+          <p>Chaque chapitre progresse jusqu’aux pièges réels de production, à la performance et aux choix d’architecture.</p>
+        </div>
+        <div class="card">
+          <h3>4. S’entraîner</h3>
+          <p>Les exercices et leurs corrigés servent à valider le raisonnement, pas seulement la syntaxe.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script src="assets/js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Exercices</title>
+  <meta name="description" content="Questions théoriques, lecture de code, bugs concurrents, producteur/consommateur et mini cas d’architecture." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/styles.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-badge">MT</div>
+        <div>
+          <p class="eyebrow">Support de formation</p>
+          <h1>Multithreading</h1>
+        </div>
+      </div>
+      <nav class="nav">
+        <a class="nav-link" href="../index.html" data-label="Accueil">Accueil</a>
+<a class="nav-link" href="../pages/introduction.html" data-label="Introduction">Introduction</a>
+<a class="nav-link" href="../pages/concepts-fondamentaux.html" data-label="Concepts fondamentaux">Concepts fondamentaux</a>
+<a class="nav-link" href="../pages/java-threads-basics.html" data-label="Java — bases">Java — bases</a>
+<a class="nav-link" href="../pages/java-concurrency-advanced.html" data-label="Java — avancé">Java — avancé</a>
+<a class="nav-link" href="../pages/python-threads-basics.html" data-label="Python — bases">Python — bases</a>
+<a class="nav-link" href="../pages/python-concurrency-advanced.html" data-label="Python — avancé">Python — avancé</a>
+<a class="nav-link" href="../pages/synchronization.html" data-label="Synchronisation">Synchronisation</a>
+<a class="nav-link" href="../pages/race-condition-deadlock.html" data-label="Race / Deadlock">Race / Deadlock</a>
+<a class="nav-link" href="../pages/executors-thread-pools.html" data-label="Pools / Executors">Pools / Executors</a>
+<a class="nav-link" href="../pages/async-vs-threading.html" data-label="Async vs Threads">Async vs Threads</a>
+<a class="nav-link" href="../pages/performance-debugging.html" data-label="Performance / Debug">Performance / Debug</a>
+<a class="nav-link" href="../pages/best-practices.html" data-label="Bonnes pratiques">Bonnes pratiques</a>
+<a class="nav-link" href="../pages/exercises.html" data-label="Exercices">Exercices</a>
+<a class="nav-link" href="../pages/corrections.html" data-label="Corrigés">Corrigés</a>
+      </nav>
+    </aside>
+    <main class="content">
+      <header class="page-header">
+        <div>
+          <p class="eyebrow">Cours progressif • Java & Python</p>
+          <h1>Exercices</h1>
+          <p class="lead">Questions théoriques, lecture de code, bugs concurrents, producteur/consommateur et mini cas d’architecture.</p>
+        </div>
+        <button id="toc-toggle" class="btn ghost mobile-only">Sommaire</button>
+      </header>
+
+      <div class="content-grid">
+        <article class="article">
+          
+<section>
+  <h2>Exercices débutant</h2>
+  <h3>1. Théorie</h3>
+  <ol>
+    <li>Explique la différence entre processus et thread.</li>
+    <li>Explique la différence entre concurrence et parallélisme.</li>
+    <li>Pourquoi <span class="inline-code">start()</span> et <span class="inline-code">run()</span> ne sont-ils pas équivalents en Java ?</li>
+    <li>Que change le GIL en Python ?</li>
+  </ol>
+  <h3>2. Lecture de code</h3>
+</section>
+<div class="code-shell"><pre><code>// Java
+Thread t = new Thread(() -> System.out.println("hello"));
+t.run();
+System.out.println("done");
+</code></pre></div>
+<section>
+  <p>Question : combien de threads sont réellement utilisés ici pour exécuter le lambda ?</p>
+</section>
+<section>
+  <h2>Exercices intermédiaires</h2>
+  <h3>3. Détection de bug concurrent</h3>
+</section>
+<div class="code-shell"><pre><code># Python
+import threading
+
+counter = 0
+
+def increment():
+    global counter
+    for _ in range(10000):
+        counter += 1
+
+threads = [threading.Thread(target=increment) for _ in range(4)]
+for t in threads:
+    t.start()
+for t in threads:
+    t.join()
+
+print(counter)
+</code></pre></div>
+<section>
+  <p>Questions : quel bug peut apparaître ? Comment le corriger proprement ?</p>
+  <h3>4. Producteur / consommateur</h3>
+  <p>Implémente un producteur et deux consommateurs en Java ou Python avec une file bloquante. Prévois un mécanisme d’arrêt propre.</p>
+  <h3>5. Correction de deadlock</h3>
+  <p>On te donne deux locks A et B, et deux méthodes qui les acquièrent dans un ordre différent. Propose une correction.</p>
+</section>
+<section>
+  <h2>Exercices avancés</h2>
+  <h3>6. Cas d’architecture</h3>
+  <p>Tu dois traiter 10 000 appels HTTP vers un service externe, avec des temps de réponse variables. Compare trois solutions : synchrone, thread pool, asynchrone. Quelle approche choisirais-tu et pourquoi ?</p>
+  <h3>7. Sizing d’un pool</h3>
+  <p>Tu observes un backlog croissant dans un pool de 4 threads. Quelles hypothèses testes-tu avant d’augmenter brutalement le nombre de workers ?</p>
+  <h3>8. Java Memory Model</h3>
+  <p>Explique pourquoi <span class="inline-code">volatile</span> ne suffit pas pour protéger <span class="inline-code">count++</span>.</p>
+</section>
+<div class="callout success"><div class="callout-title">Conseil</div>
+<p>Essaie de résoudre les exercices sans regarder les corrigés. En concurrence, le raisonnement vaut autant que le code.</p>
+</div>
+          <div class="pager">
+            <a class="btn ghost" href="best-practices.html">← Précédent</a>
+            <a class="btn" href="corrections.html">Suivant →</a>
+          </div>
+        </article>
+        <aside class="toc" id="toc">
+          <div class="toc-card">
+            <p class="toc-title">Sommaire du chapitre</p>
+            <div id="toc-container"></div>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+  <script src="../assets/js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Keycloak 25 overview — Keycloak 25 Course</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <a class="brand" href="../index.html">Keycloak Course<small>Junior → Expert</small></a>
+      <div class="nav-group">
+        <a href="../index.html">Accueil</a>
+        <a href="../pages/introduction.html">Introduction générale</a>
+<a href="../pages/fondamentaux-identite-et-auth.html">Fondamentaux identité et authentification</a>
+<a href="../pages/keycloak-25-overview.html">Keycloak 25 overview</a>
+<a href="../pages/sso.html">SSO</a>
+<a href="../pages/oauth2.html">OAuth2</a>
+<a href="../pages/oidc.html">OpenID Connect</a>
+<a href="../pages/fido2-webauthn.html">FIDO2 / WebAuthn</a>
+<a href="../pages/rbac.html">RBAC</a>
+<a href="../pages/keycloak-realms-clients-users-roles.html">Realms, clients, users, roles</a>
+<a href="../pages/flows-et-authentication.html">Flows et authentication</a>
+<a href="../pages/integration-application.html">Intégration applicative</a>
+<a href="../pages/securite-bonnes-pratiques.html">Sécurité et bonnes pratiques</a>
+<a href="../pages/cas-pratiques.html">Cas pratiques</a>
+<a href="../pages/exercices.html">Exercices et corrigés</a>
+<a href="../pages/conclusion.html">Conclusion</a>
+      </div>
+    </aside>
+    <main class="content">
+      
+<section class="hero">
+  <h1>Keycloak 25 overview</h1>
+  <p class="lead">Keycloak 25 est un serveur IAM orienté standards, conçu pour centraliser l’authentification, le SSO, la fédération d’identité et l’émission de tokens.</p>
+</section>
+<section class="panel">
+  <h2>Ce qu’il faut savoir sur Keycloak 25</h2>
+  <p>Cette version introduit notamment le support Java 21, confirme la direction cloud-native du produit et continue de pousser les intégrations standards plutôt que les anciens adapters propriétaires.</p>
+  <div class="callout attention"><div class="label">Attention</div><p>Ne construis pas une architecture dépendante d’anciens adapters spécifiques supprimés ou déconseillés. Favorise le support standard OIDC/OAuth2 des frameworks et reverse proxies.</p></div>
+</section>
+<section class="panel">
+  <h2>Objets principaux</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Objet</th><th>Rôle</th><th>Exemple concret</th></tr></thead>
+      <tbody>
+        <tr><td>Realm</td><td>Espace d’isolation logique</td><td>Un realm par environnement ou par organisation selon le design</td></tr>
+        <tr><td>Client</td><td>Application enregistrée</td><td>SPA React, API Spring Boot, portail admin</td></tr>
+        <tr><td>User</td><td>Identité finale</td><td>alice@entreprise.fr</td></tr>
+        <tr><td>Group</td><td>Regroupement d’utilisateurs</td><td>RH, Finance, Support</td></tr>
+        <tr><td>Role</td><td>Droit logique</td><td>admin, manager, payroll-read</td></tr>
+        <tr><td>Scope</td><td>Ensemble de claims / permissions demandés</td><td>openid profile email</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+<section class="panel">
+  <h2>Cycle de vie d’une authentification</h2>
+  <pre><code>1. Le client redirige l'utilisateur vers Keycloak
+2. Keycloak exécute un authentication flow
+3. L'utilisateur s'authentifie (mot de passe, OTP, WebAuthn...)
+4. Keycloak crée/associe une session SSO
+5. Keycloak émet les tokens
+6. Le client utilise le token pour appeler l'API
+7. L'API valide issuer, audience, signature, expiration et rôles
+</code></pre>
+</section>
+<section class="panel">
+  <h2>Tokens émis</h2>
+  <div class="callout definition"><div class="label">Définition</div><p><strong>Access token</strong> : sert à appeler une API.<br><strong>ID token</strong> : décrit l’authentification de l’utilisateur pour le client.<br><strong>Refresh token</strong> : permet d’obtenir de nouveaux tokens sans relogin immédiat.</p></div>
+  <pre><code>{
+  "iss": "https://sso.example.com/realms/acme",
+  "sub": "0d42a6...",
+  "aud": "finance-api",
+  "azp": "web-portal",
+  "scope": "openid profile email",
+  "realm_access": {
+    "roles": ["user", "manager"]
+  },
+  "resource_access": {
+    "finance-api": {
+      "roles": ["invoice:read", "invoice:approve"]
+    }
+  }
+}</code></pre>
+  <div class="callout piege"><div class="label">Piège fréquent</div><p>Utiliser l’ID token pour appeler une API. Une API attend en général un <strong>access token</strong>, pas un ID token.</p></div>
+</section>
+
+      <div class="footer-nav"><a href="../pages/fondamentaux-identite-et-auth.html">← Page précédente</a><a href="../pages/sso.html">Page suivante →</a></div>
+    </main>
+  </div>
+  <script src="../assets/js/app.js"></script>
+</body>
+</html>

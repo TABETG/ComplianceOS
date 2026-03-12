@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fondamentaux identité et authentification — Keycloak 25 Course</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <a class="brand" href="../index.html">Keycloak Course<small>Junior → Expert</small></a>
+      <div class="nav-group">
+        <a href="../index.html">Accueil</a>
+        <a href="../pages/introduction.html">Introduction générale</a>
+<a href="../pages/fondamentaux-identite-et-auth.html">Fondamentaux identité et authentification</a>
+<a href="../pages/keycloak-25-overview.html">Keycloak 25 overview</a>
+<a href="../pages/sso.html">SSO</a>
+<a href="../pages/oauth2.html">OAuth2</a>
+<a href="../pages/oidc.html">OpenID Connect</a>
+<a href="../pages/fido2-webauthn.html">FIDO2 / WebAuthn</a>
+<a href="../pages/rbac.html">RBAC</a>
+<a href="../pages/keycloak-realms-clients-users-roles.html">Realms, clients, users, roles</a>
+<a href="../pages/flows-et-authentication.html">Flows et authentication</a>
+<a href="../pages/integration-application.html">Intégration applicative</a>
+<a href="../pages/securite-bonnes-pratiques.html">Sécurité et bonnes pratiques</a>
+<a href="../pages/cas-pratiques.html">Cas pratiques</a>
+<a href="../pages/exercices.html">Exercices et corrigés</a>
+<a href="../pages/conclusion.html">Conclusion</a>
+      </div>
+    </aside>
+    <main class="content">
+      
+<section class="hero">
+  <h1>Fondamentaux identité et authentification</h1>
+  <p class="lead">Avant Keycloak, il faut comprendre les briques de base : session, token, état, confiance et délégation.</p>
+</section>
+<section class="panel">
+  <h2>Authentification vs autorisation</h2>
+  <p>Exemple simple : tu ouvres la porte de l’entreprise avec ton badge. Le badge prouve ton identité. Ensuite, certaines salles restent interdites selon ton service. Le badge gère l’authentification ; les règles d’accès gèrent l’autorisation.</p>
+  <div class="callout piege"><div class="label">Piège fréquent</div><p>Stocker un booléen <span class="inline-code">isAdmin=true</span> sans modèle propre de rôles et permissions. Cela marche au début, puis devient ingérable.</p></div>
+</section>
+<section class="panel">
+  <h2>Stateful vs stateless</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Approche</th><th>Principe</th><th>Forces</th><th>Limites</th></tr></thead>
+      <tbody>
+        <tr><td>Stateful</td><td>Le serveur garde une session</td><td>Simple côté navigateur</td><td>Scalabilité et réplication plus complexes</td></tr>
+        <tr><td>Stateless</td><td>Le client présente un token autoportant</td><td>Bien adapté aux API et microservices</td><td>Révocation et durée de vie à bien gérer</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout retenir"><div class="label">À retenir</div><p>Le navigateur aime les cookies et les sessions. Les API aiment les bearer tokens. Une architecture moderne combine souvent les deux selon le contexte.</p></div>
+</section>
+<section class="panel">
+  <h2>Session cookie vs token</h2>
+  <pre><code># Cookie de session
+Cookie: SESSION=abc123
+
+# Bearer token
+Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...
+</code></pre>
+  <p>Le cookie est souvent opaque pour le client. Le JWT, lui, contient des claims lisibles après décodage base64url. Lisible ne veut pas dire fiable : la confiance vient de la signature, pas du simple décodage.</p>
+</section>
+<section class="panel">
+  <h2>Trust et fédération</h2>
+  <p>La notion de <strong>trust</strong> est centrale. Une application accepte un token parce qu’elle fait confiance à l’émetteur, à sa clé de signature et à sa configuration.</p>
+  <div class="callout definition"><div class="label">Définition</div><p><strong>Identity federation</strong> : une organisation accepte qu’un autre fournisseur d’identité authentifie l’utilisateur à sa place.</p></div>
+  <div class="callout practice"><div class="label">Bonne pratique</div><p>Documente toujours qui fait confiance à qui, sur quelle clé, sur quel issuer, sur quels scopes, et dans quel environnement.</p></div>
+</section>
+
+      <div class="footer-nav"><a href="../pages/introduction.html">← Page précédente</a><a href="../pages/keycloak-25-overview.html">Page suivante →</a></div>
+    </main>
+  </div>
+  <script src="../assets/js/app.js"></script>
+</body>
+</html>

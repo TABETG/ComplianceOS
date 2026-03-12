@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Corrigés détaillés — Cours Multithreading</title>
+  <link rel="stylesheet" href="../assets/css/styles.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-badge">MT</div>
+        <div>
+          <strong>Multithreading Course</strong>
+          <p>Java & Python</p>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="../index.html">Accueil</a>
+<a href="introduction.html">Introduction</a>
+<a href="concepts-fondamentaux.html">Concepts fondamentaux</a>
+<a href="java-threads-basics.html">Java — bases</a>
+<a href="java-concurrency-advanced.html">Java — avancé</a>
+<a href="python-threads-basics.html">Python — bases</a>
+<a href="python-concurrency-advanced.html">Python — avancé</a>
+<a href="synchronization.html">Synchronisation</a>
+<a href="race-condition-deadlock.html">Bugs classiques</a>
+<a href="executors-thread-pools.html">Pools & async</a>
+<a href="async-vs-threading.html">Async vs threads</a>
+<a href="performance-debugging.html">Perf & debugging</a>
+<a href="best-practices.html">Bonnes pratiques</a>
+<a href="exercises.html">Exercices</a>
+<a class="active" href="corrections.html">Corrigés</a>
+      </nav>
+    </aside>
+    <main class="content">
+      <header class="hero hero-small">
+        <span class="eyebrow">Support progressif — junior à avancé</span>
+        <h1>Corrigés détaillés</h1>
+        <p>Corrigés expliqués, raisonnés et orientés bonnes pratiques de projet.</p>
+      </header>
+      <div class="page-grid">
+        <article class="article">
+          
+<section>
+<h2>1. Correction — processus vs thread</h2>
+<p>Un processus est une instance d’application isolée avec son propre espace mémoire. Un thread est une unité d’exécution à l’intérieur d’un processus. Les threads partagent beaucoup de ressources, ce qui facilite la communication mais augmente le risque de bugs de concurrence.</p>
+</section>
+
+<section>
+<h2>2. Correction — start() vs run()</h2>
+<p><code>start()</code> demande à la JVM de créer un nouveau thread d’exécution qui appellera ensuite <code>run()</code>. Appeler <code>run()</code> directement exécute simplement la méthode dans le thread courant, sans concurrence réelle.</p>
+</section>
+
+<section>
+<h2>3. Correction — GIL et threading Python</h2>
+<p>Le threading Python est particulièrement utile pour les tâches I/O-bound : appels HTTP, accès fichiers, attente réseau, scraping, sockets, appels à des services externes. Le GIL limite surtout le parallélisme CPU pur du bytecode Python.</p>
+</section>
+
+<section>
+<h2>4. Correction — Counter Java non thread-safe</h2>
+<p>Le code n’est pas thread-safe parce que <code>value++</code> n’est pas atomique. Deux corrections classiques :</p>
+<ul>
+  <li>utiliser <code>synchronized</code>,</li>
+  <li>remplacer par <code>AtomicInteger</code>.</li>
+</ul>
+<pre class="code-block"><code class="language-java">class SafeCounter {
+    private final AtomicInteger value = new AtomicInteger(0);
+
+    public void increment() {
+        value.incrementAndGet();
+    }
+
+    public int getValue() {
+        return value.get();
+    }
+}</code></pre>
+<p>Ici, le choix d’<code>AtomicInteger</code> est bon car le besoin est un compteur simple. Pour des invariants plus complexes, un lock peut devenir nécessaire.</p>
+</section>
+
+<section>
+<h2>5. Correction — diagnostic d’un blocage Java</h2>
+<ol>
+  <li>Récupérer métriques de saturation : latence, taille des queues, taux d’occupation des pools.</li>
+  <li>Prendre un thread dump au moment du problème.</li>
+  <li>Identifier threads BLOCKED / WAITING / TIMED_WAITING.</li>
+  <li>Vérifier ordre de prise des verrous et ressources externes lentes.</li>
+  <li>Corréler avec logs applicatifs et timeouts.</li>
+</ol>
+<p>Erreur fréquente : regarder seulement le CPU alors que le vrai problème est un lock ou une file saturée.</p>
+</section>
+
+<section>
+<h2>6. Correction — deadlock</h2>
+<p>Problème : ordre incohérent d’acquisition des verrous. Correction simple : imposer un ordre global, par exemple toujours <code>lockA</code> puis <code>lockB</code>. Correction architecturale meilleure : éviter d’avoir besoin de deux verrous imbriqués ou passer par un acteur/queue centralisée.</p>
+</section>
+
+<section>
+<h2>7. Correction — producteur / consommateur</h2>
+<pre class="code-block"><code class="language-python">from queue import Queue
+from threading import Thread
+
+queue = Queue(maxsize=100)
+SENTINEL = object()
+
+def producer():
+    for i in range(10):
+        queue.put(i)
+    queue.put(SENTINEL)
+
+def consumer():
+    while True:
+        item = queue.get()
+        try:
+            if item is SENTINEL:
+                queue.put(SENTINEL)
+                break
+            print(&quot;Processing&quot;, item)
+        finally:
+            queue.task_done()
+
+Thread(target=producer).start()
+Thread(target=consumer).start()
+Thread(target=consumer).start()</code></pre>
+<p>Le point important ici est le protocole de fin. Sans sentinelle ou signal clair, les consumers peuvent attendre indéfiniment.</p>
+</section>
+
+<section>
+<h2>8. Correction — mini architecture</h2>
+<p>Dans le cas des fichiers envoyés à une API externe lente, le cœur du problème est I/O-bound. Une bonne solution serait :</p>
+<ul>
+  <li>pool de threads borné pour les appels externes,</li>
+  <li>queue interne bornée pour lisser la charge,</li>
+  <li>timeouts + retries contrôlés,</li>
+  <li>séparation du calcul léger et du stockage en base,</li>
+  <li>observabilité sur backlog, erreurs et saturation.</li>
+</ul>
+<p>Je n’irais pas vers multiprocessing, car le calcul décrit est léger. L’async peut être pertinent si l’architecture entière est pensée pour cela, mais un pool I/O bien borné est souvent plus simple et plus maintenable.</p>
+<div class="callout callout-note"><h3>À retenir</h3><ul><li>Une bonne correction concurrente traite le protocole, pas seulement la syntaxe.</li><li>Préférer les abstractions métier sûres comme les queues et pools bornés.</li><li>Le bon choix dépend toujours de la nature de la charge : CPU, I/O, latence, volumétrie.</li></ul></div>
+</section>
+<div class="prev-next"><a href="exercises.html">← Exercices</a><span></span></div>
+
+        </article>
+        <aside class="toc">
+          <div class="toc-box">
+            <h3>Sommaire</h3>
+            <div id="toc"></div>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+  <script src="../assets/js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Exercices</title>
+  <link rel="stylesheet" href="../assets/css/styles.css" />
+</head>
+<body>
+
+<header class="topbar">
+  <div class="container topbar-inner">
+    <a class="brand" href="../index.html">Spring Course</a>
+    <nav class="nav"><a href="../index.html" class="nav-link">Accueil</a><a href="spring-boot.html" class="nav-link">Spring Boot</a><a href="ioc-di.html" class="nav-link">IoC / DI</a><a href="aop.html" class="nav-link">AOP</a><a href="transactional.html" class="nav-link">@Transactional</a><a href="jpa.html" class="nav-link">Spring Data JPA</a><a href="graphql-dgs.html" class="nav-link">GraphQL DGS</a><a href="kafka.html" class="nav-link">Kafka</a><a href="rabbitmq.html" class="nav-link">RabbitMQ</a><a href="exercises.html" class="nav-link">Exercices</a><a href="corrections.html" class="nav-link">Corrigés</a></nav>
+    <button class="menu-toggle" aria-label="Ouvrir le menu">☰</button>
+  </div>
+</header>
+
+<main class="container page-layout">
+  <aside class="sidebar">
+    <div class="card sticky">
+      <p class="eyebrow">Chapitre</p>
+      <h1>Exercices</h1>
+      <p>Questions, lecture de code, bugs et mini cas d’architecture.</p>
+      <div id="toc" class="toc"></div>
+    </div>
+  </aside>
+  <article class="content">
+    
+<section id="intro"><h2>1. Introduction</h2>
+<p>Cette page regroupe des exercices transverses, séparés du cours, pour valider la compréhension théorique, l’analyse de code, la correction de bugs et les arbitrages d’architecture.</p></section>
+<section id="beginner"><h2>2. Exercices débutant</h2>
+<details><summary>Exercice 1 — Spring Boot</summary><p>Explique en quelques lignes la différence entre Spring Framework et Spring Boot, puis cite le rôle de <code>@SpringBootApplication</code>.</p></details>
+<details><summary>Exercice 2 — IoC / DI</summary><p>Réécris une classe qui instancie elle-même un dépôt avec <code>new</code> en injection par constructeur.</p></details>
+<details><summary>Exercice 3 — JPA</summary><p>Crée une entité <code>Book</code> avec <code>id</code>, <code>title</code>, <code>author</code> et un repository avec <code>findByTitleContainingIgnoreCase</code>.</p></details>
+</section>
+<section id="intermediate"><h2>3. Exercices intermédiaires</h2>
+<details><summary>Exercice 4 — AOP</summary><p>Écris un aspect de logging pour toutes les méthodes d’un package <code>service</code>, puis explique pourquoi tu ne veux pas l’appliquer à tout le projet sans filtre.</p></details>
+<details><summary>Exercice 5 — @Transactional</summary><p>Tu as un service qui crée une commande, débite un stock et écrit un audit. Décide où placer la transaction et justifie.</p></details>
+<details><summary>Exercice 6 — GraphQL</summary><p>Construis un schéma GraphQL minimal avec une query et une mutation pour gérer des produits.</p></details>
+<details><summary>Exercice 7 — Kafka</summary><p>Décris le design d’un événement <code>OrderCreated</code> avec une clé adaptée pour préserver l’ordre utile.</p></details>
+</section>
+<section id="advanced"><h2>4. Exercices avancés</h2>
+<details><summary>Exercice 8 — Bug JPA / N+1</summary><p>Une API liste 200 commandes et charge le client pour chacune dans une boucle. Identifie le problème et propose au moins deux solutions.</p></details>
+<details><summary>Exercice 9 — Bug transactionnel</summary><p>Une méthode annotée <code>@Transactional</code> est appelée depuis une autre méthode de la même classe et le comportement attendu n’a pas lieu. Explique pourquoi.</p></details>
+<details><summary>Exercice 10 — Kafka vs RabbitMQ</summary><p>Tu dois choisir une technologie pour : a) notifications asynchrones métiers ciblées, b) conservation rejouable d’un flux d’événements. Donne le bon choix et justifie.</p></details>
+<details><summary>Exercice 11 — Mini architecture</summary><p>Conçois l’architecture d’un service e-commerce : REST ou GraphQL pour le front, JPA pour la persistence, Kafka ou RabbitMQ pour les événements. Justifie chaque décision.</p></details>
+</section>
+<section id="retain"><h2>5. À retenir</h2><p>Le but n’est pas seulement de “savoir réciter”, mais de relier le concept, le code, le comportement runtime et le choix d’architecture.</p></section>
+<section id="corrections-link"><h2>6. Corrigés</h2><p>Les corrigés détaillés sont dans <a href="corrections.html">Corrigés</a>.</p></section>
+
+    <div class="pager"><a class="btn secondary" href="rabbitmq.html">← Précédent</a><a class="btn" href="corrections.html">Suivant →</a></div>
+  </article>
+</main>
+<script src="../assets/js/script.js"></script>
+</body>
+</html>

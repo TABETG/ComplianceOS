@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Synchrone vs asynchrone vs threads vs process — Cours Multithreading</title>
+  <link rel="stylesheet" href="../assets/css/styles.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-badge">MT</div>
+        <div>
+          <strong>Multithreading Course</strong>
+          <p>Java & Python</p>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="../index.html">Accueil</a>
+<a href="introduction.html">Introduction</a>
+<a href="concepts-fondamentaux.html">Concepts fondamentaux</a>
+<a href="java-threads-basics.html">Java — bases</a>
+<a href="java-concurrency-advanced.html">Java — avancé</a>
+<a href="python-threads-basics.html">Python — bases</a>
+<a href="python-concurrency-advanced.html">Python — avancé</a>
+<a href="synchronization.html">Synchronisation</a>
+<a href="race-condition-deadlock.html">Bugs classiques</a>
+<a href="executors-thread-pools.html">Pools & async</a>
+<a class="active" href="async-vs-threading.html">Async vs threads</a>
+<a href="performance-debugging.html">Perf & debugging</a>
+<a href="best-practices.html">Bonnes pratiques</a>
+<a href="exercises.html">Exercices</a>
+<a href="corrections.html">Corrigés</a>
+      </nav>
+    </aside>
+    <main class="content">
+      <header class="hero hero-small">
+        <span class="eyebrow">Support progressif — junior à avancé</span>
+        <h1>Synchrone vs asynchrone vs threads vs process</h1>
+        <p>Comparer clairement les approches synchrones, asynchrones, threadées et multiprocess.</p>
+      </header>
+      <div class="page-grid">
+        <article class="article">
+          
+<section>
+<h2>1. Définitions simples</h2>
+<div class="table-wrap"><table><thead><tr><th>Modèle</th><th>Définition simple</th><th>Image mentale</th></tr></thead><tbody><tr><td>Synchrone</td><td>On attend chaque étape avant la suivante</td><td>Une seule caisse avec une file stricte.</td></tr><tr><td>Asynchrone</td><td>On déclenche puis on reprend plus tard</td><td>On laisse un ticket et on revient quand c’est prêt.</td></tr><tr><td>Multithreading</td><td>Plusieurs threads avancent</td><td>Plusieurs employés dans le même bureau.</td></tr><tr><td>Multiprocessing</td><td>Plusieurs processus séparés</td><td>Plusieurs bureaux séparés avec leurs propres ressources.</td></tr></tbody></table></div>
+</section>
+
+<section>
+<h2>2. Java vs Python</h2>
+<p>En Java, les threads sont souvent un choix naturel et puissant, y compris pour le CPU parallèle. En Python, ils brillent surtout pour l’I/O ; pour le CPU, les processus sont plus intéressants sous CPython.</p>
+<div class="table-wrap"><table><thead><tr><th>Question</th><th>Java</th><th>Python</th></tr></thead><tbody><tr><td>CPU-bound</td><td>Threads, ForkJoinPool, parallélisme réel plus naturel</td><td>Préférer multiprocessing / ProcessPoolExecutor</td></tr><tr><td>I/O-bound</td><td>Threads, pools, async selon contexte</td><td>Threads ou asyncio selon architecture</td></tr><tr><td>Très grand nombre de connexions</td><td>NIO / réactif / async</td><td>asyncio souvent très pertinent</td></tr></tbody></table></div>
+</section>
+
+<section>
+<h2>3. Quand choisir quoi</h2>
+<ul>
+  <li><strong>Synchrone</strong> : quand la simplicité prime et que la charge est modeste.</li>
+  <li><strong>Threads</strong> : quand plusieurs tâches doivent progresser ensemble, surtout I/O ou workers backend.</li>
+  <li><strong>Asynchrone</strong> : quand énormément d’attentes I/O peuvent être pilotées de manière coopérative.</li>
+  <li><strong>Process</strong> : quand il faut isoler ou exploiter plusieurs cœurs pour du CPU lourd.</li>
+</ul>
+</section>
+
+<section>
+<h2>4. Recommandations pratiques</h2>
+<div class="callout callout-note"><h3>À retenir</h3><ul><li>Commence par le modèle le plus simple qui répond au besoin.</li><li>Ne choisis pas asyncio uniquement parce que c’est 'moderne'.</li><li>Ne choisis pas des threads pour un calcul CPU Python intensif en espérant un miracle.</li><li>Évite de mélanger trop de modèles concurrents sans raison claire.</li></ul></div>
+</section>
+<div class="prev-next"><a href="executors-thread-pools.html">← Executors, thread pools et exécution asynchrone</a><a href="performance-debugging.html">Performance, debugging et observabilité →</a></div>
+
+        </article>
+        <aside class="toc">
+          <div class="toc-box">
+            <h3>Sommaire</h3>
+            <div id="toc"></div>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+  <script src="../assets/js/script.js"></script>
+</body>
+</html>

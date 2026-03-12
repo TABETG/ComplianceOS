@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Python — Concurrency avancée</title>
+  <meta name="description" content="Synchronisation, Queue, futures, multiprocessing, asyncio et design propre." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/styles.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-badge">MT</div>
+        <div>
+          <p class="eyebrow">Support de formation</p>
+          <h1>Multithreading</h1>
+        </div>
+      </div>
+      <nav class="nav">
+        <a class="nav-link" href="../index.html" data-label="Accueil">Accueil</a>
+<a class="nav-link" href="../pages/introduction.html" data-label="Introduction">Introduction</a>
+<a class="nav-link" href="../pages/concepts-fondamentaux.html" data-label="Concepts fondamentaux">Concepts fondamentaux</a>
+<a class="nav-link" href="../pages/java-threads-basics.html" data-label="Java — bases">Java — bases</a>
+<a class="nav-link" href="../pages/java-concurrency-advanced.html" data-label="Java — avancé">Java — avancé</a>
+<a class="nav-link" href="../pages/python-threads-basics.html" data-label="Python — bases">Python — bases</a>
+<a class="nav-link" href="../pages/python-concurrency-advanced.html" data-label="Python — avancé">Python — avancé</a>
+<a class="nav-link" href="../pages/synchronization.html" data-label="Synchronisation">Synchronisation</a>
+<a class="nav-link" href="../pages/race-condition-deadlock.html" data-label="Race / Deadlock">Race / Deadlock</a>
+<a class="nav-link" href="../pages/executors-thread-pools.html" data-label="Pools / Executors">Pools / Executors</a>
+<a class="nav-link" href="../pages/async-vs-threading.html" data-label="Async vs Threads">Async vs Threads</a>
+<a class="nav-link" href="../pages/performance-debugging.html" data-label="Performance / Debug">Performance / Debug</a>
+<a class="nav-link" href="../pages/best-practices.html" data-label="Bonnes pratiques">Bonnes pratiques</a>
+<a class="nav-link" href="../pages/exercises.html" data-label="Exercices">Exercices</a>
+<a class="nav-link" href="../pages/corrections.html" data-label="Corrigés">Corrigés</a>
+      </nav>
+    </aside>
+    <main class="content">
+      <header class="page-header">
+        <div>
+          <p class="eyebrow">Cours progressif • Java & Python</p>
+          <h1>Python — Concurrency avancée</h1>
+          <p class="lead">Synchronisation, Queue, futures, multiprocessing, asyncio et design propre.</p>
+        </div>
+        <button id="toc-toggle" class="btn ghost mobile-only">Sommaire</button>
+      </header>
+
+      <div class="content-grid">
+        <article class="article">
+          
+<section>
+  <h2>1. Introduction</h2>
+  <p>Python propose plusieurs primitives de synchronisation simples à prendre en main. Elles permettent déjà de construire beaucoup de solutions correctes sans tomber dans des designs trop fragiles.</p>
+</section>
+<section>
+  <h2>2. Niveau débutant renforcé</h2>
+  <h3>Lock, RLock, Event, Semaphore, Condition, Queue</h3>
+  <div class="compare-table-wrap"><table><thead><tr><th>Primitive</th><th>Rôle</th><th>Quand l’utiliser</th></tr></thead><tbody><tr><td>Lock</td><td>Exclusion mutuelle simple</td><td>Protéger une section critique</td></tr><tr><td>RLock</td><td>Lock réentrant</td><td>Quand le même thread doit re-verrouiller</td></tr><tr><td>Event</td><td>Signal binaire</td><td>Déclencher / arrêter un travail</td></tr><tr><td>Semaphore</td><td>Limiter le nombre d’accès</td><td>Quota ou ressource partagée</td></tr><tr><td>Condition</td><td>Attente + signal</td><td>Coordination fine</td></tr><tr><td>Queue</td><td>Communication sûre entre threads</td><td>Producteur/consommateur</td></tr></tbody></table></div>
+</section>
+<div class="code-shell"><pre><code>import threading
+
+counter = 0
+lock = threading.Lock()
+
+def increment():
+    global counter
+    for _ in range(100_000):
+        with lock:
+            counter += 1  # protégé contre les interleavings concurrents
+
+threads = [threading.Thread(target=increment) for _ in range(4)]
+
+for t in threads:
+    t.start()
+for t in threads:
+    t.join()
+
+print(counter)
+</code></pre></div>
+<section>
+  <h2>3. Niveau intermédiaire</h2>
+  <h3>Queue pour producteur / consommateur</h3>
+  <p><span class="inline-code">queue.Queue</span> est souvent la meilleure solution au lieu de faire soi-même un buffer partagé avec <span class="inline-code">Condition</span>.</p>
+</section>
+<div class="code-shell"><pre><code>from queue import Queue
+import threading
+import time
+
+jobs = Queue()
+
+def producer():
+    for i in range(5):
+        jobs.put(f"job-{i}")
+    jobs.put(None)  # sentinelle d'arrêt
+
+def consumer():
+    while True:
+        item = jobs.get()
+        try:
+            if item is None:
+                break
+            print(f"Traitement de {item}")
+            time.sleep(0.2)
+        finally:
+            jobs.task_done()
+
+tp = threading.Thread(target=producer)
+tc = threading.Thread(target=consumer)
+
+tp.start(); tc.start()
+tp.join(); tc.join()
+</code></pre></div>
+<section>
+  <h3>concurrent.futures</h3>
+  <p><span class="inline-code">ThreadPoolExecutor</span> et <span class="inline-code">ProcessPoolExecutor</span> donnent une API plus propre que la gestion manuelle de threads ou de processus.</p>
+</section>
+<div class="code-shell"><pre><code>from concurrent.futures import ThreadPoolExecutor
+
+def fetch(url):
+    # simulation d'un appel réseau
+    return f"fetched: {url}"
+
+urls = ["a", "b", "c"]
+
+with ThreadPoolExecutor(max_workers=4) as executor:
+    results = list(executor.map(fetch, urls))
+
+print(results)
+</code></pre></div>
+<section>
+  <h2>4. Niveau avancé</h2>
+  <h3>multiprocessing</h3>
+  <p>Pour du CPU-bound, plusieurs processus peuvent exploiter plusieurs cœurs et contourner la limitation du GIL, au prix d’un coût plus élevé et d’une communication plus complexe.</p>
+  <h3>Recommandations de senior</h3>
+  <ul class="tight">
+    <li>Choisir l’outil en fonction du profil de charge, pas par habitude.</li>
+    <li>Préférer les queues et futures aux variables globales partagées.</li>
+    <li>Rester simple : beaucoup de problèmes se résolvent avec une queue, quelques workers et un protocole d’arrêt clair.</li>
+  </ul>
+</section>
+<div class="callout remember"><div class="callout-title">Comparaison clé</div><div class="compare-table-wrap"><table><thead><tr><th>Comparaison</th><th>Lecture rapide</th><th>Choix pratique</th></tr></thead><tbody><tr><td>threading vs multiprocessing</td><td>léger mais GIL vs plus lourd mais multi-cœur</td><td>IO-bound -> threading ; CPU-bound -> multiprocessing</td></tr><tr><td>Thread manuel vs ThreadPoolExecutor</td><td>contrôle fin vs simplicité et réutilisation</td><td>Préférer le pool dans la majorité des cas</td></tr><tr><td>threading vs asyncio</td><td>préemptif léger côté OS/interpréteur vs coopératif basé sur event loop</td><td>asyncio brille pour beaucoup d’I/O structurée</td></tr></tbody></table></div></div>
+          <div class="pager">
+            <a class="btn ghost" href="python-threads-basics.html">← Précédent</a>
+            <a class="btn" href="synchronization.html">Suivant →</a>
+          </div>
+        </article>
+        <aside class="toc" id="toc">
+          <div class="toc-card">
+            <p class="toc-title">Sommaire du chapitre</p>
+            <div id="toc-container"></div>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+  <script src="../assets/js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Accueil — Keycloak 25 Course</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <a class="brand" href="index.html">Keycloak Course<small>Junior → Expert</small></a>
+      <div class="nav-group">
+        <a href="index.html">Accueil</a>
+        <a href="pages/introduction.html">Introduction générale</a>
+<a href="pages/fondamentaux-identite-et-auth.html">Fondamentaux identité et authentification</a>
+<a href="pages/keycloak-25-overview.html">Keycloak 25 overview</a>
+<a href="pages/sso.html">SSO</a>
+<a href="pages/oauth2.html">OAuth2</a>
+<a href="pages/oidc.html">OpenID Connect</a>
+<a href="pages/fido2-webauthn.html">FIDO2 / WebAuthn</a>
+<a href="pages/rbac.html">RBAC</a>
+<a href="pages/keycloak-realms-clients-users-roles.html">Realms, clients, users, roles</a>
+<a href="pages/flows-et-authentication.html">Flows et authentication</a>
+<a href="pages/integration-application.html">Intégration applicative</a>
+<a href="pages/securite-bonnes-pratiques.html">Sécurité et bonnes pratiques</a>
+<a href="pages/cas-pratiques.html">Cas pratiques</a>
+<a href="pages/exercices.html">Exercices et corrigés</a>
+<a href="pages/conclusion.html">Conclusion</a>
+      </div>
+    </aside>
+    <main class="content">
+      
+<section class="hero">
+  <span class="badge">Keycloak 25</span><span class="badge">OIDC / OAuth2</span><span class="badge">SSO / FIDO2 / RBAC</span>
+  <h1>Cours complet Keycloak 25 : de junior à expert</h1>
+  <p class="lead">
+    Ce support couvre la théorie utile, les décisions d’architecture, les pièges de sécurité et l’intégration concrète
+    dans des applications modernes. L’idée directrice est simple : comprendre <strong>qui est l’utilisateur</strong>,
+    <strong>comment il prouve son identité</strong>, <strong>ce qu’il a le droit de faire</strong>, puis
+    <strong>comment industrialiser cela proprement</strong>.
+  </p>
+  <div class="kpi">
+    <div class="card"><strong>Niveau</strong><br>Débutant → confirmé → production</div>
+    <div class="card"><strong>Public</strong><br>Backend Java, fullstack, tech lead, préparation entretien</div>
+    <div class="card"><strong>Style</strong><br>Explications simples, schémas textuels, code commenté, cas concrets</div>
+  </div>
+</section>
+
+<section class="panel">
+  <h2>Comment lire ce cours</h2>
+  <p>Tu peux suivre les pages dans l’ordre ou aller directement sur un sujet précis. La logique pédagogique est la suivante :</p>
+  <div id="toc-auto" class="toc"></div>
+  <p class="note">Chaque page contient des blocs <strong>Définition</strong>, <strong>À retenir</strong>, <strong>Attention</strong>, <strong>Bonne pratique</strong> et <strong>Piège fréquent</strong>.</p>
+  <button id="toggle-details">Afficher le guide de lecture</button>
+  <div id="details-panel" class="callout practice" hidden>
+    <div class="label">Guide</div>
+    <p><strong>Étape 1 :</strong> comprendre les fondamentaux IAM, sessions, tokens et trust.</p>
+    <p><strong>Étape 2 :</strong> comprendre OAuth2, OIDC et SSO comme un flux complet.</p>
+    <p><strong>Étape 3 :</strong> apprendre le modèle Keycloak : realm, client, user, role, flow.</p>
+    <p><strong>Étape 4 :</strong> modéliser les rôles, brancher les applications et sécuriser la production.</p>
+  </div>
+</section>
+
+<section class="panel">
+  <h2>Plan du cours</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Page</th><th>But</th><th>Résultat attendu</th></tr></thead>
+      <tbody>
+        <tr><td>Introduction</td><td>Poser le vocabulaire IAM</td><td>Savoir distinguer authentication, authorization, identity, federation</td></tr>
+        <tr><td>Fondamentaux</td><td>Comprendre cookies, sessions, tokens</td><td>Ne plus mélanger stateful et stateless</td></tr>
+        <tr><td>Keycloak 25</td><td>Découvrir le produit</td><td>Maîtriser les objets principaux et les tokens émis</td></tr>
+        <tr><td>OAuth2 / OIDC / SSO</td><td>Comprendre les protocoles</td><td>Choisir le bon flow sans improviser</td></tr>
+        <tr><td>FIDO2</td><td>Comprendre passwordless et MFA résistant au phishing</td><td>Savoir quand l’activer</td></tr>
+        <tr><td>RBAC</td><td>Concevoir les rôles proprement</td><td>Éviter le chaos des permissions</td></tr>
+        <tr><td>Intégration & sécurité</td><td>Passer à la réalité projet</td><td>Sécuriser frontend, backend, API et microservices</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+      <div class="footer-nav"><span></span><a href="pages/introduction.html">Page suivante →</a></div>
+    </main>
+  </div>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

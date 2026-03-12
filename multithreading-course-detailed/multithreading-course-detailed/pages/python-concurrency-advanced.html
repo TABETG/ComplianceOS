@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Python — Concurrency avancée — Cours Multithreading</title>
+  <link rel="stylesheet" href="../assets/css/styles.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-badge">MT</div>
+        <div>
+          <strong>Multithreading Course</strong>
+          <p>Java & Python</p>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="../index.html">Accueil</a>
+<a href="introduction.html">Introduction</a>
+<a href="concepts-fondamentaux.html">Concepts fondamentaux</a>
+<a href="java-threads-basics.html">Java — bases</a>
+<a href="java-concurrency-advanced.html">Java — avancé</a>
+<a href="python-threads-basics.html">Python — bases</a>
+<a class="active" href="python-concurrency-advanced.html">Python — avancé</a>
+<a href="synchronization.html">Synchronisation</a>
+<a href="race-condition-deadlock.html">Bugs classiques</a>
+<a href="executors-thread-pools.html">Pools & async</a>
+<a href="async-vs-threading.html">Async vs threads</a>
+<a href="performance-debugging.html">Perf & debugging</a>
+<a href="best-practices.html">Bonnes pratiques</a>
+<a href="exercises.html">Exercices</a>
+<a href="corrections.html">Corrigés</a>
+      </nav>
+    </aside>
+    <main class="content">
+      <header class="hero hero-small">
+        <span class="eyebrow">Support progressif — junior à avancé</span>
+        <h1>Python — Concurrency avancée</h1>
+        <p>Locks, events, queues, pools, multiprocessing et choix de stratégie en Python.</p>
+      </header>
+      <div class="page-grid">
+        <article class="article">
+          
+<section>
+<h2>1. Synchronisation avancée</h2>
+<div class="table-wrap"><table><thead><tr><th>Primitive Python</th><th>Usage</th><th>Remarque</th></tr></thead><tbody><tr><td>Lock</td><td>Exclusion mutuelle simple</td><td>Le plus courant.</td></tr><tr><td>RLock</td><td>Verrou réentrant</td><td>Le même thread peut reprendre le lock.</td></tr><tr><td>Semaphore</td><td>Limiter le nombre d’accès</td><td>Très utile pour limiter des appels externes.</td></tr><tr><td>Event</td><td>Signaler un événement</td><td>Pratique pour stop/start simple.</td></tr><tr><td>Condition</td><td>Attendre une condition sous verrou</td><td>Coordination plus fine.</td></tr><tr><td>Queue</td><td>Transfert thread-safe de données</td><td>Souvent meilleur choix pour pipeline.</td></tr></tbody></table></div>
+<pre class="code-block"><code class="language-python">from queue import Queue
+import threading
+
+queue = Queue()
+
+def producer():
+    for i in range(5):
+        queue.put(i)
+    queue.put(None)  # sentinelle de fin
+
+def consumer():
+    while True:
+        item = queue.get()
+        if item is None:
+            break
+        print(f&quot;Traitement {item}&quot;)
+        queue.task_done()</code></pre>
+<p><code>Queue</code> est souvent la primitive la plus propre pour producteur/consommateur.</p>
+</section>
+
+<section>
+<h2>2. ThreadPoolExecutor et concurrent.futures</h2>
+<pre class="code-block"><code class="language-python">from concurrent.futures import ThreadPoolExecutor
+
+def fetch(url):
+    # appel réseau simulé
+    return f&quot;fetched {url}&quot;
+
+urls = [&quot;u1&quot;, &quot;u2&quot;, &quot;u3&quot;]
+
+with ThreadPoolExecutor(max_workers=8) as pool:
+    results = list(pool.map(fetch, urls))
+
+print(results)</code></pre>
+<p>C’est généralement la meilleure porte d’entrée haut niveau pour gérer plusieurs tâches I/O en Python.</p>
+<h3>ProcessPoolExecutor</h3>
+<p>Pour les tâches CPU-bound, <code>ProcessPoolExecutor</code> ou <code>multiprocessing</code> sont souvent plus adaptés que les threads.</p>
+</section>
+
+<section>
+<h2>3. Multiprocessing et alternatives</h2>
+<p>Le multiprocessing crée plusieurs processus. Chaque processus a son propre interpréteur et contourne donc la limitation du GIL pour le CPU. En contrepartie :</p>
+<ul>
+  <li>coût mémoire plus élevé,</li>
+  <li>coût de sérialisation entre processus,</li>
+  <li>communication plus lourde.</li>
+</ul>
+<div class="table-wrap"><table><thead><tr><th>Approche</th><th>Bonne pour</th><th>Limite principale</th></tr></thead><tbody><tr><td>threading</td><td>I/O-bound léger</td><td>Pas de vrai parallélisme CPU pur sous CPython.</td></tr><tr><td>multiprocessing</td><td>CPU-bound</td><td>Coût de communication et mémoire.</td></tr><tr><td>asyncio</td><td>Très nombreuses I/O coopératives</td><td>Demande un modèle asynchrone explicite.</td></tr></tbody></table></div>
+</section>
+
+<section>
+<h2>4. asyncio quand pertinent</h2>
+<p><code>asyncio</code> n’est pas du multithreading. C’est de la concurrence coopérative basée sur une boucle événementielle. Très adapté quand tu as énormément d’I/O réseau et peu de calculs bloquants. Ce n’est pas un remplacement universel des threads.</p>
+</section>
+
+<section>
+<h2>5. Recommandations de senior</h2>
+<ul>
+  <li>Choisis la primitive selon la nature de la charge : I/O, CPU, latence, volumétrie.</li>
+  <li>Préférer <code>Queue</code> et <code>ThreadPoolExecutor</code> aux bricolages manuels.</li>
+  <li>Évite de partager des objets mutables complexes sans protocole clair.</li>
+  <li>Documente qui produit, qui consomme, qui arrête, et comment on fait remonter les erreurs.</li>
+</ul>
+<div class="callout callout-warn"><h3>Pièges fréquents</h3><ul><li>Le GIL n’empêche pas toutes les races logiques.</li><li>Un trop grand nombre de threads peut dégrader les performances.</li><li>Les exceptions dans des workers oubliés sont une vraie source de bugs fantômes.</li></ul></div>
+</section>
+<div class="prev-next"><a href="python-threads-basics.html">← Python — Threads : bases</a><a href="synchronization.html">Synchronisation et coordination →</a></div>
+
+        </article>
+        <aside class="toc">
+          <div class="toc-box">
+            <h3>Sommaire</h3>
+            <div id="toc"></div>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+  <script src="../assets/js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Synchronisation et coordination</title>
+  <meta name="description" content="Locks, sémaphores, conditions, barrières, queues et patterns producteur/consommateur en Java et Python." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/styles.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-badge">MT</div>
+        <div>
+          <p class="eyebrow">Support de formation</p>
+          <h1>Multithreading</h1>
+        </div>
+      </div>
+      <nav class="nav">
+        <a class="nav-link" href="../index.html" data-label="Accueil">Accueil</a>
+<a class="nav-link" href="../pages/introduction.html" data-label="Introduction">Introduction</a>
+<a class="nav-link" href="../pages/concepts-fondamentaux.html" data-label="Concepts fondamentaux">Concepts fondamentaux</a>
+<a class="nav-link" href="../pages/java-threads-basics.html" data-label="Java — bases">Java — bases</a>
+<a class="nav-link" href="../pages/java-concurrency-advanced.html" data-label="Java — avancé">Java — avancé</a>
+<a class="nav-link" href="../pages/python-threads-basics.html" data-label="Python — bases">Python — bases</a>
+<a class="nav-link" href="../pages/python-concurrency-advanced.html" data-label="Python — avancé">Python — avancé</a>
+<a class="nav-link" href="../pages/synchronization.html" data-label="Synchronisation">Synchronisation</a>
+<a class="nav-link" href="../pages/race-condition-deadlock.html" data-label="Race / Deadlock">Race / Deadlock</a>
+<a class="nav-link" href="../pages/executors-thread-pools.html" data-label="Pools / Executors">Pools / Executors</a>
+<a class="nav-link" href="../pages/async-vs-threading.html" data-label="Async vs Threads">Async vs Threads</a>
+<a class="nav-link" href="../pages/performance-debugging.html" data-label="Performance / Debug">Performance / Debug</a>
+<a class="nav-link" href="../pages/best-practices.html" data-label="Bonnes pratiques">Bonnes pratiques</a>
+<a class="nav-link" href="../pages/exercises.html" data-label="Exercices">Exercices</a>
+<a class="nav-link" href="../pages/corrections.html" data-label="Corrigés">Corrigés</a>
+      </nav>
+    </aside>
+    <main class="content">
+      <header class="page-header">
+        <div>
+          <p class="eyebrow">Cours progressif • Java & Python</p>
+          <h1>Synchronisation et coordination</h1>
+          <p class="lead">Locks, sémaphores, conditions, barrières, queues et patterns producteur/consommateur en Java et Python.</p>
+        </div>
+        <button id="toc-toggle" class="btn ghost mobile-only">Sommaire</button>
+      </header>
+
+      <div class="content-grid">
+        <article class="article">
+          
+<section>
+  <h2>1. Introduction</h2>
+  <p>La synchronisation et la coordination servent à garantir que plusieurs threads accèdent correctement à une ressource partagée ou progressent dans un ordre attendu.</p>
+</section>
+<section>
+  <h2>2. Niveau débutant</h2>
+  <h3>Exclusion mutuelle</h3>
+  <p>Quand une ressource ne peut être modifiée correctement que par un seul thread à la fois, on utilise un lock.</p>
+  <h3>Producteur / consommateur</h3>
+  <p>Un thread produit des tâches, un autre les consomme. Les files bloquantes sont idéales pour ce pattern.</p>
+</section>
+<div class="compare-table-wrap"><table><thead><tr><th>Besoin</th><th>Java</th><th>Python</th><th>Quand choisir</th></tr></thead><tbody><tr><td>Exclusion mutuelle simple</td><td>synchronized / ReentrantLock</td><td>Lock</td><td>Section critique courte</td></tr><tr><td>Signal simple</td><td>CountDownLatch / Condition</td><td>Event / Condition</td><td>Déclenchement ou attente d’état</td></tr><tr><td>Limiter N accès</td><td>Semaphore</td><td>Semaphore</td><td>Quota ou ressource partagée limitée</td></tr><tr><td>Producteur/consommateur</td><td>BlockingQueue</td><td>Queue</td><td>Pipeline de tâches</td></tr><tr><td>Synchroniser un groupe</td><td>CyclicBarrier</td><td>Barrier artisanale / futures / join</td><td>Phase commune à plusieurs workers</td></tr></tbody></table></div>
+<div class="code-shell"><pre><code>// Java - producteur / consommateur avec BlockingQueue
+import java.util.concurrent.*;
+
+public class ProducerConsumer {
+    public static void main(String[] args) {
+        BlockingQueue<String> queue = new ArrayBlockingQueue<>(10);
+
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+
+        executor.submit(() -> {
+            for (int i = 0; i < 5; i++) {
+                queue.put("job-" + i);
+            }
+            queue.put("STOP");
+            return null;
+        });
+
+        executor.submit(() -> {
+            while (true) {
+                String item = queue.take();
+                if ("STOP".equals(item)) break;
+                System.out.println("Traitement: " + item);
+            }
+            return null;
+        });
+
+        executor.shutdown();
+    }
+}
+</code></pre></div><div class="code-shell"><pre><code># Python - producteur / consommateur avec Queue
+from queue import Queue
+from threading import Thread
+
+queue = Queue()
+
+def producer():
+    for i in range(5):
+        queue.put(f"job-{i}")
+    queue.put("STOP")
+
+def consumer():
+    while True:
+        item = queue.get()
+        if item == "STOP":
+            break
+        print("Traitement:", item)
+
+Thread(target=producer).start()
+Thread(target=consumer).start()
+</code></pre></div>
+<section>
+  <h2>3. Niveau intermédiaire</h2>
+  <h3>Choisir la bonne primitive</h3>
+  <ul class="tight">
+    <li>Lock : protection simple.</li>
+    <li>Condition : attente conditionnelle.</li>
+    <li>Semaphore : limiter le débit d’accès.</li>
+    <li>Queue : communication sûre et découplage.</li>
+  </ul>
+  <h3>Pièges</h3>
+  <ul class="tight">
+    <li>Utiliser une Condition quand une Queue suffit.</li>
+    <li>Conserver un lock trop longtemps.</li>
+    <li>Faire du code lent ou bloquant à l’intérieur d’une section critique.</li>
+  </ul>
+</section>
+<section>
+  <h2>4. Niveau avancé</h2>
+  <p>La synchronisation doit être pensée au niveau du design, pas ajoutée “à la fin”. Les meilleurs systèmes concurrents réduisent l’état partagé et utilisent des primitives explicites là où elles apportent vraiment une garantie.</p>
+</section>
+<div class="callout remember"><div class="callout-title">À retenir</div>
+<ul class="tight">
+  <li>Pour producteur/consommateur, préfère une file bloquante à un protocole artisanal.</li>
+  <li>Le choix de la primitive dépend d’un besoin précis : exclusion, signal, quota, file, barrière.</li>
+  <li>Une synchronisation trop fine ou trop complexe devient vite illisible et fragile.</li>
+</ul>
+</div>
+          <div class="pager">
+            <a class="btn ghost" href="python-concurrency-advanced.html">← Précédent</a>
+            <a class="btn" href="race-condition-deadlock.html">Suivant →</a>
+          </div>
+        </article>
+        <aside class="toc" id="toc">
+          <div class="toc-card">
+            <p class="toc-title">Sommaire du chapitre</p>
+            <div id="toc-container"></div>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+  <script src="../assets/js/script.js"></script>
+</body>
+</html>

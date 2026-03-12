@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Race conditions, deadlocks et bugs classiques — Cours Multithreading</title>
+  <link rel="stylesheet" href="../assets/css/styles.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-badge">MT</div>
+        <div>
+          <strong>Multithreading Course</strong>
+          <p>Java & Python</p>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="../index.html">Accueil</a>
+<a href="introduction.html">Introduction</a>
+<a href="concepts-fondamentaux.html">Concepts fondamentaux</a>
+<a href="java-threads-basics.html">Java — bases</a>
+<a href="java-concurrency-advanced.html">Java — avancé</a>
+<a href="python-threads-basics.html">Python — bases</a>
+<a href="python-concurrency-advanced.html">Python — avancé</a>
+<a href="synchronization.html">Synchronisation</a>
+<a class="active" href="race-condition-deadlock.html">Bugs classiques</a>
+<a href="executors-thread-pools.html">Pools & async</a>
+<a href="async-vs-threading.html">Async vs threads</a>
+<a href="performance-debugging.html">Perf & debugging</a>
+<a href="best-practices.html">Bonnes pratiques</a>
+<a href="exercises.html">Exercices</a>
+<a href="corrections.html">Corrigés</a>
+      </nav>
+    </aside>
+    <main class="content">
+      <header class="hero hero-small">
+        <span class="eyebrow">Support progressif — junior à avancé</span>
+        <h1>Race conditions, deadlocks et bugs classiques</h1>
+        <p>Comprendre les grands bugs concurrents, les reconnaître et savoir les éviter proprement.</p>
+      </header>
+      <div class="page-grid">
+        <article class="article">
+          
+<section>
+<h2>1. Race condition</h2>
+<p>Une race condition survient quand le résultat dépend de l’ordre d’exécution entre plusieurs threads. Si cet ordre n’est pas maîtrisé, le résultat devient imprévisible.</p>
+<pre class="code-block"><code class="language-java">class Counter {
+    int value = 0;
+
+    void increment() {
+        value++; // non thread-safe
+    }
+}</code></pre>
+<p><strong>Correction :</strong> synchroniser, utiliser une primitive atomique ou supprimer l’état partagé.</p>
+</section>
+
+<section>
+<h2>2. Deadlock</h2>
+<p>Un deadlock survient quand deux threads attendent chacun une ressource détenue par l’autre. Plus personne n’avance.</p>
+<pre class="code-block"><code class="language-java">synchronized (lockA) {
+    synchronized (lockB) {
+        // ...
+    }
+}
+
+// ailleurs
+synchronized (lockB) {
+    synchronized (lockA) {
+        // ...
+    }
+}</code></pre>
+<p><strong>Évitement :</strong> ordre global de prise des verrous, timeout, design sans double verrou si possible.</p>
+</section>
+
+<section>
+<h2>3. Livelock et starvation</h2>
+<p>Dans un livelock, les threads réagissent mais ne progressent pas. Dans la starvation, un thread progresse trop peu car d’autres monopolisent la ressource.</p>
+</section>
+
+<section>
+<h2>4. Visibility bug</h2>
+<pre class="code-block"><code class="language-java">class StopFlag {
+    boolean stop = false;
+}</code></pre>
+<p>Un thread écrit <code>stop = true</code>, un autre continue de lire <code>false</code>. Correction : <code>volatile</code>, lock ou autre relation happens-before.</p>
+</section>
+
+<section>
+<h2>5. Lost update</h2>
+<p>Deux threads lisent la même valeur, la modifient chacun de leur côté, puis écrivent successivement. L’une des mises à jour est perdue.</p>
+</section>
+
+<section>
+<h2>6. Double-checked locking</h2>
+<p>Ce pattern est historiquement piégeux quand il est mal implémenté. En Java moderne, il demande généralement un champ <code>volatile</code> si on l’utilise pour une initialisation paresseuse manuelle.</p>
+<pre class="code-block"><code class="language-java">private static volatile ExpensiveService instance;
+
+public static ExpensiveService getInstance() {
+    if (instance == null) {
+        synchronized (MyClass.class) {
+            if (instance == null) {
+                instance = new ExpensiveService();
+            }
+        }
+    }
+    return instance;
+}</code></pre>
+</section>
+
+<section>
+<h2>7. Interleavings et ordre d’exécution</h2>
+<p>Un même code peut produire différentes traces légales selon l’interleaving. C’est la raison pour laquelle un bug concurrent peut être rarissime et pourtant grave.</p>
+<div class="callout callout-warn"><h3>Pièges fréquents</h3><ul><li>Tester dix fois sans erreur ne prouve pas qu’un code concurrent est correct.</li><li>Un deadlock peut ne se produire que sous forte charge.</li><li>Les logs non horodatés et non corrélés rendent le diagnostic presque impossible.</li></ul></div>
+<div class="callout callout-note"><h3>À retenir</h3><ul><li>Un bug concurrent est souvent un bug de protocole entre threads.</li><li>Les solutions les plus fiables diminuent le partage mutable.</li><li>Les files, atomiques et structures concurrentes haut niveau évitent beaucoup de bugs.</li></ul></div>
+</section>
+<div class="prev-next"><a href="synchronization.html">← Synchronisation et coordination</a><a href="executors-thread-pools.html">Executors, thread pools et exécution asynchrone →</a></div>
+
+        </article>
+        <aside class="toc">
+          <div class="toc-box">
+            <h3>Sommaire</h3>
+            <div id="toc"></div>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+  <script src="../assets/js/script.js"></script>
+</body>
+</html>

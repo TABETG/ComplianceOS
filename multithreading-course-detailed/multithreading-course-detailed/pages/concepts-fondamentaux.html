@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Concepts fondamentaux de concurrence — Cours Multithreading</title>
+  <link rel="stylesheet" href="../assets/css/styles.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-badge">MT</div>
+        <div>
+          <strong>Multithreading Course</strong>
+          <p>Java & Python</p>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="../index.html">Accueil</a>
+<a href="introduction.html">Introduction</a>
+<a class="active" href="concepts-fondamentaux.html">Concepts fondamentaux</a>
+<a href="java-threads-basics.html">Java — bases</a>
+<a href="java-concurrency-advanced.html">Java — avancé</a>
+<a href="python-threads-basics.html">Python — bases</a>
+<a href="python-concurrency-advanced.html">Python — avancé</a>
+<a href="synchronization.html">Synchronisation</a>
+<a href="race-condition-deadlock.html">Bugs classiques</a>
+<a href="executors-thread-pools.html">Pools & async</a>
+<a href="async-vs-threading.html">Async vs threads</a>
+<a href="performance-debugging.html">Perf & debugging</a>
+<a href="best-practices.html">Bonnes pratiques</a>
+<a href="exercises.html">Exercices</a>
+<a href="corrections.html">Corrigés</a>
+      </nav>
+    </aside>
+    <main class="content">
+      <header class="hero hero-small">
+        <span class="eyebrow">Support progressif — junior à avancé</span>
+        <h1>Concepts fondamentaux de concurrence</h1>
+        <p>Atomicité, visibilité, ordering, état partagé et notions qui expliquent les vrais bugs concurrents.</p>
+      </header>
+      <div class="page-grid">
+        <article class="article">
+          
+<section>
+<h2>1. Introduction</h2>
+<p>Les notions fondamentales de concurrence sont celles qui expliquent pourquoi du code “semble correct” mais casse en production. En multithreading, deux dangers reviennent sans cesse : <strong>l’état partagé mutable</strong> et <strong>l’absence de garanties d’ordre ou de visibilité</strong>.</p>
+<h3>Shared state et mutable state</h3>
+<p>Un état partagé est une donnée accessible par plusieurs threads. Si cet état peut changer, on parle d’état mutable partagé. C’est la source de la majorité des races, lost updates et corruptions.</p>
+</section>
+
+<section>
+<h2>2. Niveau débutant</h2>
+<h3>Atomicité</h3>
+<p>Une opération atomique est indivisible : aucun autre thread ne peut observer un état intermédiaire. Un simple <code>counter++</code> n’est pas atomique : lecture, calcul, écriture.</p>
+<h3>Visibilité mémoire</h3>
+<p>Quand un thread modifie une variable, un autre thread ne verra pas toujours immédiatement la nouvelle valeur sans mécanisme de synchronisation adapté.</p>
+<h3>Ordering</h3>
+<p>Le compilateur, le runtime et le CPU peuvent réordonner certaines instructions tant que le résultat reste correct pour un thread isolé. En concurrence, cela peut casser les hypothèses naïves.</p>
+<pre class="code-block"><code class="language-java">class SharedFlag {
+    boolean running = true;
+}
+
+class Worker implements Runnable {
+    private final SharedFlag flag;
+
+    Worker(SharedFlag flag) {
+        this.flag = flag;
+    }
+
+    @Override
+    public void run() {
+        while (flag.running) {
+            // boucle
+        }
+        System.out.println(&quot;Arrêt&quot;);
+    }
+}</code></pre>
+<p>Ce code paraît innocent. Pourtant, sans <code>volatile</code> ou synchronisation, le worker peut ne jamais voir le changement de <code>running</code>.</p>
+</section>
+
+<section>
+<h2>3. Niveau intermédiaire</h2>
+<h3>Section critique</h3>
+<p>Une section critique est une zone où un accès concurrent non contrôlé est dangereux. On la protège avec un verrou ou on évite le partage.</p>
+<h3>Contention</h3>
+<p>La contention apparaît quand plusieurs threads se disputent la même ressource : verrou, CPU, connexion, file, disque. Une application peut être “thread-safe” mais lente à cause d’une contention excessive.</p>
+<h3>Starvation</h3>
+<p>Un thread est affamé quand il ne progresse presque jamais parce que d’autres accaparent CPU ou verrou.</p>
+<h3>Livelock</h3>
+<p>Deux threads ne sont pas bloqués, mais ils réagissent l’un à l’autre d’une façon qui empêche tout progrès utile. Ils “bougent” sans avancer.</p>
+</section>
+
+<section>
+<h2>4. Niveau avancé</h2>
+<h3>Monitor, wait et notify</h3>
+<p>En Java, chaque objet peut servir de moniteur. Un thread peut entrer dans un bloc <code>synchronized</code>, attendre via <code>wait()</code>, puis être réveillé par <code>notify()</code> ou <code>notifyAll()</code>. C’est puissant mais bas niveau.</p>
+<h3>Immutabilité</h3>
+<p>L’immutabilité est souvent l’arme la plus simple : si un objet ne change jamais après construction, plusieurs threads peuvent le lire sans coordination particulière.</p>
+<h3>Confinement</h3>
+<p>Le confinement consiste à limiter une donnée à un seul thread ou à un seul contexte. Une donnée non partagée est naturellement plus sûre.</p>
+<h3>Idempotence</h3>
+<p>Dans les systèmes concurrents distribués, l’idempotence réduit le risque de double traitement. Si rejouer une opération produit le même effet, la robustesse augmente.</p>
+<div class="table-wrap"><table><thead><tr><th>Notion</th><th>Question pratique</th><th>Réflexe</th></tr></thead><tbody><tr><td>Atomicité</td><td>L’opération doit-elle être indivisible ?</td><td>Utiliser synchronisation, atomiques ou architecture évitant le partage.</td></tr><tr><td>Visibilité</td><td>Un autre thread doit-il voir immédiatement le changement ?</td><td>volatile, lock, queue, synchronisation.</td></tr><tr><td>Ordering</td><td>Ai-je besoin d’un ordre garanti entre plusieurs écritures/lectures ?</td><td>happens-before via primitives adaptées.</td></tr><tr><td>Immutabilité</td><td>Puis-je éviter le problème au lieu de le synchroniser ?</td><td>Privilégier objets immuables.</td></tr></tbody></table></div>
+</section>
+
+<section>
+<h2>5. Exemples clairs</h2>
+<h3>Bug de lost update</h3>
+<pre class="code-block"><code class="language-python">import threading
+
+counter = 0
+
+def increment():
+    global counter
+    for _ in range(100000):
+        counter += 1  # lecture + calcul + écriture
+
+threads = [threading.Thread(target=increment) for _ in range(2)]
+for t in threads:
+    t.start()
+for t in threads:
+    t.join()
+
+print(counter)</code></pre>
+<p>Le résultat peut être inférieur à 200000. C’est une race condition. Même si le GIL existe, les garanties ne remplacent pas une vraie conception thread-safe pour toutes les opérations partagées.</p>
+<div class="callout callout-warn"><h3>Pièges fréquents</h3><ul><li>Le GIL n’est pas un passe-droit pour ignorer la synchronisation logique.</li><li>Une variable partagée simple peut déjà suffire à introduire un bug.</li><li>Un bug concurrent peut ne se produire qu’une fois sur mille.</li></ul></div>
+</section>
+<div class="prev-next"><a href="introduction.html">← Introduction au multithreading</a><a href="java-threads-basics.html">Java — Threads : bases →</a></div>
+
+        </article>
+        <aside class="toc">
+          <div class="toc-box">
+            <h3>Sommaire</h3>
+            <div id="toc"></div>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+  <script src="../assets/js/script.js"></script>
+</body>
+</html>
